@@ -396,3 +396,176 @@ by="combo")
 behav_data<-unique(behav_data)
 
 ```
+
+## Analysis of chasing behaviours
+
+Based on our time spent with the fish, we have a few questions we want to address:
+
+* Was chasing more likely to occur in trials with larger females (and/or with larger differences in body size between smallest and largest females)? [this is a trial-level comparison]
+* Is chasing more likely when there is a large number of individuals courting? [this is a courtship bout-level comparison]
+* Are longer courtship bouts more likely to end in chasing and/or contain chasing? [this is a courtship bout-level comparison]
+
+
+### Chasing and female size
+
+
+```{r propChasingTrial}
+# Calculating the proportion of chasing
+prop_chasing <- table(chase_data$Trial, chase_data$Chasing_present )
+prop_chasing <- as.data.frame(rbind(prop_chasing))
+prop_chasing$No <- as.numeric(prop_chasing$No)
+prop_chasing$Yes <- as.numeric(prop_chasing$Yes)
+prop_chasing$sum <-prop_chasing$No + prop_chasing$Yes
+prop_chasing$Prop_No <- round(prop_chasing$No/prop_chasing$sum, 3)
+prop_chasing$Prop_Yes <- round(prop_chasing$Yes/prop_chasing$sum, 3)
+prop_chasing$Trial <- rownames(prop_chasing)
+
+
+prop_chase  <- merge(prop_chasing[,c(3:6)], 
+                    unique(chase_data[,c("Trial", "Difference", "Max_length")]), 
+                    by="Trial")
+
+```
+
+```{r plotPropChasingBodySize}
+par(mfrow=c(1,2))
+plot(prop_chase$Prop_Yes~prop_chase$Max_length,
+     cex=log(prop_chase$sum)/2,
+     pch=19,
+     xlab="Maximum female length (mm)",
+     ylab="Proportion of time spent chasing",
+     bty='l',
+     ylim=c(0,1),
+     xlim=c(110,125))
+
+plot(prop_chase$Prop_Yes~prop_chase$Difference,
+     cex=log(prop_chase$sum)/2,
+     pch=19,
+     xlab="Difference in female lengths (mm)",
+     ylab="Proportion of time spent chasing",
+     bty='l',
+     ylim=c(0,1),
+     xlim=c(15,40))
+```
+
+```{r}
+mod1<-glm(prop_chase$Prop_Yes ~ prop_chase$Max_length, family="binomial")
+```
+
+
+
+### Chasing and group size
+
+```{r chasingNum}
+chase_data$Chasing_numeric<-as.numeric(factor(chase_data$Chasing_present, levels=c("Yes","No")))
+chase_data$Chasing_end_numeric<-as.numeric(factor(chase_data$Chasing_end, levels=c("Yes","No")))
+```
+
+```{r}
+mod1<-glm((chase_data$Chasing_numeric-1)~chase_data$Group_size*chase_data$Time_of_Day, 
+          family="binomial")
+summary(mod1)
+anova(mod1)
+```
+
+We can describe the fit using ...
+
+```{r}
+# Fit stuff here
+```
+
+
+```{r}
+probs = predict(mod1, 
+                newdata = list(2), 
+                type = "response")
+
+
+newx = seq(min(chase_data$Group_size), max(chase_data$Group_size), length.out=nrow(chase_data))
+
+probs = predict(mod1, 
+                newdata = data.frame(newx), 
+                type = "response", 
+                se.fit = TRUE)
+
+pm = probs$fit
+pu = probs$fit + probs$se.fit * 1.96 # 95% confidence interval
+pl = probs$fit - probs$se.fit * 1.96 # 95% confidence interval
+
+
+
+```
+
+
+```{r plotChaseGroups}
+par(mfrow=c(1,2))
+# chasing present/absent
+plot(jitter(chase_data$Chasing_numeric-1)~chase_data$Group_size,
+     xlab="Group size",
+     ylab="Chasing present",
+     yaxt='n',
+     bty='l',
+     pch=19,
+     col=alpha("dark grey",0.5),
+     cex=1.5)
+axis(2,at=c(0,1),labels=c("No","Yes"),las=1)
+
+polygon(c(rev(newx),newx), c(rev(pl),pu),
+     col = "grey90", border = NA)
+
+lines(newx, pm, lwd = 2)
+lines(newx, pu, lwd = 2, col = "red")
+lines(newx, pl, lwd = 2, col = "red")
+
+# bout ended with chasing
+plot(jitter(chase_data$Chasing_end_numeric-1)~chase_data$Group_size,
+     xlab="Group size",
+     ylab="Bout ended with Chasing",
+     yaxt='n',
+     bty='l',
+     pch=19,
+     col=alpha("dark grey",0.5),
+     cex=1.5)
+axis(2,at=c(0,1),labels=c("No","Yes"),las=1)
+```
+
+These plots made me curious: if a bout contained chasing, how frequently did it end with chasing? It looks like about 50% of the time. 
+
+```{r chasingPresentEnd}
+plot(table(chase_data$Chasing_present, chase_data$Chasing_end))
+```
+
+
+
+
+
+
+### Chasing and courtship bout length
+
+```{r plotChaseBoutLength}
+
+par(mfrow=c(1,2))
+# chasing present/absent
+plot(jitter(chase_data$Chasing_numeric)~chase_data$Duration,
+     xlab="Courtship bout duration (s)",
+     ylab="Chasing present",
+     yaxt='n',
+     bty='l',
+     pch=19,
+     col=alpha("dark grey",0.5),
+     cex=1.5)
+axis(2,at=c(1,2),labels=c("No","Yes"),las=1)
+
+# bout ended with chasing
+plot(jitter(chase_data$Chasing_end_numeric)~chase_data$Duration,
+     xlab="Courtship bout duration (s)",
+     ylab="Bout ended with Chasing",
+     yaxt='n',
+     bty='l',
+     pch=19,
+     col=alpha("dark grey",0.5),
+     cex=1.5)
+axis(2,at=c(1,2),labels=c("No","Yes"),las=1)
+```
+
+
