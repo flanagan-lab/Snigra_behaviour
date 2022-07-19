@@ -397,6 +397,93 @@ behav_data<-unique(behav_data)
 
 ```
 
+So, there are some interesting issues. There are fewer chasing observations than courtship observations, but this is expected -- chasing only occurred in intersexual contexts, and the courtship data contains some same-sex interactions. The courtship dataset also contains a few observations without active courtship from all participants, which were excluded from analyses.
+
+But there are also some courtship bouts that are missing from the merged dataframe  -- let's take a look at these.
+
+```{r checkingMissing}
+missing<-court_data[!court_data$combo %in% behav_data$combo,]
+
+intersex<-unlist(as.list(by(missing,missing$courtship_events,function(bout){
+  
+  males<- bout$subject %in% "Male"
+  
+  if(length(males[males==TRUE]) == 0){
+    return(FALSE)
+  } else{
+    return(TRUE)
+  }
+  
+})))
+
+# these are the bouts that should be included
+#intersex[intersex==TRUE]
+missing<-missing[missing$courtship_events %in% names(intersex[intersex==TRUE]),]
+
+active_behavs<-c("Wiggle","Pose")
+
+active<-unlist(as.list(by(missing, missing$courtship_events, function(bout, active_behavs){
+  
+  activeTF<-bout$behavior %in% active_behavs
+  if(length(activeTF[activeTF==TRUE])==0){
+    return(FALSE)
+  }else {
+    return(TRUE)
+  }
+},active_behavs=active_behavs)))
+active_bouts<-active[active==TRUE]
+
+missing<-missing[missing$courtship_events %in% names(active_bouts),]
+table(missing$media_file_path, missing$courtship_events)
+```
+
+These three courtship bouts should be in the chase data because they involve both males and females and active behaviours. One of them is missing the Day_filmed info, but that's secondary. 
+
+
+```{r}
+prob_file<-unique(chase_data$media_file_path[gsub("\\s+","",chase_data$media_file_path) %in% gsub("\\s+","",unique(missing$media_file_path))])
+```
+
+It appears that the missing bout from Trial 4 is not included in the merged dataset because it's not included in the chase data -- that's probably also why it's got NA for the day. The video "D:/Pipefish Mesocosm Film/Trial 4/5-12-20/5-12  AM 01.MTS" was apparently not in the chase results.
+
+What about the other two bouts? Their video is in the chase datasheet.
+
+```{r}
+# number of observations in that trial
+n_court<-nrow(court_data[gsub("\\s+","",court_data$media_file_path) %in% gsub("\\s+","",prob_file),])
+n_chase<-nrow(chase_data[gsub("\\s+","",chase_data$media_file_path) %in% gsub("\\s+","",prob_file),])
+
+prob_court<-court_data[gsub("\\s+","",court_data$media_file_path) %in% gsub("\\s+","",prob_file),]
+prob_chase<-chase_data[gsub("\\s+","",chase_data$media_file_path) %in% gsub("\\s+","",prob_file),]
+
+missing_times<-prob_court$time_in_video[!prob_court$time_in_video %in% prob_chase$time_in_video]
+```
+
+```{r}
+hist(prob_chase$time_in_video[prob_chase$time_in_video >= min(missing_times) & prob_chase$time_in_video <= max(missing_times) ],
+     col="grey",
+     border = "grey",
+     ylim=c(0,4),
+     xlab="Time in the video",
+     main="",
+     ylab="Number of observations",
+     breaks=seq(floor(min(missing_times))-5,ceiling(max(missing_times))+5,5))
+hist(missing_times,add=TRUE, 
+     col=alpha("cornflowerblue",0.5),
+     border=alpha("cornflowerblue",0.5),
+      breaks=seq(floor(min(missing_times))-5,ceiling(max(missing_times))+5,5))
+legend("topleft",
+       c("Timepoints in the chasing dataset",
+         "Timepoints that are in the courting dataset 
+and missing from chasing"),
+       col=c("grey",alpha("cornflowerblue",0.5)),
+       pch=15,
+       bty='n',
+       ncol=1)
+```
+
+
+
 ## Analysis of chasing behaviours
 
 Based on our time spent with the fish, we have a few questions we want to address:
