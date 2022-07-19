@@ -1,0 +1,398 @@
+---
+title: "Chasing behaviour analysis"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,out.extra='',fig.pos="H",
+                      fig.path = "./figs/",
+                      dpi = 300,fig.keep='last',dev='png')
+knitr::opts_knit$set(root.dir='../',fig_path="./figs/")
+```
+
+```{r loadLibs, message=FALSE}
+library(stringr)
+library(dplyr)
+library(scales)
+library(tidyverse)
+```
+
+This document is for the analysis of the *Stigmatopora nigra* chasing behaviours. During the mesocosm experiments, we noticed that male pipefish frequently 'chased' or followed a single female pipefish, interspersed with courting. 
+
+Following an initial analysis of the courtship behaviours, Fleur van Eyndhoven re-analysed the videos to record chasing. Specifically, for each bout of courtship (which had been previously analysed), she recorded whether the bout ended in chasing, contained any chasing, and the size of the group (number of males and females). 
+
+All of the raw data from this analysis is found in Chase_datasheets/. The code to parse the data is taken/modified from Fleur's script `R_scripts/Chasing_data.R`.
+
+
+
+## Parsing the data
+
+### Courtship data 
+
+```{r readData}
+courtfiles<-list.files(path="BORIS_data/",pattern="csv",full.names=TRUE)
+
+
+courtdat<- lapply(courtfiles, function(file){           #no function so we just put file
+  temp<-scan(file, "character", sep='\n', quiet = TRUE) #scan through data to line ending 
+  nlines<- grep("Time,", temp)                      #fine line that starts with Time
+  dat<-read.csv(file, skip=nlines-1) # skip everything above line that starts with Time
+  dat$Modifier.3<-as.character(dat$Modifier.3) # Mod 3 has both numbers and words change to character
+  dat$file.name<-file         ## add something in here to cut the path of file name so its just sample
+  return(dat)
+})   
+courtdat<-bind_rows(courtdat)
+
+```
+
+```{r extractTimesFXN}
+
+extract_times <- function(dat1){
+  
+  nn <- nrow(dat1)
+  
+  
+  starting_points <- c()
+  end_points <- c()
+  
+  #get where observations start
+  for(i in 1:nn){
+    d <- dat1[i,]
+    
+    behavior <- d$Behavior
+    
+    if(behavior == "Start"){
+      #print("start")
+      starting_points <- c(starting_points, i)
+    }
+    
+    if(behavior == "Stop"){
+      #print("end")
+      end_points <- c(end_points, i)
+    }
+    
+    
+  }
+  return(list(starting_points,end_points))
+}
+  
+```
+
+```{r extractTimes}
+times<-extract_times(courtdat) 
+starting_points<-times[[1]]
+end_points<-times[[2]]
+observation_chunks <- list()
+
+ for(j in 1:length(starting_points) ){
+    start <- starting_points[j]
+    end <- end_points[j]
+    observation_chunks[[j]] <- courtdat[start:end, ]
+    
+  }
+```
+
+```{r getUsefulInfo}
+useful_list <- lapply(seq_along(observation_chunks), function(chunk){
+  
+  x <- observation_chunks[[chunk]]
+  x$Modifier.1[is.na(x$Modifier.1)]<-""
+  x$Modifier.2[is.na(x$Modifier.2)]<-""
+  x$Modifier.3[is.na(x$Modifier.3)]<-""
+  n3 <- nrow(x)
+  
+  length_of_chunk <- x$Time[n3] - x$Time[1] 
+  times <-data.frame()
+ 
+  
+  for(k in 1:n3){
+    x_row <- x[k,]
+    
+    if(x_row$Behavior== "Start" | x_row$Behavior== "Stop" ){
+      next()
+    }else{
+      
+      selected_behavior <- x_row$Behavior
+      selected_subject <- x_row$Subject
+      selected_m1 <- x_row$Modifier.1
+      selected_m2 <- x_row$Modifier.2 
+      selected_m3 <- x_row$Modifier.3
+      selected_status <- x_row$Status
+      
+      if(selected_status=="START"){
+        end_row <- x[which   (x$Behavior==selected_behavior &
+                             x$Subject== selected_subject & 
+                             x$Modifier.1 == selected_m1 &
+                             x$Modifier.2 == selected_m2 &
+                             x$Modifier.3 == selected_m3 &
+                             x$Status == "STOP" &
+                               x$Time>=x_row$Time),]
+       
+       
+        time_elapsed <- end_row$Time[which.min(end_row$Time-x_row$Time)] - x_row$Time
+        #}
+        if(nrow(end_row)==0){
+          print(paste(x_row$Media.file.path,x_row$Time,time_elapsed ))
+        }
+    
+        return_data_per_row <- data.frame("media_file_path"= x_row$Media.file.path,
+                                          "time_in_video"= x_row$Time,
+                                          "Duration"= time_elapsed,
+                                          "behavior"= selected_behavior,
+                                          "subject"=selected_subject,
+                                          "modifier_1" = selected_m1, 
+                                          "modifier_2"= selected_m2,
+                                          "modifier_3"= selected_m3)
+        
+        
+        times <-rbind(times, return_data_per_row )
+        
+      }
+      
+      if(selected_status == "STOP"){
+        next()
+      }
+      
+      if(selected_status == "POINT"){
+       
+        return_data_per_row <- data.frame("media_file_path"= x_row$Media.file.path,
+                                          "time_in_video"= x_row$Time,
+                                          "Duration"= 0.00,
+                                          "behavior"= selected_behavior,
+                                          "subject"=selected_subject,
+                                          "modifier_1" = selected_m1, 
+                                          "modifier_2"= selected_m2,
+                                          "modifier_3"= selected_m3)
+        times <-rbind(times, return_data_per_row )
+      }
+      
+      
+      
+      
+    }
+    
+  
+  
+  
+
+  }
+  times$courtship_events <- chunk
+  times$total_time_of_courtship <- length_of_chunk
+  
+  return(times)  
+})
+
+
+
+
+court_data <- do.call(rbind, useful_list)
+court_data$Trial=substr(court_data$media_file_path, 27, 33)
+#Adding Am or Noon filming times
+court_data$Time_of_Day=str_sub(court_data$media_file_path, -10)
+court_data$Time_of_Day=str_extract(court_data$Time_of_Day,"(\\w+)")
+court_data$Time_of_Day <-  ifelse(court_data$Time_of_Day == "oon", "Noon",
+                                  court_data$Time_of_Day)
+#Adding Date filmed 
+court_data$Date_filmed=substr(court_data$media_file_path, 35, 42)
+court_data$Date_filmed=str_extract(court_data$Date_filmed,"(\\w+)")
+
+library(dplyr)
+
+# Adding which day filmed (1-7)
+court_data$Day_filmed <- ifelse(court_data$Trial == "Trial 1" & court_data$Date_filmed == 8, "7",
+                                ifelse(court_data$Trial == "Trial 2" & court_data$Date_filmed == 3, "1",
+                                       ifelse( court_data$Trial == "Trial 2" & court_data$Date_filmed == 9, "7",
+                                               ifelse( court_data$Trial == "Trial 3" & court_data$Date_filmed == 3, "1",
+                                                       ifelse( court_data$Trial == "Trial 3" & court_data$Date_filmed == 4, "2",
+                                                               ifelse( court_data$Trial == "Trial 3" & court_data$Date_filmed == 5, "3",
+                                                                       ifelse( court_data$Trial == "Trial 3" & court_data$Date_filmed == 8, "6",
+                                                                               ifelse( court_data$Trial == "Trial 4" & court_data$Date_filmed == 4, "1",
+                                                                                       ifelse( court_data$Trial == "Trial 4" & court_data$Date_filmed == 6, "3",
+                                                                                               ifelse( court_data$Trial == "Trial 4" & court_data$Date_filmed == 7, "4",
+                                                                                                       ifelse( court_data$Trial == "Trial 4" & court_data$Date_filmed == 10, "7",
+                                                                                                               ifelse( court_data$Trial == "Trial 5" & court_data$Date_filmed == 6, "2",
+                                                                                                                       ifelse( court_data$Trial == "Trial 5" & court_data$Date_filmed == 9, "5",
+                                                                                                                               ifelse( court_data$Trial == "Trial 5" & court_data$Date_filmed == 10, "6",                    
+                                                                                                                                       ifelse( court_data$Trial == "Trial 5" & court_data$Date_filmed == 11, "7",
+                                                                                                                                               ifelse( court_data$Trial == "Trial 6" & court_data$Date_filmed == 7, "3",
+                                                                                                                                                       ifelse( court_data$Trial == "Trial 6" & court_data$Date_filmed == 8, "4",
+                                                                                                                                                               ifelse( court_data$Trial == "Trial 6" & court_data$Date_filmed == 10, "6",
+                                                                                                                                                                       ifelse( court_data$Trial == "Trial 7" & court_data$Date_filmed == 10, "3",
+                                                                                                                                                                               ifelse( court_data$Trial == "Trial 7" & court_data$Date_filmed == 13, "6",
+                                                                                                                                                                                       ifelse( court_data$Trial == "Trial 8" & court_data$Date_filmed == 10, "3",
+                                                                                                                                                                                               ifelse( court_data$Trial == "Trial 8" & court_data$Date_filmed == 11, "4",
+                                                                                                                                                                                                       ifelse( court_data$Trial == "Trial 8" & court_data$Date_filmed == 13, "6",
+                                                                                                                                                                                                               ifelse( court_data$Trial == "Trial 8" & court_data$Date_filmed == 14, "7",
+                                                                                                                                                                                                                       ifelse( court_data$Trial == "Trial 9" & court_data$Date_filmed == 10, "2",
+                                                                                                                                                                                                                               ifelse( court_data$Trial == "Trial 9" & court_data$Date_filmed == 11, "3",
+                                                                                                                                                                                                                                       ifelse( court_data$Trial == "Trial 9" & court_data$Date_filmed == 13, "5",
+                                                                                                                                                                                                                                               ifelse( court_data$Trial == "Trial 10" & court_data$Date_filmed == 12, "3",
+                                                                                                                                                                                                                                                       NA  ))))))))))))))))))))))))))))
+
+#Trial 10 
+court_data$Trial <- ifelse(court_data$Trial == "Trial 1" & court_data$Date_filmed == 12, "Trial 10",
+                           court_data$Trial)
+court_data$Day_filmed <- ifelse( court_data$Trial == "Trial 10" & court_data$Date_filmed == 12, "3",
+                                 court_data$Day_filmed)
+
+  
+```
+
+
+
+### Chasing data
+
+```{r getData}
+chase_data<-dplyr::bind_rows(
+  lapply(
+    list.files(
+      pattern="Trial", 
+      path="Chase_datasheets",
+      full.names = TRUE)
+    , read.csv
+    )
+  )
+colnames(chase_data) <- c("media_file_path", 
+                          "time_in_video", 
+                          "Duration",  
+                          "behavior" , 
+                          "subject" ,
+                          "modifier_1" ,
+                          "modifier_2",
+                          "modifier_3" ,
+                          "Group_size", 
+                          "Female", 
+                          "Male" ,
+                          "Chasing_end" , 
+                          "Chasing_present" , 
+                          "courtship_events_wrong" ,
+                          "total_time_of_courtship")
+
+```
+
+```{r cleanData}
+# remove extra columns
+chase_data<-chase_data[,1:which(colnames(chase_data)=="total_time_of_courtship")]
+
+# remove bouts with no active courtship
+# aka female-female interactions where group size was NA
+chase_data<- subset(chase_data,!is.na(Group_size)) 
+chase_data <- chase_data %>%
+  mutate_at(vars(Group_size,Female,Male), funs(round(., 1))) 
+
+# remove column with incorrect bout numbers
+chase_data <- chase_data[,-which(colnames(chase_data)=="courtship_events_wrong")]
+```
+
+```{r metaData}
+#Adding in Trial number
+chase_data$Trial=substr(chase_data$media_file_path, 27, 33)
+#Adding Am or Noon filming times
+chase_data$Time_of_Day=str_sub(chase_data$media_file_path, -10)
+chase_data$Time_of_Day=str_extract(chase_data$Time_of_Day,"(\\w+)")
+chase_data$Time_of_Day <-  ifelse(chase_data$Time_of_Day == "oon", "Noon",
+                                  chase_data$Time_of_Day)
+#Adding Date filmed 
+chase_data$Date_filmed=substr(chase_data$media_file_path, 35, 42)
+chase_data$Date_filmed=str_extract(chase_data$Date_filmed,"(\\w+)")
+
+# Adding which day filmed (1-7)
+chase_data$Day_filmed <- ifelse(chase_data$Trial == "Trial 1" & chase_data$Date_filmed == 8, "7",
+                         ifelse(chase_data$Trial == "Trial 2" & chase_data$Date_filmed == 3, "1",
+                         ifelse( chase_data$Trial == "Trial 2" & chase_data$Date_filmed == 9, "7",
+                         ifelse( chase_data$Trial == "Trial 3" & chase_data$Date_filmed == 3, "1",
+                                                       ifelse( chase_data$Trial == "Trial 3" & chase_data$Date_filmed == 4, "2",
+                                                               ifelse( chase_data$Trial == "Trial 3" & chase_data$Date_filmed == 5, "3",
+                                                                       ifelse( chase_data$Trial == "Trial 3" & chase_data$Date_filmed == 8, "6",
+                                                                               ifelse( chase_data$Trial == "Trial 4" & chase_data$Date_filmed == 4, "1",
+                                                                                       ifelse( chase_data$Trial == "Trial 4" & chase_data$Date_filmed == 6, "3",
+                                                                                               ifelse( chase_data$Trial == "Trial 4" & chase_data$Date_filmed == 7, "4",
+                                                                                                       ifelse( chase_data$Trial == "Trial 4" & chase_data$Date_filmed == 10, "7",
+                                                                                                               ifelse( chase_data$Trial == "Trial 5" & chase_data$Date_filmed == 6, "2",
+                                                                                                                       ifelse( chase_data$Trial == "Trial 5" & chase_data$Date_filmed == 9, "5",
+                                                                                                                               ifelse( chase_data$Trial == "Trial 5" & chase_data$Date_filmed == 10, "6",                    
+                                                                                                                                       ifelse( chase_data$Trial == "Trial 5" & chase_data$Date_filmed == 11, "7",
+                                                                                                                                               ifelse( chase_data$Trial == "Trial 6" & chase_data$Date_filmed == 7, "3",
+                                                                                                                                                       ifelse( chase_data$Trial == "Trial 6" & chase_data$Date_filmed == 8, "4",
+                                                                                                                                                               ifelse( chase_data$Trial == "Trial 6" & chase_data$Date_filmed == 10, "6",
+                                                                                                                                                                       ifelse( chase_data$Trial == "Trial 7" & chase_data$Date_filmed == 10, "3",
+                                                                                                                                                                               ifelse( chase_data$Trial == "Trial 7" & chase_data$Date_filmed == 13, "6",
+                                                                                                                                                                                       ifelse( chase_data$Trial == "Trial 8" & chase_data$Date_filmed == 10, "3",
+                                                                                                                                                                                               ifelse( chase_data$Trial == "Trial 8" & chase_data$Date_filmed == 11, "4",
+                                                                                                                                                                                                       ifelse( chase_data$Trial == "Trial 8" & chase_data$Date_filmed == 13, "6",
+                                                                                                                                                                                                               ifelse( chase_data$Trial == "Trial 8" & chase_data$Date_filmed == 14, "7",
+                                                                                                                                                                                                                       ifelse( chase_data$Trial == "Trial 9" & chase_data$Date_filmed == 10, "2",
+                                                                                                                                                                                                                               ifelse( chase_data$Trial == "Trial 9" & chase_data$Date_filmed == 11, "3",
+                                                                                                                                                                                                                                       ifelse( chase_data$Trial == "Trial 9" & chase_data$Date_filmed == 13, "5",
+                                                                                                                                                                                                                                               ifelse( chase_data$Trial == "Trial 10" & chase_data$Date_filmed == 12, "3",
+                                                                                                                                                                                                                                                       NA  ))))))))))))))))))))))))))))
+
+#Trial 10 - because R though it was trail 1
+chase_data$Trial <- ifelse(chase_data$Trial == "Trial 1" & chase_data$Date_filmed == 12, "Trial 10",
+                           chase_data$Trial)
+chase_data$Day_filmed <- ifelse( chase_data$Trial == "Trial 10" & chase_data$Date_filmed == 12, "3",
+                                 chase_data$Day_filmed)
+
+
+
+```
+
+
+
+```{r femaleSize}
+chase_data <- chase_data %>% mutate(Max_length =
+                     case_when(Trial =="Trial 1" ~ "115.2", 
+                               Trial =="Trial 2" ~ "116.6",
+                               Trial =="Trial 3" ~ "121.4",
+                               Trial =="Trial 4" ~ "123.6",
+                               Trial =="Trial 5" ~ "113.2",
+                               Trial =="Trial 6" ~ "119.4",
+                               Trial =="Trial 7" ~ "122.2",
+                               Trial =="Trial 8" ~ "113.7",
+                               Trial =="Trial 9" ~ "116.4",
+                               Trial =="Trial 10"~ "113.5",                   
+                               ))
+
+chase_data <- chase_data %>% mutate(Min_length =
+                               case_when(Trial =="Trial 1" ~ "87.8", 
+                                         Trial =="Trial 2" ~ "89.8",
+                                         Trial =="Trial 3" ~ "90.4",
+                                         Trial =="Trial 4" ~ "86.8",
+                                         Trial =="Trial 5" ~ "94.2",
+                                         Trial =="Trial 6" ~ "83.2",
+                                         Trial =="Trial 7" ~ "83.9",
+                                         Trial =="Trial 8" ~ "88",
+                                         Trial =="Trial 9" ~ "94.8",
+                                         Trial =="Trial 10"~ "94.4",                   
+                               ))
+
+chase_data[ , c("Max_length","Min_length")]<- apply(chase_data[ , c("Max_length","Min_length")], 2,            
+                    function(x) as.numeric(as.character(x)))
+chase_data$Difference<- (chase_data$Max_length - chase_data$Min_length)
+
+```
+
+
+### Combining courtship and chasing data
+
+```{r createUniqueID}
+court_data$combo<-paste(gsub("\\s+","",court_data$media_file_path), 
+                        court_data$time_in_video, 
+                        round(court_data$Duration,3), 
+                        round(court_data$total_time_of_courtship,3), sep="_")
+
+chase_data$combo<-paste(gsub("\\s+","",chase_data$media_file_path), 
+                      chase_data$time_in_video, 
+                      round(chase_data$Duration,3) ,
+                      round(chase_data$total_time_of_courtship,3), sep="_")
+
+behav_data <- merge(court_data, chase_data[,c("combo","media_file_path", "time_in_video", "Duration" , "total_time_of_courtship",
+                                         "Group_size", "Female", "Male","Chasing_end" , "Chasing_present"
+)], 
+by="combo")
+# remove any unnecessarily duplicated ones
+behav_data<-unique(behav_data)
+
+```
