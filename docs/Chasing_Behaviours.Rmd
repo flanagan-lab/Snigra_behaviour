@@ -272,7 +272,7 @@ colnames(chase_data) <- c("media_file_path",
 
 ```
 
-```{r cleanData}
+```{r cleanData, warning=FALSE}
 # remove extra columns
 chase_data<-chase_data[,1:which(colnames(chase_data)=="total_time_of_courtship")]
 
@@ -437,18 +437,12 @@ missing<-missing[missing$courtship_events %in% names(active_bouts),]
 table(missing$media_file_path, missing$courtship_events)
 ```
 
-These three courtship bouts should be in the chase data because they involve both males and females and active behaviours. One of them is missing the Day_filmed info, but that's secondary. 
+No courtship bouts remain that should be in the chase data but are not -- all courtship events involving both males and females and active behaviours are present.
 
 
-```{r}
+```{r, eval=FALSE}
 prob_file<-unique(chase_data$media_file_path[gsub("\\s+","",chase_data$media_file_path) %in% gsub("\\s+","",unique(missing$media_file_path))])
-```
 
-It appears that the missing bout from Trial 4 is not included in the merged dataset because it's not included in the chase data -- that's probably also why it's got NA for the day. The video "D:/Pipefish Mesocosm Film/Trial 4/5-12-20/5-12  AM 01.MTS" was apparently not in the chase results.
-
-What about the other two bouts? Their video is in the chase datasheet.
-
-```{r}
 # number of observations in that trial
 n_court<-nrow(court_data[gsub("\\s+","",court_data$media_file_path) %in% gsub("\\s+","",prob_file),])
 n_chase<-nrow(chase_data[gsub("\\s+","",chase_data$media_file_path) %in% gsub("\\s+","",prob_file),])
@@ -459,7 +453,7 @@ prob_chase<-chase_data[gsub("\\s+","",chase_data$media_file_path) %in% gsub("\\s
 missing_times<-prob_court$time_in_video[!prob_court$time_in_video %in% prob_chase$time_in_video]
 ```
 
-```{r}
+```{r, eval=FALSE}
 hist(prob_chase$time_in_video[prob_chase$time_in_video >= min(missing_times) & prob_chase$time_in_video <= max(missing_times) ],
      col="grey",
      border = "grey",
