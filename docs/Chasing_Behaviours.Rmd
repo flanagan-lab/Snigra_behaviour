@@ -712,6 +712,17 @@ plot(table(chase_data$Chasing_present, chase_data$Chasing_end))
 
 ### Chasing and courtship bout length
 
+
+```{r}
+par(mfrow=c(2,2))
+hist(chase_data$Group_size)
+hist(chase_data$Duration)
+
+hist(log(chase_data$Group_size))
+hist(log(chase_data$Duration))
+```
+
+
 ```{r plotChaseBoutLength}
 
 par(mfrow=c(1,2))
