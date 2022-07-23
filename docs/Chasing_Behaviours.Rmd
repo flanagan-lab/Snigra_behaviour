@@ -552,10 +552,6 @@ logit_back<-function(y) { return(exp(y)/(1+exp(y))) }
 
 ```
 ```{r}
-mod1<-glm((chase_data$Chasing_numeric-1)~chase_data$Group_size*chase_data$Time_of_Day, 
-          family="binomial")
-summary(mod1)
-anova(mod1)
 predicted_probs<-function(mod, tmpdat,column, jvalues){
   # calculate predicted probabilities and store in a list
   pp <- lapply(jvalues, function(j) {
