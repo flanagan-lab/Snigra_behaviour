@@ -651,36 +651,52 @@ grpEndMod_predict<-predicted_probs(grpEndMod, tmpdat, "Group_size",jvalues)
 ```
 
 
+
 ```{r plotChaseGroups}
 par(mfrow=c(1,2))
 # chasing present/absent
-plot(jitter(chase_data$Chasing_numeric-1)~chase_data$Group_size,
-     xlab="Group size",
+plot(jitter(chase_data$Chasing_numeric, 0.25)~chase_data$Group_size,
+       pch=trial_pch[chase_data$Trial],
+     col=alpha(time_cols[chase_data$Time_of_Day],0.5),
+     cex=1.5,
+     xlab="Mean Group size",
      ylab="Chasing present",
      yaxt='n',
      bty='l',
-     pch=19,
-     col=alpha("dark grey",0.5),
-     cex=1.5)
+     type='n')
 axis(2,at=c(0,1),labels=c("No","Yes"),las=1)
 
-polygon(c(rev(newx),newx), c(rev(pl),pu),
-     col = "grey90", border = NA)
+# add the predicted probabilities
+polygon(c(rev(grpChaseMod_predict$Variable),grpChaseMod_predict$Variable), 
+        c(rev(grpChaseMod_predict$Lower),grpChaseMod_predict$Upper),
+     col = alpha("grey90",0.5), border = NA)
 
-lines(newx, pm, lwd = 2)
-lines(newx, pu, lwd = 2, col = "red")
-lines(newx, pl, lwd = 2, col = "red")
+lines(grpChaseMod_predict$Variable, 
+      grpChaseMod_predict$PredictedProbability, lwd = 2)
 
 # bout ended with chasing
-plot(jitter(chase_data$Chasing_end_numeric-1)~chase_data$Group_size,
+plot(jitter(chase_data$Chasing_end_numeric,0.25)~chase_data$Group_size,
      xlab="Group size",
      ylab="Bout ended with Chasing",
      yaxt='n',
      bty='l',
-     pch=19,
      col=alpha("dark grey",0.5),
+     type='n',
+     pch=trial_pch[chase_data$Trial],
+     col=alpha(time_cols[chase_data$Time_of_Day],0.5),
      cex=1.5)
 axis(2,at=c(0,1),labels=c("No","Yes"),las=1)
+
+
+# add the predicted probabilities
+polygon(c(rev(grpEndMod_predict$Variable),grpEndMod_predict$Variable), 
+        c(rev(grpEndMod_predict$Lower),grpEndMod_predict$Upper),
+     col = alpha("grey90",0.5), border = NA)
+
+lines(grpEndMod_predict$Variable, 
+      grpEndMod_predict$PredictedProbability, lwd = 2)
+
+
 ```
 
 These plots made me curious: if a bout contained chasing, how frequently did it end with chasing? It looks like about 50% of the time. 
