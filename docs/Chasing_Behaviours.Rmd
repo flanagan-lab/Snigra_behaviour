@@ -17,6 +17,9 @@ library(stringr)
 library(dplyr)
 library(scales)
 library(tidyverse)
+```{r}
+time_cols<-c(AM="#7fc97f",Noon="#beaed4")
+trial_pch<-c(0:7,9:10)
 ```
 
 This document is for the analysis of the *Stigmatopora nigra* chasing behaviours. During the mesocosm experiments, we noticed that male pipefish frequently 'chased' or followed a single female pipefish, interspersed with courting. 
