@@ -722,6 +722,65 @@ hist(log(chase_data$Duration))
 ```
 
 
+```{r durationChasingMod}
+boutChaseMod<- glmer(Chasing_numeric~Duration+Time_of_Day +(1|Trial), 
+                    family="binomial",
+                    data=chase_data)
+boutChaseModSum<-summary(boutChaseMod)
+anova(boutChaseMod)
+
+# get standard errors
+boutChaseMod_SE <- sqrt(diag(vcov(boutChaseMod)))
+
+# convert to prob space
+boutChaseMod_Est<-cbind(Est = logit_back(fixef(boutChaseMod)), 
+              LL = logit_back(fixef(boutChaseMod) - 1.96 * se), 
+              UL = logit_back(fixef(boutChaseMod) + 1.96 *se),
+              boutChaseModSum$coefficients[,3:4])
+
+
+kable(boutChaseMod_Est,"latex")
+```
+
+```{r boutChaseModPredict}
+tmpdat <- chase_data[, c("Duration", "Time_of_Day", "Trial")]
+jvalues <- seq(from = min(chase_data$Duration), to = max(chase_data$Duration),length.out=100)
+
+boutChaseMod_predict<-predicted_probs(boutChaseMod, tmpdat, "Duration",jvalues)
+
+```
+
+
+```{r boutsizeEndMod}
+boutEndMod<- glmer(Chasing_end_numeric~Duration+Time_of_Day +(1|Trial), 
+                    family="binomial",
+                    data=chase_data)
+boutEndModSum<-summary(boutEndMod)
+anova(boutEndMod)
+
+# get standard errors
+boutEndMod_SE <- sqrt(diag(vcov(boutEndMod)))
+
+# convert to prob space
+boutEndMod_Est<-cbind(Est = logit_back(fixef(boutEndMod)), 
+              LL = logit_back(fixef(boutEndMod) - 1.96 * se), 
+              UL = logit_back(fixef(boutEndMod) + 1.96 *se),
+              boutEndModSum$coefficients[,3:4])
+
+
+kable(boutEndMod_Est,"latex")
+```
+
+```{r boutEndModPredict}
+tmpdat <- chase_data[, c("Duration", "Time_of_Day", "Trial")]
+jvalues <- seq(from = min(chase_data$Duration), to = max(chase_data$Duration),length.out=100)
+
+boutEndMod_predict<-predicted_probs(boutEndMod, tmpdat, "Duration",jvalues)
+
+```
+
+
+
 ```{r plotChaseBoutLength}
 
 par(mfrow=c(1,2))
