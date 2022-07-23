@@ -544,8 +544,8 @@ mod1<-glm(prop_chase$Prop_Yes ~ prop_chase$Max_length, family="binomial")
 ### Chasing and group size
 
 ```{r chasingNum}
-chase_data$Chasing_numeric<-as.numeric(factor(chase_data$Chasing_present, levels=c("Yes","No")))
-chase_data$Chasing_end_numeric<-as.numeric(factor(chase_data$Chasing_end, levels=c("Yes","No")))
+chase_data$Chasing_numeric<-as.numeric(factor(chase_data$Chasing_present, levels=c("Yes","No")))-1
+chase_data$Chasing_end_numeric<-as.numeric(factor(chase_data$Chasing_end, levels=c("Yes","No")))-1
 ```
 ```{r logitBackTransformFXN}
 logit_back<-function(y) { return(exp(y)/(1+exp(y))) }
