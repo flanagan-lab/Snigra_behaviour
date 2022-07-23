@@ -17,6 +17,9 @@ library(stringr)
 library(dplyr)
 library(scales)
 library(tidyverse)
+require(lme4)
+```
+
 ```{r}
 time_cols<-c(AM="#7fc97f",Noon="#beaed4")
 trial_pch<-c(0:7,9:10)
@@ -544,37 +547,73 @@ mod1<-glm(prop_chase$Prop_Yes ~ prop_chase$Max_length, family="binomial")
 chase_data$Chasing_numeric<-as.numeric(factor(chase_data$Chasing_present, levels=c("Yes","No")))
 chase_data$Chasing_end_numeric<-as.numeric(factor(chase_data$Chasing_end, levels=c("Yes","No")))
 ```
+```{r logitBackTransformFXN}
+logit_back<-function(y) { return(exp(y)/(1+exp(y))) }
 
+```
 ```{r}
 mod1<-glm((chase_data$Chasing_numeric-1)~chase_data$Group_size*chase_data$Time_of_Day, 
           family="binomial")
 summary(mod1)
 anova(mod1)
+predicted_probs<-function(mod, tmpdat,column, jvalues){
+  # calculate predicted probabilities and store in a list
+  pp <- lapply(jvalues, function(j) {
+    
+      tmpdat[,column] <- j
+      p<-predict(mod, newdata = tmpdat, type = "response")
+      
+      return(p)
+  })
+  
+  # get the means with lower and upper quartiles
+  plotdat <- t(sapply(pp, function(x) {
+    
+      c(M = mean(x), quantile(x, c(0.2, 0.8)))
+  }))
+  
+  # add in LengthofStay values and convert to data frame
+  plotdat <- as.data.frame(cbind(plotdat, jvalues))
+  
+  # better names and show the first few rows
+  colnames(plotdat) <- c("PredictedProbability", "Lower", "Upper", "Variable")
+  
+  return(plotdat)
+}
 ```
 
-We can describe the fit using ...
 
-```{r}
-# Fit stuff here
+```{r grpsizeChasingMod}
+grpChaseMod<- glmer(Chasing_numeric~Group_size+Time_of_Day +(1|Trial), 
+                    family="binomial",
+                    data=chase_data)
+grpChaseModSum<-summary(grpChaseMod)
+anova(grpChaseMod)
+
+# get standard errors
+grpChaseMod_SE <- sqrt(diag(vcov(grpChaseMod)))
+
+# convert to prob space
+grpChaseMod_Est<-cbind(Est = logit_back(fixef(grpChaseMod)), 
+              LL = logit_back(fixef(grpChaseMod) - 1.96 * se), 
+              UL = logit_back(fixef(grpChaseMod) + 1.96 *se),
+              grpChaseModSum$coefficients[,3:4])
+
+
+kable(grpChaseMod_Est,"latex")
+```
+
+```{r grpChaseModPredict}
+tmpdat <- chase_data[, c("Group_size", "Time_of_Day", "Trial")]
+jvalues <- seq(from = min(chase_data$Group_size), to = max(chase_data$Group_size),length.out=100)
+
+grpChaseMod_predict<-predicted_probs(grpChaseMod, tmpdat, "Group_size",jvalues)
+
 ```
 
 
-```{r}
-probs = predict(mod1, 
-                newdata = list(2), 
-                type = "response")
 
 
-newx = seq(min(chase_data$Group_size), max(chase_data$Group_size), length.out=nrow(chase_data))
-
-probs = predict(mod1, 
-                newdata = data.frame(newx), 
-                type = "response", 
-                se.fit = TRUE)
-
-pm = probs$fit
-pu = probs$fit + probs$se.fit * 1.96 # 95% confidence interval
-pl = probs$fit - probs$se.fit * 1.96 # 95% confidence interval
 
 
 
