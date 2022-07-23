@@ -388,11 +388,25 @@ court_data$combo<-paste(gsub("\\s+","",court_data$media_file_path),
                         court_data$time_in_video, 
                         round(court_data$Duration,3), 
                         round(court_data$total_time_of_courtship,3), sep="_")
+court_data<-unique(court_data)
 
 chase_data$combo<-paste(gsub("\\s+","",chase_data$media_file_path), 
                       chase_data$time_in_video, 
                       round(chase_data$Duration,3) ,
                       round(chase_data$total_time_of_courtship,3), sep="_")
+chase_data<-unique(chase_data)
+chase_data$Trial<-factor(chase_data$Trial,levels=c(
+  "Trial 1",
+  "Trial 2",
+  "Trial 3",
+  "Trial 4",
+  "Trial 5",
+  "Trial 6",
+  "Trial 7",
+  "Trial 8",
+  "Trial 9",
+  "Trial 10"
+))
 
 behav_data <- merge(court_data, chase_data[,c("combo","media_file_path", "time_in_video", "Duration" , "total_time_of_courtship",
                                          "Group_size", "Female", "Male","Chasing_end" , "Chasing_present"
