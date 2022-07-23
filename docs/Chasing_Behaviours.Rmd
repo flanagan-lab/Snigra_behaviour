@@ -792,8 +792,25 @@ plot(jitter(chase_data$Chasing_numeric)~chase_data$Duration,
      bty='l',
      pch=19,
      col=alpha("dark grey",0.5),
-     cex=1.5)
+     cex=1.5,
+     type='n')
 axis(2,at=c(1,2),labels=c("No","Yes"),las=1)
+
+
+# add the predicted probabilities
+polygon(c(rev(boutChaseMod_predict$Variable),boutChaseMod_predict$Variable), 
+        c(rev(boutChaseMod_predict$Lower),boutChaseMod_predict$Upper),
+     col = alpha("grey90",0.5), border = NA)
+
+lines(boutChaseMod_predict$Variable, 
+      boutChaseMod_predict$PredictedProbability, lwd = 2)
+
+# add the points
+points(jitter(chase_data$Chasing_numeric, 0.5)~chase_data$Duration,
+       pch=trial_pch[chase_data$Trial],
+     col=alpha(time_cols[chase_data$Time_of_Day],0.5),
+     cex=1.5)
+
 
 # bout ended with chasing
 plot(jitter(chase_data$Chasing_end_numeric)~chase_data$Duration,
@@ -803,8 +820,24 @@ plot(jitter(chase_data$Chasing_end_numeric)~chase_data$Duration,
      bty='l',
      pch=19,
      col=alpha("dark grey",0.5),
-     cex=1.5)
+     cex=1.5,
+     type='n')
 axis(2,at=c(1,2),labels=c("No","Yes"),las=1)
+
+# add the predicted probabilities
+polygon(c(rev(boutEndMod_predict$Variable),boutEndMod_predict$Variable), 
+        c(rev(boutEndMod_predict$Lower),boutEndMod_predict$Upper),
+     col = alpha("grey90",0.5), border = NA)
+
+lines(boutEndMod_predict$Variable, 
+      boutEndMod_predict$PredictedProbability, lwd = 2)
+
+# add the points
+points(jitter(chase_data$Chasing_numeric, 0.5)~chase_data$Duration,
+       pch=trial_pch[chase_data$Trial],
+     col=alpha(time_cols[chase_data$Time_of_Day],0.5),
+     cex=1.5)
+
 ```
 
 
