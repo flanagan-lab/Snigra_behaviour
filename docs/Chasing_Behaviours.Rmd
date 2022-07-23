@@ -622,10 +622,31 @@ grpChaseMod_predict<-predicted_probs(grpChaseMod, tmpdat, "Group_size",jvalues)
 ```
 
 
+```{r grpsizeEndMod}
+grpEndMod<- glmer(Chasing_end_numeric~Group_size+Time_of_Day +(1|Trial), 
+                    family="binomial",
+                    data=chase_data)
+grpEndModSum<-summary(grpEndMod)
+anova(grpEndMod)
+
+# get standard errors
+grpEndMod_SE <- sqrt(diag(vcov(grpEndMod)))
+
+# convert to prob space
+grpEndMod_Est<-cbind(Est = logit_back(fixef(grpEndMod)), 
+              LL = logit_back(fixef(grpEndMod) - 1.96 * se), 
+              UL = logit_back(fixef(grpEndMod) + 1.96 *se),
+              grpEndModSum$coefficients[,3:4])
 
 
+kable(grpEndMod_Est,"latex")
+```
 
+```{r grpEndModPredict}
+tmpdat <- chase_data[, c("Group_size", "Time_of_Day", "Trial")]
+jvalues <- seq(from = min(chase_data$Group_size), to = max(chase_data$Group_size),length.out=100)
 
+grpEndMod_predict<-predicted_probs(grpEndMod, tmpdat, "Group_size",jvalues)
 
 ```
 
