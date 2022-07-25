@@ -665,7 +665,7 @@ ChaseMod<- glmer(Chasing_numeric~Group_size+logDuration+Time_of_Day +(1|Trial),
                     family="binomial",
                     data=bout_data)
 ChaseModSum<-summary(ChaseMod)
-anova(ChaseMod)
+ChaseModANOVA<-anova(ChaseMod)
 
 # get standard errors
 ChaseMod_SE <- sqrt(diag(vcov(ChaseMod)))
@@ -712,7 +712,7 @@ EndMod<- glmer(Chasing_end_numeric~Group_size+logDuration+Time_of_Day +(1|Trial)
                     family="binomial",
                     data=chase_end_data)
 EndModSum<-summary(EndMod)
-anova(EndMod)
+EndModAnova<-anova(EndMod)
 
 # get standard errors
 EndMod_SE <- sqrt(diag(vcov(EndMod)))
