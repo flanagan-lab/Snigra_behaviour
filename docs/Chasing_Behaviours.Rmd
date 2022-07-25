@@ -1,6 +1,10 @@
 ---
 title: "Chasing behaviour analysis"
-output: html_notebook
+output: 
+  bookdown::pdf_document2:
+    fig_caption: yes
+    number_sections: no
+    toc: no
 editor_options: 
   chunk_output_type: console
 ---
