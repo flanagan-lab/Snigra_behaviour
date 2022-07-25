@@ -18,6 +18,7 @@ library(dplyr)
 library(scales)
 library(tidyverse)
 require(lme4)
+library(knitr)
 ```
 
 ```{r}
