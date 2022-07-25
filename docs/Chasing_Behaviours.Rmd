@@ -100,7 +100,7 @@ observation_chunks <- list()
 ```
 
 ```{r getUsefulInfo}
-useful_list <- lapply(seq_along(observation_chunks), function(chunk){
+courtdat_list <- lapply(seq_along(observation_chunks), function(chunk){
   
   x <- observation_chunks[[chunk]]
   x$Modifier.1[is.na(x$Modifier.1)]<-""
@@ -173,16 +173,13 @@ useful_list <- lapply(seq_along(observation_chunks), function(chunk){
       }
     }
   }
-  times$courtship_events <- chunk
+  times$bout_number <- chunk
   times$total_time_of_courtship <- length_of_chunk
   
   return(times)  
 })
 
-
-
-
-court_data <- do.call(rbind, useful_list)
+court_data <- do.call(rbind, courtdat_list)
 court_data$Trial=substr(court_data$media_file_path, 27, 33)
 #Adding Am or Noon filming times
 court_data$Time_of_Day=str_sub(court_data$media_file_path, -10)
@@ -262,7 +259,7 @@ colnames(chase_data) <- c("media_file_path",
                           "Male" ,
                           "Chasing_end" , 
                           "Chasing_present" , 
-                          "courtship_events_wrong" ,
+                          "bout_number_wrong" ,
                           "total_time_of_courtship")
 
 ```
@@ -278,7 +275,7 @@ chase_data <- chase_data %>%
   mutate_at(vars(Group_size,Female,Male), funs(round(., 1))) 
 
 # remove column with incorrect bout numbers
-chase_data <- chase_data[,-which(colnames(chase_data)=="courtship_events_wrong")]
+chase_data <- chase_data[,-which(colnames(chase_data)=="bout_number_wrong")]
 ```
 
 ```{r metaData}
@@ -416,7 +413,7 @@ But there are also some courtship bouts that are missing from the merged datafra
 ```{r checkingMissing}
 missing<-court_data[!court_data$combo %in% behav_data$combo,]
 
-intersex<-unlist(as.list(by(missing,missing$courtship_events,function(bout){
+intersex<-unlist(as.list(by(missing,missing$bout_number,function(bout){
   
   males<- bout$subject %in% "Male"
   
@@ -430,11 +427,11 @@ intersex<-unlist(as.list(by(missing,missing$courtship_events,function(bout){
 
 # these are the bouts that should be included
 #intersex[intersex==TRUE]
-missing<-missing[missing$courtship_events %in% names(intersex[intersex==TRUE]),]
+missing<-missing[missing$bout_number %in% names(intersex[intersex==TRUE]),]
 
 active_behavs<-c("Wiggle","Pose")
 
-active<-unlist(as.list(by(missing, missing$courtship_events, function(bout, active_behavs){
+active<-unlist(as.list(by(missing, missing$bout_number, function(bout, active_behavs){
   
   activeTF<-bout$behavior %in% active_behavs
   if(length(activeTF[activeTF==TRUE])==0){
@@ -445,8 +442,8 @@ active<-unlist(as.list(by(missing, missing$courtship_events, function(bout, acti
 },active_behavs=active_behavs)))
 active_bouts<-active[active==TRUE]
 
-missing<-missing[missing$courtship_events %in% names(active_bouts),]
-table(missing$media_file_path, missing$courtship_events)
+missing<-missing[missing$bout_number %in% names(active_bouts),]
+table(missing$media_file_path, missing$bout_number)
 ```
 
 No courtship bouts remain that should be in the chase data but are not -- all courtship events involving both males and females and active behaviours are present.
