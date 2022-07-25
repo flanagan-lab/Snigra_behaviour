@@ -514,8 +514,6 @@ bout_data<-do.call(rbind,as.list(by(
 
 Then I'll visualize the data for the two main effects of interest (group size and bout duration) to evaluate if transformation is needed or helpful. It looks like transforming the bout duration will be helpful (Fig. \@ref(fig:yvalsHist))
 
-
-```{r}
 ```{r yvalsHist, fig.cap="Distributions of the variables for group size and bout duration before (top row) and after (bottom row) log-transformation."}
 par(mfrow=c(2,2))
 hist(bout_data$Group_size, 
