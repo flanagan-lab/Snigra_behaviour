@@ -538,11 +538,11 @@ hist(log(bout_data$total_time_of_courtship),
 
 Another interesting component is to evaluate if a bout contained chasing, how frequently did it end with chasing? We can see most bouts did not contain chasing, and a large number of those that did contain chasing did not end in chasing (Fig. \@ref(fig:chasingPresentEnd)). To some extent, this result is tautological, in that bouts that did not contain chasing had no way of ending in chasing.
 
-If a bout contained chasing, how frequently did it end with chasing? Never!
-
-```{r chasingPresentEnd}
-plot(table(chase_data$Chasing_present, chase_data$Chasing_end_numeric))
 ```{r chasingPresentEnd, fig.cap="The occurrence of bouts ending in chasing, given that they contained chasing.", fig.height=5, fig.width=5}
+plot(table(chase_data$Chasing_present, chase_data$Chasing_end),
+     main="")
+mtext("The bout ended in chasing",2)
+mtext("The bout contained chasing",3)
 ```
 
 
