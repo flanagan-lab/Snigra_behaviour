@@ -597,6 +597,12 @@ plot(prop_chase$Prop_Yes~prop_chase$Difference,
      bty='l',
      ylim=c(0,1),
      xlim=c(15,40))
+legend("topleft",
+       bty='n',
+       legend=c(bquote("Spearman's"~rho==.(round(prop_cor$estimate,3))),
+                bquote("                   p"==.(round(prop_cor$p.value,3)))
+                ),
+       cex=1.5)
 ```
 
 
