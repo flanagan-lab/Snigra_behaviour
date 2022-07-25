@@ -721,7 +721,7 @@ EndMod_SE <- sqrt(diag(vcov(EndMod)))
 EndMod_Est<-cbind(Est = logit_back(fixef(EndMod)), 
               LL = logit_back(fixef(EndMod) - 1.96 * EndMod_SE), 
               UL = logit_back(fixef(EndMod) + 1.96 *EndMod_SE),
-              grpEndModSum$coefficients[,3:4])
+              EndModSum$coefficients[,3:4])
 
 
 kable(EndMod_Est,"latex")
