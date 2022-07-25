@@ -364,8 +364,8 @@ chase_data$Difference<- (chase_data$Max_length - chase_data$Min_length)
 
 ```
 ```{r chasingNum}
-chase_data$Chasing_numeric<-as.numeric(factor(chase_data$Chasing_present, levels=c("Yes","No")))-1
-chase_data$Chasing_end_numeric<-as.numeric(factor(chase_data$Chasing_end, levels=c("Yes","No")))-1
+chase_data$Chasing_numeric<-ifelse(chase_data$Chasing_present=="Yes",1, 0)
+chase_data$Chasing_end_numeric<-ifelse(chase_data$Chasing_end=="Yes",1, 0)
 ```
 
 ### Combining courtship and chasing data
