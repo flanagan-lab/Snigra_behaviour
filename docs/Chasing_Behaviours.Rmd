@@ -512,6 +512,7 @@ Then I'll visualize the data for the two main effects of interest (group size an
 
 
 ```{r}
+```{r yvalsHist, fig.cap="Distributions of the variables for group size and bout duration before (top row) and after (bottom row) log-transformation."}
 par(mfrow=c(2,2))
 hist(bout_data$Group_size, 
      main="",
@@ -539,6 +540,7 @@ If a bout contained chasing, how frequently did it end with chasing? Never!
 
 ```{r chasingPresentEnd}
 plot(table(chase_data$Chasing_present, chase_data$Chasing_end_numeric))
+```{r chasingPresentEnd, fig.cap="The occurrence of bouts ending in chasing, given that they contained chasing.", fig.height=5, fig.width=5}
 ```
 
 
@@ -579,6 +581,7 @@ Given that it seems that the maximum length and the difference in female sizes a
 
 The best approach to analysing proportion data is to use a beta regression or a Dirchilet distribution ([Douma & Weedman 2019](https://doi.org/10.1111/2041-210X.13234)), but because these are trial-level estimates we don't really have enough data for an analysis of that sort (we have $N$=10). 
 
+```{r plotPropChasingBodySize, fig.height=5, fig.width=5, fig.cap="The proportion of time spent chasing in a trial given the maximum difference in female lengths. The points are scaled by the number of bouts in that trial. While a positive trend is apparent from the plot, the correlation is not significant for this sample size of 10 trials."}
 plot(prop_chase$Prop_Yes~prop_chase$Difference,
      cex=log(prop_chase$sum)/2,
      pch=19,
@@ -737,7 +740,7 @@ durEndMod_predict<-predicted_probs(EndMod, tmpdat, "logDuration",jvalues)
 
 ## Plots
 
-```{r plotChasing}
+```{r plotChasing, fig.height=7, fig.width=7, fig.cap="The probability of chasing occurring as a result of group size and duration. The bottom row plots the probability of a bout ending in chasing (given that it contained some chasing behaviour in the first place)."}
 par(mfrow=c(2,2))
 # group size
 plot(jitter(bout_data$Chasing_numeric, 0.25)~bout_data$Group_size,
