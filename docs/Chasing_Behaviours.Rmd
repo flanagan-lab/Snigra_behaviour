@@ -591,7 +591,8 @@ mod1<-glm(prop_chase$Prop_Yes ~ prop_chase$Max_length, family="binomial")
 
 
 
-### Chasing and group size
+### Chasing, group size, bout duration
+
 
 ```{r logitBackTransformFXN}
 logit_back<-function(y) { return(exp(y)/(1+exp(y))) }
@@ -625,60 +626,77 @@ predicted_probs<-function(mod, tmpdat,column, jvalues){
 ```
 
 
-```{r grpsizeChasingMod}
-grpChaseMod<- glmer(Chasing_numeric~Group_size+Time_of_Day +(1|Trial), 
+```{r ChasingMod}
+ChaseMod<- glmer(Chasing_numeric~Group_size+logDuration+Time_of_Day +(1|Trial), 
                     family="binomial",
-                    data=chase_data)
-grpChaseModSum<-summary(grpChaseMod)
-anova(grpChaseMod)
+                    data=bout_data)
+ChaseModSum<-summary(ChaseMod)
+anova(ChaseMod)
 
 # get standard errors
-grpChaseMod_SE <- sqrt(diag(vcov(grpChaseMod)))
+ChaseMod_SE <- sqrt(diag(vcov(ChaseMod)))
 
 # convert to prob space
-grpChaseMod_Est<-cbind(Est = logit_back(fixef(grpChaseMod)), 
-              LL = logit_back(fixef(grpChaseMod) - 1.96 * se), 
-              UL = logit_back(fixef(grpChaseMod) + 1.96 *se),
-              grpChaseModSum$coefficients[,3:4])
+ChaseMod_Est<-cbind(Est = logit_back(fixef(ChaseMod)), 
+              LL = logit_back(fixef(ChaseMod) - 1.96 * ChaseMod_SE ), 
+              UL = logit_back(fixef(ChaseMod) + 1.96 *ChaseMod_SE ),
+              ChaseModSum$coefficients[,3:4])
 
 
-kable(grpChaseMod_Est,"latex")
+kable(ChaseMod_Est,"latex",booktab=TRUE)
 ```
 
-```{r grpChaseModPredict}
-tmpdat <- chase_data[, c("Group_size", "Time_of_Day", "Trial")]
-jvalues <- seq(from = min(chase_data$Group_size), to = max(chase_data$Group_size),length.out=100)
+```{r ChaseModPredict}
+tmpdat <- bout_data[, c("Group_size","logDuration", "Time_of_Day", "Trial")]
 
-grpChaseMod_predict<-predicted_probs(grpChaseMod, tmpdat, "Group_size",jvalues)
+# Group size
+jvalues <- seq(from = min(bout_data$Group_size), to = max(bout_data$Group_size),length.out=100)
+ChaseMod_predict<-predicted_probs(ChaseMod, tmpdat, "Group_size",jvalues)
+
+# duration (log-transformed)
+jvalues <- seq(from = min(chase_data$Duration), to = max(chase_data$Duration),length.out=100)
+durChaseMod_predict<-predicted_probs(ChaseMod, tmpdat, "logDuration",jvalues)
+
+```
+
+
+### Bouts end in chasing
+
+For this analysis, let's restrict it to those bouts that had some chasing in them.
 
 ```
 
 
 ```{r grpsizeEndMod}
-grpEndMod<- glmer(Chasing_end_numeric~Group_size+Time_of_Day +(1|Trial), 
+EndMod<- glmer(Chasing_end_numeric~Group_size+logDuration+Time_of_Day +(1|Trial), 
                     family="binomial",
-                    data=chase_data)
-grpEndModSum<-summary(grpEndMod)
-anova(grpEndMod)
+                    data=chase_end_data)
+EndModSum<-summary(EndMod)
+anova(EndMod)
 
 # get standard errors
-grpEndMod_SE <- sqrt(diag(vcov(grpEndMod)))
+EndMod_SE <- sqrt(diag(vcov(EndMod)))
 
 # convert to prob space
-grpEndMod_Est<-cbind(Est = logit_back(fixef(grpEndMod)), 
-              LL = logit_back(fixef(grpEndMod) - 1.96 * se), 
-              UL = logit_back(fixef(grpEndMod) + 1.96 *se),
+EndMod_Est<-cbind(Est = logit_back(fixef(EndMod)), 
+              LL = logit_back(fixef(EndMod) - 1.96 * EndMod_SE), 
+              UL = logit_back(fixef(EndMod) + 1.96 *EndMod_SE),
               grpEndModSum$coefficients[,3:4])
 
 
-kable(grpEndMod_Est,"latex")
+kable(EndMod_Est,"latex")
 ```
 
 ```{r grpEndModPredict}
-tmpdat <- chase_data[, c("Group_size", "Time_of_Day", "Trial")]
-jvalues <- seq(from = min(chase_data$Group_size), to = max(chase_data$Group_size),length.out=100)
+tmpdat <- chase_end_data[, c("Group_size","logDuration", "Time_of_Day", "Trial")]
 
-grpEndMod_predict<-predicted_probs(grpEndMod, tmpdat, "Group_size",jvalues)
+# group size
+jvalues <- seq(from = min(chase_end_data$Group_size), to = max(chase_end_data$Group_size),length.out=100)
+grpEndMod_predict<-predicted_probs(EndMod, tmpdat, "Group_size",jvalues)
+
+#duration
+jvalues <- seq(from = min(chase_end_data$logDuration), to = max(chase_end_data$logDuration),length.out=100)
+durEndMod_predict<-predicted_probs(EndMod, tmpdat, "logDuration",jvalues)
 
 ```
 
