@@ -494,7 +494,7 @@ Based on our time spent with the fish, we have a few questions we want to addres
 ### Exploratory analysis
 
 
-First I need to convert the data from a per-observation basis to a per-bout basis. What I need for the analysis are the bout number, the information in `total_time_of_courtship`, the group size, chasing info, the trial number, and the time of day..
+First I need to convert the data from a per-observation basis to a per-bout basis. What I need for the analysis are the bout number, the information in `total_time_of_courtship`, the group size, chasing info, the trial number, and the time of day. 
 
 ```{r}
 bout_data<-do.call(rbind,as.list(by(
@@ -508,6 +508,7 @@ bout_data<-do.call(rbind,as.list(by(
 )))
 ```
 
+Then I'll visualize the data for the two main effects of interest (group size and bout duration) to evaluate if transformation is needed or helpful. It looks like transforming the bout duration will be helpful (Fig. \@ref(fig:yvalsHist))
 
 
 ```{r}
@@ -532,14 +533,13 @@ hist(log(bout_data$total_time_of_courtship),
      ylab="Number of bouts")
 ```
 
+Another interesting component is to evaluate if a bout contained chasing, how frequently did it end with chasing? We can see most bouts did not contain chasing, and a large number of those that did contain chasing did not end in chasing (Fig. \@ref(fig:chasingPresentEnd)). To some extent, this result is tautological, in that bouts that did not contain chasing had no way of ending in chasing.
 
 If a bout contained chasing, how frequently did it end with chasing? Never!
 
 ```{r chasingPresentEnd}
 plot(table(chase_data$Chasing_present, chase_data$Chasing_end_numeric))
 ```
-
-
 
 
 
@@ -575,6 +575,10 @@ plot(prop_chase$Prop_Yes~prop_chase$Max_length,
      ylim=c(0,1),
      xlim=c(110,125))
 
+Given that it seems that the maximum length and the difference in female sizes appear to be highly correlated (which makes some amount of sense; Fig. \@ref(fig:plotLengthDistrs)), we should only focus on one. Because Fleur collected some preliminary data suggesting that the relative size of prospective mates, not simply the raw size, is important in informing male decisions, we focused on the difference in body size. 
+
+The best approach to analysing proportion data is to use a beta regression or a Dirchilet distribution ([Douma & Weedman 2019](https://doi.org/10.1111/2041-210X.13234)), but because these are trial-level estimates we don't really have enough data for an analysis of that sort (we have $N$=10). 
+
 plot(prop_chase$Prop_Yes~prop_chase$Difference,
      cex=log(prop_chase$sum)/2,
      pch=19,
@@ -593,6 +597,7 @@ mod1<-glm(prop_chase$Prop_Yes ~ prop_chase$Max_length, family="binomial")
 
 ### Chasing, group size, bout duration
 
+We can analyse the chasing behaviours within each bout as a function of the overall group size and bout duration, with time of day as a predictor variable and the trial as a random effect.
 
 ```{r logitBackTransformFXN}
 logit_back<-function(y) { return(exp(y)/(1+exp(y))) }
@@ -664,6 +669,10 @@ ChaseMod_Est<-cbind(Est = logit_back(fixef(ChaseMod)),
 kable(ChaseMod_Est,"latex",booktab=TRUE)
 ```
 
+All of the fixed effects in the model were significant (Table \@ref(tab:ChasingMod)), with group size, bout duration, and time of day increasing the probability of chasing occurring (once the variance associated with the trial was partitioned out).
+
+I then created predicted probabilities based on the model to summarize the overall effect. 
+
 ```{r ChaseModPredict}
 tmpdat <- bout_data[, c("Group_size","logDuration", "Time_of_Day", "Trial")]
 
@@ -680,7 +689,7 @@ durChaseMod_predict<-predicted_probs(ChaseMod, tmpdat, "logDuration",jvalues)
 
 ### Bouts end in chasing
 
-For this analysis, let's restrict it to those bouts that had some chasing in them.
+For this analysis, let's restrict it to those bouts that had some chasing in them. Since bouts without chasing are defined as also not ending in chasing, these are not useful pieces of data for this analysis. 
 
 ```{r}
 chase_end_data<-bout_data[which(bout_data$Chasing_numeric==1),]
@@ -706,6 +715,10 @@ EndMod_Est<-cbind(Est = logit_back(fixef(EndMod)),
 
 kable(EndMod_Est,"latex")
 ```
+
+In this case, none of the fixed effects in the model were significant (Table \@ref(tab:EndMod)). The probability that a bout would end in chasing, without any of the fixed effects, was `r round(EndMod_Est[1,1]*100,2)`%. 
+
+As before, I created predicted probabilities based on the model to summarize the overall (lack of) effects, which were then useful for plotting (Fig. \@ref(fig:plotChasing)).
 
 ```{r grpEndModPredict}
 tmpdat <- chase_end_data[, c("Group_size","logDuration", "Time_of_Day", "Trial")]
