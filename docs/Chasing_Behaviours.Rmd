@@ -625,6 +625,24 @@ predicted_probs<-function(mod, tmpdat,column, jvalues){
 }
 ```
 
+```{r}
+bout_data$logDuration<-log(bout_data$total_time_of_courtship)
+bout_data$Time_of_Day <- factor(bout_data$Time_of_Day,
+                                levels=c("AM","Noon"))
+bout_data$Trial <- factor(bout_data$Trial,
+                          levels=c(
+  "Trial 1",
+  "Trial 2",
+  "Trial 3",
+  "Trial 4",
+  "Trial 5",
+  "Trial 6",
+  "Trial 7",
+  "Trial 8",
+  "Trial 9",
+  "Trial 10"
+))
+```
 
 ```{r ChasingMod}
 ChaseMod<- glmer(Chasing_numeric~Group_size+logDuration+Time_of_Day +(1|Trial), 
