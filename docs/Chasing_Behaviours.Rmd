@@ -55,11 +55,9 @@ courtdat<-bind_rows(courtdat)
 ```
 
 ```{r extractTimesFXN}
-
 extract_times <- function(dat1){
   
   nn <- nrow(dat1)
-  
   
   starting_points <- c()
   end_points <- c()
@@ -112,7 +110,6 @@ useful_list <- lapply(seq_along(observation_chunks), function(chunk){
   
   length_of_chunk <- x$Time[n3] - x$Time[1] 
   times <-data.frame()
- 
   
   for(k in 1:n3){
     x_row <- x[k,]
@@ -174,16 +171,7 @@ useful_list <- lapply(seq_along(observation_chunks), function(chunk){
                                           "modifier_3"= selected_m3)
         times <-rbind(times, return_data_per_row )
       }
-      
-      
-      
-      
     }
-    
-  
-  
-  
-
   }
   times$courtship_events <- chunk
   times$total_time_of_courtship <- length_of_chunk
