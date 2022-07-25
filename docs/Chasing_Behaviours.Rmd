@@ -682,6 +682,8 @@ durChaseMod_predict<-predicted_probs(ChaseMod, tmpdat, "logDuration",jvalues)
 
 For this analysis, let's restrict it to those bouts that had some chasing in them.
 
+```{r}
+chase_end_data<-bout_data[which(bout_data$Chasing_numeric==1),]
 ```
 
 
