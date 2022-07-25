@@ -599,11 +599,6 @@ plot(prop_chase$Prop_Yes~prop_chase$Difference,
      xlim=c(15,40))
 ```
 
-```{r}
-mod1<-glm(prop_chase$Prop_Yes ~ prop_chase$Max_length, family="binomial")
-```
-
-
 
 ### Chasing, group size, bout duration
 
