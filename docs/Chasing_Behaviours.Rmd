@@ -395,9 +395,7 @@ chase_data$Trial<-factor(chase_data$Trial,levels=c(
   "Trial 10"
 ))
 
-behav_data <- merge(court_data, chase_data[,c("combo","media_file_path", "time_in_video", "Duration" , "total_time_of_courtship",
-                                         "Group_size", "Female", "Male","Chasing_end" , "Chasing_present"
-)], 
+behav_data <- merge(court_data, chase_data[,c("combo","Group_size", "Female", "Male","Chasing_present","Chasing_numeric","Chasing_end","Chasing_end_numeric")], 
 by="combo")
 # remove any unnecessarily duplicated ones
 behav_data<-unique(behav_data)
