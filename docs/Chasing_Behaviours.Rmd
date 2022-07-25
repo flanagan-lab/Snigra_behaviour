@@ -491,6 +491,57 @@ Based on our time spent with the fish, we have a few questions we want to addres
 * Is chasing more likely when there is a large number of individuals courting? [this is a courtship bout-level comparison]
 * Are longer courtship bouts more likely to end in chasing and/or contain chasing? [this is a courtship bout-level comparison]
 
+### Exploratory analysis
+
+
+First I need to convert the data from a per-observation basis to a per-bout basis. What I need for the analysis are the bout number, the information in `total_time_of_courtship`, the group size, chasing info, the trial number, and the time of day..
+
+```{r}
+bout_data<-do.call(rbind,as.list(by(
+  data=behav_data,
+  INDICES=behav_data$bout_number,
+  function(dat){
+    bout_dat<- dat[,c("bout_number","Trial", "Time_of_Day","Group_size", "total_time_of_courtship","Chasing_present","Chasing_numeric","Chasing_end","Chasing_end_numeric")]
+    return(unique(bout_dat))
+  }
+  
+)))
+```
+
+
+
+```{r}
+par(mfrow=c(2,2))
+hist(bout_data$Group_size, 
+     main="",
+     xlab="Group size",
+     ylab="Number of bouts"
+     )
+hist(bout_data$total_time_of_courtship,
+     main="",
+     xlab="Duration (s)",
+     ylab="Number of bouts")
+
+hist(log(bout_data$Group_size),
+     main="",
+     xlab="log(Group size)",
+     ylab="Number of bouts")
+hist(log(bout_data$total_time_of_courtship),
+     main="",
+     xlab="log(Duration)",
+     ylab="Number of bouts")
+```
+
+
+If a bout contained chasing, how frequently did it end with chasing? Never!
+
+```{r chasingPresentEnd}
+plot(table(chase_data$Chasing_present, chase_data$Chasing_end_numeric))
+```
+
+
+
+
 
 ### Chasing and female size
 
