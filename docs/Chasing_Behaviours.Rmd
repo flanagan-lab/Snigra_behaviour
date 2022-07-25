@@ -724,7 +724,7 @@ EndMod_Est<-cbind(Est = logit_back(fixef(EndMod)),
               EndModSum$coefficients[,3:4])
 
 
-kable(EndMod_Est,"latex")
+kable(EndMod_Est,"latex", booktab=TRUE)
 ```
 
 In this case, none of the fixed effects in the model were significant (Table \@ref(tab:EndMod)). The probability that a bout would end in chasing, without any of the fixed effects, was `r round(EndMod_Est[1,1]*100,2)`%. 
