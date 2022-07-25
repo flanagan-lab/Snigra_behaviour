@@ -190,8 +190,6 @@ court_data$Time_of_Day <-  ifelse(court_data$Time_of_Day == "oon", "Noon",
 court_data$Date_filmed=substr(court_data$media_file_path, 35, 42)
 court_data$Date_filmed=str_extract(court_data$Date_filmed,"(\\w+)")
 
-library(dplyr)
-
 # Adding which day filmed (1-7)
 court_data$Day_filmed <- ifelse(court_data$Trial == "Trial 1" & court_data$Date_filmed == 8, "7",
                                 ifelse(court_data$Trial == "Trial 2" & court_data$Date_filmed == 3, "1",
