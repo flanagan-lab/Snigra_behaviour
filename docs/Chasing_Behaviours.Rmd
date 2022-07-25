@@ -583,6 +583,11 @@ Given that it seems that the maximum length and the difference in female sizes a
 
 The best approach to analysing proportion data is to use a beta regression or a Dirchilet distribution ([Douma & Weedman 2019](https://doi.org/10.1111/2041-210X.13234)), but because these are trial-level estimates we don't really have enough data for an analysis of that sort (we have $N$=10). 
 
+```{r propCor, warning=FALSE}
+prop_cor<-cor.test(prop_chase$Prop_Yes, prop_chase$Difference,method = "spearman")
+```
+
+
 ```{r plotPropChasingBodySize, fig.height=5, fig.width=5, fig.cap="The proportion of time spent chasing in a trial given the maximum difference in female lengths. The points are scaled by the number of bouts in that trial. While a positive trend is apparent from the plot, the correlation is not significant for this sample size of 10 trials."}
 plot(prop_chase$Prop_Yes~prop_chase$Difference,
      cex=log(prop_chase$sum)/2,
