@@ -797,7 +797,7 @@ chase_end_data<-bout_data[which(bout_data$Chasing_numeric==1),]
 
 
 ```{r EndMod}
-EndMod<- glmer(Chasing_end_numeric~Group_size+logDuration+Time_of_Day +(1|Trial), 
+EndMod<- glmer(Chasing_end_numeric~Group_size*logDuration+(1|Time_of_Day) +(1|Trial), 
                     family="binomial",
                     data=chase_end_data)
 EndModSum<-summary(EndMod)
