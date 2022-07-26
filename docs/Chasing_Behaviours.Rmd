@@ -791,7 +791,7 @@ hist(resid(ChaseMod))
 
 For this analysis, let's restrict it to those bouts that had some chasing in them. Since bouts without chasing are defined as also not ending in chasing, these are not useful pieces of data for this analysis. 
 
-```{r}
+```{r chaseEndData}
 chase_end_data<-bout_data[which(bout_data$Chasing_numeric==1),]
 ```
 
