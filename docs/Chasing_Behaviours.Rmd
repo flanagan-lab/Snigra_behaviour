@@ -552,6 +552,11 @@ mtext("The bout ended in chasing",2)
 mtext("The bout contained chasing",3)
 ```
 
+Before fitting models, we also want to check if:
+- the variances of data (transformed by the link function) are homogeneous across categories
+- the responses of transformed data linear with respect to continuous predictors? 
+- outlier individuals or groups exist
+- whether distributions within groups match the assumed distribution
 
 
 ### Chasing and female size
@@ -573,6 +578,12 @@ prop_chase  <- merge(prop_chasing[,c(3:6)],
                     unique(chase_data[,c("Trial", "Difference", "Max_length")]), 
                     by="Trial")
 
+```{r variancesPlot}
+par(mfrow=c(2,2))
+plot(bout_data$Chasing_numeric~bout_data$Group_size)
+plot(bout_data$Chasing_numeric~bout_data$logDuration)
+plot(bout_data$Chasing_numeric~bout_data$Time_of_Day)
+plot(bout_data$Chasing_numeric~bout_data$Trial)
 ```
 
 ```{r plotLengthDistrs}
@@ -584,14 +595,27 @@ plot(prop_chase$Difference~prop_chase$Max_length,
      bty='l',
      ylim=c(15,40),
      xlim=c(110,125))
+```{r variancesPlotFlipped}
+par(mfrow=c(2,2))
+plot(bout_data$Group_size~bout_data$Chasing_numeric)
+plot(bout_data$logDuration~bout_data$Chasing_numeric)
+plot(bout_data$Time_of_Day~bout_data$Chasing_numeric)
+plot(bout_data$Trial~bout_data$Chasing_numeric)
 ```
 
 Given that it seems that the maximum length and the difference in female sizes appear to be highly correlated (which makes some amount of sense; Fig. \@ref(fig:plotLengthDistrs)), we should only focus on one. Because Fleur collected some preliminary data suggesting that the relative size of prospective mates, not simply the raw size, is important in informing male decisions, we focused on the difference in body size. 
+So these boxplots are not great -- logDuration looks good, and the group size is ok except for trials 9 and 10, but time of day is a bit all over the place. 
 
 The best approach to analysing proportion data is to use a beta regression or a Dirchilet distribution ([Douma & Weedman 2019](https://doi.org/10.1111/2041-210X.13234)), but because these are trial-level estimates we don't really have enough data for an analysis of that sort (we have $N$=10). 
 
 ```{r propCor, warning=FALSE}
 prop_cor<-cor.test(prop_chase$Prop_Yes, prop_chase$Difference,method = "spearman")
+```{r}
+par(mfrow=c(2,2))
+boxplot(bout_data$Group_size~bout_data$Time_of_Day)
+boxplot(bout_data$logDuration~bout_data$Time_of_Day)
+boxplot(bout_data$Group_size~bout_data$Trial)
+boxplot(bout_data$logDuration~bout_data$Trial)
 ```
 
 
@@ -610,8 +634,11 @@ legend("topleft",
                 bquote("                   p"==.(round(prop_cor$p.value,3)))
                 ),
        cex=1.5)
+```{r}
+plot(bout_data$Group_size~bout_data$logDuration)
 ```
 
+These plots suggest that I'm probably ok to move forward with these data, but I might consider dropping the observations from Trial 10 and seeing if the model output is different.
 
 ### Chasing, group size, bout duration
 
