@@ -851,8 +851,6 @@ I'll follow the same approach as for the model of chasing
 
 Based on Table \@ref(tab:EndMod), the lower likelihood is pretty low compared to the estimates and the upper likelihood, suggesting that variance is possibly not well estimated.  
 
-
-
 **the chosen link function is appropriate**
 
 To evaluate this, we can compare predicted values to actual outcomes -- but we'll need to round/subset/group the data to compare across continuous values.
