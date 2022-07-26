@@ -677,7 +677,7 @@ jvalues <- seq(from = min(bout_data$Group_size), to = max(bout_data$Group_size),
 ChaseMod_predict<-predicted_probs(ChaseMod, tmpdat, "Group_size",jvalues)
 
 # duration (log-transformed)
-jvalues <- seq(from = min(chase_data$Duration), to = max(chase_data$Duration),length.out=100)
+jvalues <- seq(from = min(bout_data$logDuration), to = max(bout_data$logDuration),length.out=100)
 durChaseMod_predict<-predicted_probs(ChaseMod, tmpdat, "logDuration",jvalues)
 
 ```
