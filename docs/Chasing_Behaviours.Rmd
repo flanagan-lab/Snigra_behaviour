@@ -597,7 +597,7 @@ plot(bout_data$Time_of_Day~bout_data$Chasing_numeric)
 plot(bout_data$Trial~bout_data$Chasing_numeric)
 ```
 
-So these boxplots are not great -- logDuration looks good, and the group size is ok except for trials 9 and 10, but time of day is a bit all over the place. 
+So these boxplots are ok -- logDuration looks good, and the group size is ok except for trials 9 and 10, and time of day is decently consistent. 
 
 ```{r predictedsByCats, fig.height=7, fig.width=7}
 par(mfrow=c(2,2))
