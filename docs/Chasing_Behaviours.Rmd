@@ -682,6 +682,110 @@ durChaseMod_predict<-predicted_probs(ChaseMod, tmpdat, "logDuration",jvalues)
 
 ```
 
+#### Checking assumptions
+
+Let's also check some of the model assumptions and evaluate model fit. The generic model plot, with residuals vs fitted, won't actually tell us that much.
+
+For inspiration on checking assumptions, I drew on the resources in [The Analysis Factor](https://www.theanalysisfactor.com/regression-diagnostics-glmm/) and [Statistical tools for high-throughput analysis](http://www.sthda.com/english/articles/36-classification-methods-essentials/148-logistic-regression-assumptions-and-diagnostics-in-r/).
+
+**Random effects come from a normal distribution**
+
+```{r randomeffects}
+rands<-ranef(ChaseMod)
+
+hist(c(rands$Trial[,1],rands$Time_of_Day[,1]))
+```
+
+This is not amazingly normal, but I think it's good enough, given that we have so few random effects estimates. 
+
+
+**linearity of continuous predictor variables and logit of the outcome**
+
+To evaluate this assumption, we need the predicted probabilities and the two continuous variables, group size and the log of bout duration.
+
+```{r}
+probabilities <- predict(ChaseMod, type="response")
+pred_classes<-ifelse(probabilities > 0.5, "yes", "no")
+
+predictors<-c("logDuration","Group_size","Time_of_Day","Trial")
+
+mydata<-cbind(bout_data[,predictors], 
+              logit=logit_transform(probabilities))
+
+par(mfrow=c(1,2))
+plot(mydata$logDuration~mydata$logit)
+plot(mydata$Group_size~mydata$logit)
+
+
+```
+
+These look ok to me -- roughly linear.
+
+**the variances of data (transformed by the link function) are homogeneous across categories**
+
+This is similar -- we plot the predicted values across each of the categories and ensure similar variances.
+
+```{r}
+par(mfrow=c(1,2))
+boxplot(mydata$logit~mydata$Trial)
+boxplot(mydata$logit~mydata$Time_of_Day)
+```
+
+These also look ok, except maybe trial 10. And I think that the distributions within groups match the assumed distributions. 
+
+
+**the chosen link function is appropriate**
+
+To evaluate this, we can compare predicted values to actual outcomes -- but we'll need to round/subset/group the data to compare across continuous values.
+
+```{r grpsizeLink}
+grpSizes<-data.frame(
+  avgChasing=unlist(as.list(by(bout_data,bout_data$Group_size, function(dat){
+    return(mean(dat$Chasing_numeric))
+  })))
+)
+grpSizes$grpSize <- rownames(grpSizes)
+
+preds<-ChaseMod_predict[round(ChaseMod_predict$Variable,1) %in% grpSizes$grpSize,]
+preds$Variable<-round(preds$Variable,1)
+
+grpSizes<-merge(grpSizes, preds, by.x = "grpSize",by.y="Variable",all=TRUE)
+
+plot(grpSizes$PredictedProbability~grpSizes$avgChasing)
+```
+
+There is a lot of variation with respect to group size in predicted probabilities when no chasing occurred (Fig. \@ref(fig: grpsizeLink)), but the non-zero probabilities appear fairly well correlated. The same appears to be true for bout duration (Fig. \@ref(fig: durationLink)). 
+
+```{r durationLink}
+durCats<-seq(floor(min(bout_data$logDuration)),ceiling(max(bout_data$logDuration)),by=0.5)
+
+for(i in 1:length(durCats) - 1){
+  boutDur[i,]<-data.frame(
+    avgChasing=mean(bout_data$Chasing_numeric[bout_data$logDuration >= durCats[i] & 
+                                                bout_data$logDuration < durCats[i+1]]),
+    avgDur = mean(durCats[i], durCats[i+1]),
+    predDur = mean(durChaseMod_predict$PredictedProbability[durChaseMod_predict$Variable >= durCats[i] &
+                                                              durChaseMod_predict$Variable < durCats[i+1]])
+  )
+}
+
+
+plot(boutDur$predDur~boutDur$avgChasing)
+```
+
+
+**Appropriate estimation of variance**
+
+Based on Table \@ref(tab:ChasingMod), we can see that the parameter estimates have a reasonable amount of variation around them, which is a good indicator that the estimation of variance is appropriate. 
+
+**No major outliers are present**
+
+We can look at the distribution of residuals and see that they are reasonably normal (Fig. \@ref(fig:histResid)) -- on top of that, it is not highly skewed, with no obvious outliers. So I think we're probably good to proceed with interpreting this analysis!
+
+```{r histResid}
+hist(resid(ChaseMod))
+```
+
 
 ### Bouts end in chasing
 
