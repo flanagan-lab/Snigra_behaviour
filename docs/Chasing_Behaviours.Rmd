@@ -519,6 +519,26 @@ bout_data<-do.call(rbind,as.list(by(
 )))
 ```
 
+```{r}
+bout_data$logDuration<-log(bout_data$total_time_of_courtship)
+bout_data$Time_of_Day <- factor(bout_data$Time_of_Day,
+                                levels=c("AM","Noon"))
+bout_data$Trial <- factor(bout_data$Trial,
+                          levels=c(
+  "Trial 1",
+  "Trial 2",
+  "Trial 3",
+  "Trial 4",
+  "Trial 5",
+  "Trial 6",
+  "Trial 7",
+  "Trial 8",
+  "Trial 9",
+  "Trial 10"
+))
+```
+
+
 Then I'll visualize the data for the two main effects of interest (group size and bout duration) to evaluate if transformation is needed or helpful. It looks like transforming the bout duration will be helpful (Fig. \@ref(fig:yvalsHist))
 
 ```{r yvalsHist, fig.cap="Distributions of the variables for group size and bout duration before (top row) and after (bottom row) log-transformation."}
@@ -624,25 +644,6 @@ predicted_probs<-function(mod, tmpdat,column, jvalues){
   
   return(plotdat)
 }
-```
-
-```{r}
-bout_data$logDuration<-log(bout_data$total_time_of_courtship)
-bout_data$Time_of_Day <- factor(bout_data$Time_of_Day,
-                                levels=c("AM","Noon"))
-bout_data$Trial <- factor(bout_data$Trial,
-                          levels=c(
-  "Trial 1",
-  "Trial 2",
-  "Trial 3",
-  "Trial 4",
-  "Trial 5",
-  "Trial 6",
-  "Trial 7",
-  "Trial 8",
-  "Trial 9",
-  "Trial 10"
-))
 ```
 
 ```{r ChasingMod}
