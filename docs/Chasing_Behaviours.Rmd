@@ -513,7 +513,7 @@ Based on our time spent with the fish, we have a few questions we want to addres
 
 First I need to convert the data from a per-observation basis to a per-bout basis. What I need for the analysis are the bout number, the information in `total_time_of_courtship`, the group size, chasing info, the trial number, and the time of day. 
 
-```{r}
+```{r createBoutData}
 bout_data<-do.call(rbind,as.list(by(
   data=behav_data,
   INDICES=behav_data$bout_number,
@@ -523,9 +523,7 @@ bout_data<-do.call(rbind,as.list(by(
   }
   
 )))
-```
 
-```{r}
 bout_data$logDuration<-log(bout_data$total_time_of_courtship)
 bout_data$Time_of_Day <- factor(bout_data$Time_of_Day,
                                 levels=c("AM","Noon"))
