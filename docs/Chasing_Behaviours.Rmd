@@ -679,7 +679,7 @@ tmpdat <- bout_data[, c("Group_size","logDuration", "Time_of_Day", "Trial")]
 
 # Group size
 jvalues <- seq(from = min(bout_data$Group_size), to = max(bout_data$Group_size),length.out=100)
-ChaseMod_predict<-predicted_probs(ChaseMod, tmpdat, "Group_size",jvalues)
+grpChaseMod_predict<-predicted_probs(ChaseMod, tmpdat, "Group_size",jvalues)
 
 # duration (log-transformed)
 jvalues <- seq(from = min(bout_data$logDuration), to = max(bout_data$logDuration),length.out=100)
@@ -751,7 +751,7 @@ grpSizes<-data.frame(
 )
 grpSizes$grpSize <- rownames(grpSizes)
 
-preds<-ChaseMod_predict[round(ChaseMod_predict$Variable,1) %in% grpSizes$grpSize,]
+preds<-grpChaseMod_predict[round(grpChaseMod_predict$Variable,1) %in% grpSizes$grpSize,]
 preds$Variable<-round(preds$Variable,1)
 
 grpSizes<-merge(grpSizes, preds, by.x = "grpSize",by.y="Variable",all=TRUE)
