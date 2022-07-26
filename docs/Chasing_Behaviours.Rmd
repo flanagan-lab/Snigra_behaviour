@@ -835,7 +835,7 @@ durEndMod_predict<-predicted_probs(EndMod, tmpdat, "logDuration",jvalues)
 
 
 
-## Plots
+### Chasing Plots (final)
 
 ```{r plotChasing, fig.height=7, fig.width=7, fig.cap="The probability of chasing occurring as a result of group size and duration. The bottom row plots the probability of a bout ending in chasing (given that it contained some chasing behaviour in the first place)."}
 par(mfrow=c(2,2))
