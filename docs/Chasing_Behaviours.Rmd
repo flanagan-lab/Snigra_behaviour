@@ -607,7 +607,9 @@ boxplot(bout_data$Group_size~bout_data$Trial)
 boxplot(bout_data$logDuration~bout_data$Trial)
 ```
 
-```{r}
+And finally let's check to see if there is autocorrelation in the continuous predictors. 
+
+```{r groupAndDur}
 plot(bout_data$Group_size~bout_data$logDuration)
 ```
 
