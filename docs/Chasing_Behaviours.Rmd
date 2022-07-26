@@ -760,6 +760,8 @@ There is a lot of variation with respect to group size in predicted probabilitie
 ```{r durationLink}
 durCats<-seq(floor(min(bout_data$logDuration)),ceiling(max(bout_data$logDuration)),by=0.5)
 
+boutDur<-data.frame(matrix(NA, nrow=length(durCats)-1,ncol=3))
+colnames(boutDur)<-c("avgChasing","avgDur","predDur")
 for(i in 1:length(durCats) - 1){
   boutDur[i,]<-data.frame(
     avgChasing=mean(bout_data$Chasing_numeric[bout_data$logDuration >= durCats[i] & 
@@ -872,6 +874,8 @@ There is a lot of variation with respect to group size in predicted probabilitie
 ```{r durationLinkEnd}
 durCats<-seq(floor(min(chase_end_data$logDuration)),ceiling(max(chase_end_data$logDuration)),by=0.5)
 
+boutDur<-data.frame(matrix(NA, nrow=length(durCats)-1,ncol=3))
+colnames(boutDur)<-c("avgChasing","avgDur","predDur")
 for(i in 1:length(durCats) - 1){
   boutDur[i,]<-data.frame(
     avgChasing=mean(chase_end_data$Chasing_end_numeric[chase_end_data$logDuration >= durCats[i] & 
