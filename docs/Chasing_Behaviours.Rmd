@@ -700,7 +700,7 @@ For inspiration on checking assumptions, I drew on the resources in [The Analysi
 ```{r randomeffects, fig.cap="Distribution of random effects from the chasing model."}
 rands<-ranef(ChaseMod)
 
-hist(c(rands$Trial[,1],rands$Time_of_Day[,1]))
+hist(c(rands$Trial[,1],rands$Time_of_Day[,1]), main="",xlab="Random effects")
 ```
 
 This is not amazingly normal, but I think it's good enough, given that we have so few random effects estimates. 
@@ -1003,8 +1003,6 @@ points(jitter(bout_data$Chasing_numeric, 0.5)~bout_data$logDuration,
      col=alpha(time_cols[bout_data$Time_of_Day],0.5),
      cex=1.5)
 
-
-par(mfrow=c(1,2))
 
 # bout ended with chasing
 plot(jitter(chase_end_data$Chasing_end_numeric,0.25)~chase_end_data$Group_size,
