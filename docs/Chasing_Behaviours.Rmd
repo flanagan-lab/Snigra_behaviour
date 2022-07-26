@@ -458,7 +458,7 @@ table(missing$media_file_path, missing$bout_number)
 No courtship bouts remain that should be in the chase data but are not -- all courtship events involving both males and females and active behaviours are present.
 
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 prob_file<-unique(chase_data$media_file_path[gsub("\\s+","",chase_data$media_file_path) %in% gsub("\\s+","",unique(missing$media_file_path))])
 
 # number of observations in that trial
@@ -471,7 +471,7 @@ prob_chase<-chase_data[gsub("\\s+","",chase_data$media_file_path) %in% gsub("\\s
 missing_times<-prob_court$time_in_video[!prob_court$time_in_video %in% prob_chase$time_in_video]
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 hist(prob_chase$time_in_video[prob_chase$time_in_video >= min(missing_times) & prob_chase$time_in_video <= max(missing_times) ],
      col="grey",
      border = "grey",
