@@ -11,8 +11,12 @@ header-includes: |
   \usepackage{lipsum} \usepackage{float} \floatplacement{figure}{H}
 ---
 
-```{r setup, include=FALSE}
+```{r knitsetup, include=FALSE}
 knitr::opts_knit$set(root.dir='../',fig_path="./figs/")
+```
+
+
+```{r chunksetup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,out.extra='',fig.pos="H",
                       fig.path = "./figs/",
                       dpi = 300,fig.keep='last',dev='png')
