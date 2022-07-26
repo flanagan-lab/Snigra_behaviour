@@ -581,7 +581,7 @@ Before fitting models, we also want to check if:
 - whether distributions within groups match the assumed distribution
 
 
-```{r variancesPlot}
+```{r variancesPlot, fig.height=7, fig.width=7}
 par(mfrow=c(2,2))
 plot(bout_data$Chasing_numeric~bout_data$Group_size)
 plot(bout_data$Chasing_numeric~bout_data$logDuration)
@@ -589,7 +589,7 @@ plot(bout_data$Chasing_numeric~bout_data$Time_of_Day)
 plot(bout_data$Chasing_numeric~bout_data$Trial)
 ```
 
-```{r variancesPlotFlipped}
+```{r variancesPlotFlipped, fig.height=7, fig.width=7}
 par(mfrow=c(2,2))
 plot(bout_data$Group_size~bout_data$Chasing_numeric)
 plot(bout_data$logDuration~bout_data$Chasing_numeric)
@@ -599,7 +599,7 @@ plot(bout_data$Trial~bout_data$Chasing_numeric)
 
 So these boxplots are not great -- logDuration looks good, and the group size is ok except for trials 9 and 10, but time of day is a bit all over the place. 
 
-```{r}
+```{r predictedsByCats, fig.height=7, fig.width=7}
 par(mfrow=c(2,2))
 boxplot(bout_data$Group_size~bout_data$Time_of_Day)
 boxplot(bout_data$logDuration~bout_data$Time_of_Day)
@@ -728,7 +728,7 @@ These look ok to me -- roughly linear.
 
 This is similar -- we plot the predicted values across each of the categories and ensure similar variances.
 
-```{r}
+```{r variancePlots, fig.width=7}
 par(mfrow=c(1,2))
 boxplot(mydata$logit~mydata$Trial)
 boxplot(mydata$logit~mydata$Time_of_Day)
@@ -931,7 +931,7 @@ Not particularly linear but also looking like there is no effect (which matches 
 
 This is similar -- we plot the predicted values across each of the categories and ensure similar variances.
 
-```{r variancesEnd}
+```{r variancesEnd, fig.width=7}
 par(mfrow=c(1,2))
 boxplot(mydata$logit~mydata$Trial)
 boxplot(mydata$logit~mydata$Time_of_Day)
