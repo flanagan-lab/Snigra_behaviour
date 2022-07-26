@@ -834,6 +834,114 @@ durEndMod_predict<-predicted_probs(EndMod, tmpdat, "logDuration",jvalues)
 ```
 
 
+#### Checking assumptions
+
+Let's also check some of the model assumptions and evaluate model fit. The generic model plot, with residuals vs fitted, won't actually tell us that much.
+
+I'll follow the same approach as for the model of chasing
+
+**Appropriate estimation of variance**
+
+Based on Table \@ref(tab:EndMod), the lower likelihood is pretty low compared to the estimates and the upper likelihood, suggesting that variance is possibly not well estimated.  
+
+
+
+**the chosen link function is appropriate**
+
+To evaluate this, we can compare predicted values to actual outcomes -- but we'll need to round/subset/group the data to compare across continuous values.
+
+```{r grpsizeLinkEnd}
+grpSizes<-data.frame(
+  avgChasing=unlist(as.list(by(chase_end_data,chase_end_data$Group_size, function(dat){
+    return(mean(dat$Chasing_end_numeric))
+  })))
+)
+grpSizes$grpSize <- rownames(grpSizes)
+
+preds<-grpEndMod_predict[round(grpEndMod_predict$Variable,1) %in% grpSizes$grpSize,]
+preds$Variable<-round(preds$Variable,1)
+
+grpSizes<-merge(grpSizes, preds, by.x = "grpSize",by.y="Variable",all=TRUE)
+
+plot(grpSizes$PredictedProbability~grpSizes$avgChasing)
+```
+
+There is a lot of variation with respect to group size in predicted probabilities when chasing occurred (Fig. \@ref(fig: grpsizeLinkEnd)), and there's not a hugely strong correlation. The same appears to be true for bout duration (Fig. \@ref(fig: durationLinkEnd)). 
+
+```{r durationLinkEnd}
+durCats<-seq(floor(min(chase_end_data$logDuration)),ceiling(max(chase_end_data$logDuration)),by=0.5)
+
+for(i in 1:length(durCats) - 1){
+  boutDur[i,]<-data.frame(
+    avgChasing=mean(chase_end_data$Chasing_end_numeric[chase_end_data$logDuration >= durCats[i] & 
+                                                chase_end_data$logDuration < durCats[i+1]]),
+    avgDur = mean(durCats[i], durCats[i+1]),
+    predDur = mean(durEndMod_predict$PredictedProbability[durEndMod_predict$Variable >= durCats[i] &
+                                                              durEndMod_predict$Variable < durCats[i+1]])
+  )
+}
+
+
+plot(boutDur$predDur~boutDur$avgChasing)
+```
+
+
+
+**Random effects come from a normal distribution**
+
+```{r randomeffectsEndMod}
+rands<-ranef(EndMod)
+
+hist(c(rands$Trial[,1],rands$Time_of_Day[,1]))
+```
+
+Looks pretty normal to me.
+
+
+**linearity of continuous predictor variables and logit of the outcome**
+
+To evaluate this assumption, we need the predicted probabilities and the two continuous variables, group size and the log of bout duration.
+
+```{r linearityEnd}
+probabilities <- predict(EndMod, type="response")
+pred_classes<-ifelse(probabilities > 0.5, "yes", "no")
+
+predictors<-c("logDuration","Group_size","Time_of_Day","Trial")
+
+mydata<-cbind(chase_end_data[,predictors], 
+              logit=logit_transform(probabilities))
+
+par(mfrow=c(1,2))
+plot(mydata$logDuration~mydata$logit)
+plot(mydata$Group_size~mydata$logit)
+
+
+```
+
+Not particularly linear but also looking like there is no effect (which matches the model summary results).
+
+**the variances of data (transformed by the link function) are homogeneous across categories**
+
+This is similar -- we plot the predicted values across each of the categories and ensure similar variances.
+
+```{r variancesEnd}
+par(mfrow=c(1,2))
+boxplot(mydata$logit~mydata$Trial)
+boxplot(mydata$logit~mydata$Time_of_Day)
+```
+
+The variances look mostly ok here -- more variation in trial 3 than the others, but not dramatically so. 
+
+
+**No major outliers are present**
+
+We can look at the distribution of residuals and see that they are reasonably normal (Fig. \@ref(fig:histResidEnd)), although possibly a bit bimodal. 
+
+```{r histResidEnd}
+hist(resid(EndMod))
+```
+
+
 
 ### Chasing Plots (final)
 
