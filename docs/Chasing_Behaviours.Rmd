@@ -29,7 +29,14 @@ library(knitr)
 time_cols<-c(AM="#7fc97f",Noon="#beaed4")
 trial_pch<-c(0:7,9:10)
 ```
+```{r}
+logit_transform<-function(x){
+  xl<-log(x/(1-x))
+  return(xl)
+}
+```
 
+ 
 This document is for the analysis of the *Stigmatopora nigra* chasing behaviours. During the mesocosm experiments, we noticed that male pipefish frequently 'chased' or followed a single female pipefish, interspersed with courting. 
 
 Following an initial analysis of the courtship behaviours, Fleur van Eyndhoven re-analysed the videos to record chasing. Specifically, for each bout of courtship (which had been previously analysed), she recorded whether the bout ended in chasing, contained any chasing, and the size of the group (number of males and females). 
