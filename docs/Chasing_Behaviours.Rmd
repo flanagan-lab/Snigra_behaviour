@@ -646,7 +646,7 @@ bout_data$Trial <- factor(bout_data$Trial,
 ```
 
 ```{r ChasingMod}
-ChaseMod<- glmer(Chasing_numeric~Group_size+logDuration+Time_of_Day +(1|Trial), 
+ChaseMod<- glmer(Chasing_numeric~Group_size*logDuration+ (1|Time_of_Day) +(1|Trial), 
                     family="binomial",
                     data=bout_data)
 ChaseModSum<-summary(ChaseMod)
