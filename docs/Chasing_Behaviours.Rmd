@@ -583,7 +583,7 @@ Before fitting models, we also want to check if:
 - whether distributions within groups match the assumed distribution
 
 
-```{r variancesPlot, fig.height=7, fig.width=7}
+```{r variancesPlot, fig.height=7, fig.width=7, fig.cap="Distributions of the response variable (chasing present/absent) as a function of the two predictors and two random effects.", eval=FALSE, include=FALSE}
 par(mfrow=c(2,2))
 plot(bout_data$Chasing_numeric~bout_data$Group_size)
 plot(bout_data$Chasing_numeric~bout_data$logDuration)
@@ -591,7 +591,7 @@ plot(bout_data$Chasing_numeric~bout_data$Time_of_Day)
 plot(bout_data$Chasing_numeric~bout_data$Trial)
 ```
 
-```{r variancesPlotFlipped, fig.height=7, fig.width=7}
+```{r variancesPlotFlipped, fig.height=7, fig.width=7, fig.cap="Distributions of the predictor variables as a function of the binomial response variable, chasing present/absent."}
 par(mfrow=c(2,2))
 plot(bout_data$Group_size~bout_data$Chasing_numeric)
 plot(bout_data$logDuration~bout_data$Chasing_numeric)
@@ -601,7 +601,7 @@ plot(bout_data$Trial~bout_data$Chasing_numeric)
 
 So these boxplots are ok -- logDuration looks good, and the group size is ok except for trials 9 and 10, and time of day is decently consistent. 
 
-```{r predictedsByCats, fig.height=7, fig.width=7}
+```{r predictedsByCats, fig.height=7, fig.width=7, fig.cap="Distributions of our numeric predictor variables as a function of the categorical random effects."}
 par(mfrow=c(2,2))
 boxplot(bout_data$Group_size~bout_data$Time_of_Day)
 boxplot(bout_data$logDuration~bout_data$Time_of_Day)
@@ -611,7 +611,7 @@ boxplot(bout_data$logDuration~bout_data$Trial)
 
 And finally let's check to see if there is autocorrelation in the continuous predictors. 
 
-```{r groupAndDur}
+```{r groupAndDur, fig.cap="The relationship between the two continuous predictor variables."}
 plot(bout_data$Group_size~bout_data$logDuration)
 ```
 
@@ -697,7 +697,7 @@ For inspiration on checking assumptions, I drew on the resources in [The Analysi
 
 **Random effects come from a normal distribution**
 
-```{r randomeffects}
+```{r randomeffects, fig.cap="Distribution of random effects from the chasing model."}
 rands<-ranef(ChaseMod)
 
 hist(c(rands$Trial[,1],rands$Time_of_Day[,1]))
@@ -710,7 +710,7 @@ This is not amazingly normal, but I think it's good enough, given that we have s
 
 To evaluate this assumption, we need the predicted probabilities and the two continuous variables, group size and the log of bout duration.
 
-```{r}
+```{r chasemodProbs, fig.width=7, fig.cap="The predictor variables as a function of the logit-gransformed predicted probabilities from the chasing model."}
 probabilities <- predict(ChaseMod, type="response")
 pred_classes<-ifelse(probabilities > 0.5, "yes", "no")
 
@@ -732,7 +732,7 @@ These look ok to me -- roughly linear.
 
 This is similar -- we plot the predicted values across each of the categories and ensure similar variances.
 
-```{r variancePlots, fig.width=7}
+```{r variancePlots, fig.width=7, fig.cap="Distributions of the logit-transformed predicted probabilities across the categorical random effects, plotted to inspect variances."}
 par(mfrow=c(1,2))
 boxplot(mydata$logit~mydata$Trial)
 boxplot(mydata$logit~mydata$Time_of_Day)
@@ -745,7 +745,7 @@ These also look ok, except maybe trial 10. And I think that the distributions wi
 
 To evaluate this, we can compare predicted values to actual outcomes -- but we'll need to round/subset/group the data to compare across continuous values.
 
-```{r grpsizeLink}
+```{r grpsizeLink, fig.cap="Predicted probabilities as a function of the average observed outcomes, averaged across different group sizes."}
 grpSizes<-data.frame(
   avgChasing=unlist(as.list(by(bout_data,bout_data$Group_size, function(dat){
     return(mean(dat$Chasing_numeric))
@@ -763,7 +763,7 @@ plot(grpSizes$PredictedProbability~grpSizes$avgChasing)
 
 There is a lot of variation with respect to group size in predicted probabilities when no chasing occurred (Fig. \@ref(fig: grpsizeLink)), but the non-zero probabilities appear fairly well correlated. The same appears to be true for bout duration (Fig. \@ref(fig: durationLink)). 
 
-```{r durationLink}
+```{r durationLink, fig.cap="Predicted probabilities as a function of the average observed outcomes, averaged across different bout durations."}
 durCats<-seq(floor(min(bout_data$logDuration)),ceiling(max(bout_data$logDuration)),by=0.5)
 
 boutDur<-data.frame(matrix(NA, nrow=length(durCats)-1,ncol=3))
@@ -791,8 +791,8 @@ Based on Table \@ref(tab:ChasingMod), we can see that the parameter estimates ha
 
 We can look at the distribution of residuals and see that they are reasonably normal (Fig. \@ref(fig:histResid)) -- on top of that, it is not highly skewed, with no obvious outliers. So I think we're probably good to proceed with interpreting this analysis!
 
-```{r histResid}
-hist(resid(ChaseMod))
+```{r histResid, fig.cap="Distribution of residuals from the chasing model."}
+hist(resid(ChaseMod), main="",xlab="Residuals")
 ```
 
 
@@ -822,7 +822,8 @@ EndMod_Est<-cbind(Est = logit_back(fixef(EndMod)),
               EndModSum$coefficients[,3:4])
 
 
-kable(EndMod_Est,"latex", booktab=TRUE)
+kable(EndMod_Est,"latex", booktab=TRUE,
+      caption="Table of estimates, their confidence intervals, and their z-scores and p-values.")
 ```
 
 In this case, none of the fixed effects in the model were significant (Table \@ref(tab:EndMod)). The probability that a bout would end in chasing, without any of the fixed effects, was `r round(EndMod_Est[1,1]*100,2)`%. 
@@ -857,7 +858,7 @@ Based on Table \@ref(tab:EndMod), the lower likelihood is pretty low compared to
 
 To evaluate this, we can compare predicted values to actual outcomes -- but we'll need to round/subset/group the data to compare across continuous values.
 
-```{r grpsizeLinkEnd}
+```{r grpsizeLinkEnd, fig.cap="The predicted probabilities from the model of bouts ending in chasing as a function of the mean observed outcomes, averaged across group sizes."}
 grpSizes<-data.frame(
   avgChasing=unlist(as.list(by(chase_end_data,chase_end_data$Group_size, function(dat){
     return(mean(dat$Chasing_end_numeric))
@@ -875,7 +876,7 @@ plot(grpSizes$PredictedProbability~grpSizes$avgChasing)
 
 There is a lot of variation with respect to group size in predicted probabilities when chasing occurred (Fig. \@ref(fig: grpsizeLinkEnd)), and there's not a hugely strong correlation. The same appears to be true for bout duration (Fig. \@ref(fig: durationLinkEnd)). 
 
-```{r durationLinkEnd}
+```{r durationLinkEnd, fig.cap="The predicted probabilities from the model of bouts ending in chasing as a function of the mean observed outcomes, averaged across bout durations."}
 durCats<-seq(floor(min(chase_end_data$logDuration)),ceiling(max(chase_end_data$logDuration)),by=0.5)
 
 boutDur<-data.frame(matrix(NA, nrow=length(durCats)-1,ncol=3))
@@ -1073,7 +1074,7 @@ prop_chase  <- merge(prop_chasing[,c(3:6)],
 
 ```
 
-```{r plotLengthDistrs}
+```{r plotLengthDistrs, fig.cap="The relationship between the difference in female lengths and the maximum female length per trial."}
 plot(prop_chase$Difference~prop_chase$Max_length,
      cex=1.5,     
      pch=19,
