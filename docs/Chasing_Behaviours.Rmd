@@ -786,26 +786,116 @@ boxplot(mydata$logit~mydata$Time_of_Day)
 
 These also look ok, except maybe trial 10. And I think that the distributions within groups match the assumed distributions. 
 
+**No major outliers are present**
+
+We can look at the distribution of residuals and see that they are reasonably normal (Fig. \@ref(fig:histResid)) -- on top of that, it is not highly skewed, with no obvious outliers. So I think we're probably good to proceed with interpreting this analysis!
+
+```{r histResid, fig.cap="Distribution of residuals from the chasing model."}
+hist(resid(ChaseMod), main="",xlab="Residuals")
+```
+
+We can re-fit the model, but without those potential outliers:
+
+```{r chaseModNoOut}
+bout_data_noOut<-bout_data[bout_data$Trial != "Trial 10",]
+bout_data_noOut<-bout_data[bout_data_noOut$Group_size <=5,]
+                    family="binomial",
+                    data=bout_data_noOut)
+ChaseMod_noOutSum<-summary(ChaseMod_noOut)
+ChaseMod_noOutANOVA<-anova(ChaseMod_noOut)
+
+# get standard errors
+ChaseMod_noOut_SE <- sqrt(diag(vcov(ChaseMod_noOut)))
+
+# convert to prob space
+ChaseMod_noOut_Est<-cbind(Est = logit_back(fixef(ChaseMod_noOut)), 
+              LL = logit_back(fixef(ChaseMod_noOut) - 1.96 * ChaseMod_noOut_SE ), 
+              UL = logit_back(fixef(ChaseMod_noOut) + 1.96 *ChaseMod_noOut_SE ),
+              ChaseMod_noOutSum$coefficients[,3:4])
 
 
+kable(ChaseMod_noOut_Est,"latex",booktab=TRUE)
+```
 
+These estimates are almost identical to the previous ones.
 
+```{r ChaseModPredictNoOut}
+tmpdat <- bout_data[, c("Group_size","logDuration", "Time_of_Day", "Trial")]
 
+# Group size
+jvalues <- seq(from = min(bout_data$Group_size), to = max(bout_data$Group_size),length.out=100)
+grpChaseMod_predict_noOut<-predicted_probs(ChaseMod_noOut, tmpdat, "Group_size",jvalues)
+
+# duration (log-transformed)
+jvalues <- seq(from = min(bout_data$logDuration), to = max(bout_data$logDuration),length.out=100)
+durChaseMod_predict_noOut<-predicted_probs(ChaseMod_noOut, tmpdat, "logDuration",jvalues)
 
 ```
 
-
-
-
-
-```
-
+```{r}
+par(mfrow=c(1,2))
+# group size
+plot(jitter(bout_data$Chasing_numeric, 0.25)~bout_data$Group_size,
+       pch=trial_pch[bout_data$Trial],
+     col=alpha(time_cols[bout_data$Time_of_Day],0.5),
+     cex=1.5,
+     xlab="Mean Group size",
+     ylab="Chasing present",
+     yaxt='n',
+     bty='l')
+axis(2,at=c(0,1),labels=c("No","Yes"),las=1)
 
 **Appropriate estimation of variance**
+# add the predicted probabilities for all data
+polygon(c(rev(grpChaseMod_predict$Variable),grpChaseMod_predict$Variable), 
+        c(rev(grpChaseMod_predict$Lower),grpChaseMod_predict$Upper),
+     col = alpha("grey90",0.5), border = NA)
 
 Based on Table \@ref(tab:ChasingMod), we can see that the parameter estimates have a reasonable amount of variation around them, which is a good indicator that the estimation of variance is appropriate. 
+lines(grpChaseMod_predict$Variable, 
+      grpChaseMod_predict$PredictedProbability, lwd = 2)
 
-**No major outliers are present**
+# add predicted probs for no outlier data
+polygon(c(rev(grpChaseMod_predict_noOut$Variable),grpChaseMod_predict_noOut$Variable), 
+        c(rev(grpChaseMod_predict_noOut$Lower),grpChaseMod_predict_noOut$Upper),
+     col = alpha("orchid4",0.5), border = NA)
+
+lines(grpChaseMod_predict_noOut$Variable, 
+      grpChaseMod_predict_noOut$PredictedProbability, lwd = 2,col="orchid")
+
+# duration
+plot(jitter(bout_data$Chasing_numeric)~bout_data$logDuration,
+     xlab="log(Courtship bout duration (s))",
+     ylab="Chasing present",
+     yaxt='n',
+     bty='l',
+     pch=19,
+     col=alpha("dark grey",0.5),
+     cex=1.5,
+     type='n')
+axis(2,at=c(0,1),labels=c("No","Yes"),las=1)
+
+
+# add the predicted probabilities
+polygon(c(rev(durChaseMod_predict$Variable),durChaseMod_predict$Variable), 
+        c(rev(durChaseMod_predict$Lower),durChaseMod_predict$Upper),
+     col = alpha("grey90",0.5), border = NA)
+
+lines(durChaseMod_predict$Variable, 
+      durChaseMod_predict$PredictedProbability, lwd = 2)
+
+# add the points
+points(jitter(bout_data$Chasing_numeric, 0.5)~bout_data$logDuration,
+       pch=trial_pch[bout_data$Trial],
+     col=alpha(time_cols[bout_data$Time_of_Day],0.5),
+     cex=1.5)
+# add predicted probs for no outlier data
+polygon(c(rev(durChaseMod_predict_noOut$Variable),durChaseMod_predict_noOut$Variable), 
+        c(rev(durChaseMod_predict_noOut$Lower),durChaseMod_predict_noOut$Upper),
+     col = alpha("orchid4",0.5), border = NA)
+
+lines(durChaseMod_predict_noOut$Variable, 
+      durChaseMod_predict_noOut$PredictedProbability, lwd = 2,col="orchid")
 
 We can look at the distribution of residuals and see that they are reasonably normal (Fig. \@ref(fig:histResid)) -- on top of that, it is not highly skewed, with no obvious outliers. So I think we're probably good to proceed with interpreting this analysis!
 
