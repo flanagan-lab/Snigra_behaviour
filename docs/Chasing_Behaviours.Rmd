@@ -799,6 +799,7 @@ We can re-fit the model, but without those potential outliers:
 ```{r chaseModNoOut}
 bout_data_noOut<-bout_data[bout_data$Trial != "Trial 10",]
 bout_data_noOut<-bout_data[bout_data_noOut$Group_size <=5,]
+ChaseMod_noOut<- glmer(Chasing_numeric~Group_size*logDuration+ (1|Time_of_Day) +(1|Trial), 
                     family="binomial",
                     data=bout_data_noOut)
 ChaseMod_noOutSum<-summary(ChaseMod_noOut)
