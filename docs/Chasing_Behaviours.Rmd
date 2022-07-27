@@ -961,7 +961,7 @@ I'll follow the same approach as for the model of chasing
 
 **Appropriate estimation of variance**
 
-Based on Table \@ref(tab:EndMod), the lower likelihood is pretty low compared to the estimates and the upper likelihood, suggesting that variance is possibly not well estimated.  
+Based on Table \@ref(tab:EndMod), the lower likelihood is pretty low compared to the estimates and the upper likelihood, but this is partly because the upper limit is clearly truncated at 1.   
 
 **the chosen link function is appropriate**
 
