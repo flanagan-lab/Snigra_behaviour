@@ -912,6 +912,7 @@ For this analysis, let's restrict it to those bouts that had some chasing in the
 chase_end_data<-bout_data[which(bout_data$Chasing_numeric==1),]
 ```
 
+For this model, the logit link function did not do a good job modeling the variances and was slightly off in the magnitude of the estimates. So I chose to use a cloglog link instead, which fits fairly well (as seen below in the assumptions checking section).. 
 
 ```{r EndMod}
 EndMod<- glmer(Chasing_end_numeric~Group_size*logDuration+(1|Time_of_Day) +(1|Trial),
