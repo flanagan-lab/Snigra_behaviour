@@ -846,13 +846,11 @@ plot(jitter(bout_data$Chasing_numeric, 0.25)~bout_data$Group_size,
      bty='l')
 axis(2,at=c(0,1),labels=c("No","Yes"),las=1)
 
-**Appropriate estimation of variance**
 # add the predicted probabilities for all data
 polygon(c(rev(grpChaseMod_predict$Variable),grpChaseMod_predict$Variable), 
         c(rev(grpChaseMod_predict$Lower),grpChaseMod_predict$Upper),
      col = alpha("grey90",0.5), border = NA)
 
-Based on Table \@ref(tab:ChasingMod), we can see that the parameter estimates have a reasonable amount of variation around them, which is a good indicator that the estimation of variance is appropriate. 
 lines(grpChaseMod_predict$Variable, 
       grpChaseMod_predict$PredictedProbability, lwd = 2)
 
@@ -898,12 +896,10 @@ polygon(c(rev(durChaseMod_predict_noOut$Variable),durChaseMod_predict_noOut$Vari
 lines(durChaseMod_predict_noOut$Variable, 
       durChaseMod_predict_noOut$PredictedProbability, lwd = 2,col="orchid")
 
-We can look at the distribution of residuals and see that they are reasonably normal (Fig. \@ref(fig:histResid)) -- on top of that, it is not highly skewed, with no obvious outliers. So I think we're probably good to proceed with interpreting this analysis!
 
-```{r histResid, fig.cap="Distribution of residuals from the chasing model."}
-hist(resid(ChaseMod), main="",xlab="Residuals")
 ```
 
+These are nearly identical so I think we're probably good to use all of the data.
 
 ### Bouts end in chasing
 
