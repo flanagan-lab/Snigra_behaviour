@@ -695,6 +695,52 @@ Let's also check some of the model assumptions and evaluate model fit. The gener
 
 For inspiration on checking assumptions, I drew on the resources in [The Analysis Factor](https://www.theanalysisfactor.com/regression-diagnostics-glmm/) and [Statistical tools for high-throughput analysis](http://www.sthda.com/english/articles/36-classification-methods-essentials/148-logistic-regression-assumptions-and-diagnostics-in-r/).
 
+
+**Appropriate estimation of variance**
+
+Based on Table \@ref(tab:ChasingMod), we can see that the parameter estimates have a reasonable amount of variation around them, which is a good indicator that the estimation of variance is appropriate. 
+
+**the chosen link function is appropriate**
+
+To evaluate this, we can compare predicted values to actual outcomes -- but we'll need to round/subset/group the data to compare across continuous values.
+
+```{r grpsizeLink, fig.cap="Predicted probabilities as a function of the average observed outcomes, averaged across different group sizes."}
+grpSizes<-data.frame(
+  avgChasing=unlist(as.list(by(bout_data,bout_data$Group_size, function(dat){
+    return(mean(dat$Chasing_numeric))
+  })))
+)
+grpSizes$grpSize <- rownames(grpSizes)
+
+preds<-grpChaseMod_predict[round(grpChaseMod_predict$Variable,1) %in% grpSizes$grpSize,]
+preds$Variable<-round(preds$Variable,1)
+
+grpSizes<-merge(grpSizes, preds, by.x = "grpSize",by.y="Variable",all=TRUE)
+
+plot(grpSizes$PredictedProbability~grpSizes$avgChasing)
+```
+
+There is a lot of variation with respect to group size in predicted probabilities when no chasing occurred (Fig. \@ref(fig: grpsizeLink)), but the non-zero probabilities appear fairly well correlated. The same appears to be true for bout duration (Fig. \@ref(fig: durationLink)). 
+
+```{r durationLink, fig.cap="Predicted probabilities as a function of the average observed outcomes, averaged across different bout durations."}
+durCats<-seq(floor(min(bout_data$logDuration)),ceiling(max(bout_data$logDuration)),by=0.5)
+
+boutDur<-data.frame(matrix(NA, nrow=length(durCats)-1,ncol=3))
+colnames(boutDur)<-c("avgChasing","avgDur","predDur")
+for(i in 1:length(durCats) - 1){
+  boutDur[i,]<-data.frame(
+    avgChasing=mean(bout_data$Chasing_numeric[bout_data$logDuration >= durCats[i] & 
+                                                bout_data$logDuration < durCats[i+1]]),
+    avgDur = mean(durCats[i], durCats[i+1]),
+    predDur = mean(durChaseMod_predict$PredictedProbability[durChaseMod_predict$Variable >= durCats[i] &
+                                                              durChaseMod_predict$Variable < durCats[i+1]])
+  )
+}
+
+
+plot(boutDur$predDur~boutDur$avgChasing)
+```
+
 **Random effects come from a normal distribution**
 
 ```{r randomeffects, fig.cap="Distribution of random effects from the chasing model."}
@@ -741,45 +787,17 @@ boxplot(mydata$logit~mydata$Time_of_Day)
 These also look ok, except maybe trial 10. And I think that the distributions within groups match the assumed distributions. 
 
 
-**the chosen link function is appropriate**
 
-To evaluate this, we can compare predicted values to actual outcomes -- but we'll need to round/subset/group the data to compare across continuous values.
 
-```{r grpsizeLink, fig.cap="Predicted probabilities as a function of the average observed outcomes, averaged across different group sizes."}
-grpSizes<-data.frame(
-  avgChasing=unlist(as.list(by(bout_data,bout_data$Group_size, function(dat){
-    return(mean(dat$Chasing_numeric))
-  })))
-)
-grpSizes$grpSize <- rownames(grpSizes)
 
-preds<-grpChaseMod_predict[round(grpChaseMod_predict$Variable,1) %in% grpSizes$grpSize,]
-preds$Variable<-round(preds$Variable,1)
 
-grpSizes<-merge(grpSizes, preds, by.x = "grpSize",by.y="Variable",all=TRUE)
 
-plot(grpSizes$PredictedProbability~grpSizes$avgChasing)
 ```
 
-There is a lot of variation with respect to group size in predicted probabilities when no chasing occurred (Fig. \@ref(fig: grpsizeLink)), but the non-zero probabilities appear fairly well correlated. The same appears to be true for bout duration (Fig. \@ref(fig: durationLink)). 
-
-```{r durationLink, fig.cap="Predicted probabilities as a function of the average observed outcomes, averaged across different bout durations."}
-durCats<-seq(floor(min(bout_data$logDuration)),ceiling(max(bout_data$logDuration)),by=0.5)
-
-boutDur<-data.frame(matrix(NA, nrow=length(durCats)-1,ncol=3))
-colnames(boutDur)<-c("avgChasing","avgDur","predDur")
-for(i in 1:length(durCats) - 1){
-  boutDur[i,]<-data.frame(
-    avgChasing=mean(bout_data$Chasing_numeric[bout_data$logDuration >= durCats[i] & 
-                                                bout_data$logDuration < durCats[i+1]]),
-    avgDur = mean(durCats[i], durCats[i+1]),
-    predDur = mean(durChaseMod_predict$PredictedProbability[durChaseMod_predict$Variable >= durCats[i] &
-                                                              durChaseMod_predict$Variable < durCats[i+1]])
-  )
-}
 
 
-plot(boutDur$predDur~boutDur$avgChasing)
+
+
 ```
 
 
