@@ -924,9 +924,9 @@ EndModAnova<-anova(EndMod)
 EndMod_SE <- sqrt(diag(vcov(EndMod)))
 
 # convert to prob space
-EndMod_Est<-cbind(Est = logit_back(fixef(EndMod)), 
-              LL = logit_back(fixef(EndMod) - 1.96 * EndMod_SE), 
-              UL = logit_back(fixef(EndMod) + 1.96 *EndMod_SE),
+EndMod_Est<-cbind(Est = clogloglink(fixef(EndMod), inverse=TRUE), 
+              LL = clogloglink(fixef(EndMod) - 1.96 * EndMod_SE, inverse=TRUE), 
+              UL = clogloglink(fixef(EndMod) + 1.96 *EndMod_SE, inverse=TRUE),
               EndModSum$coefficients[,3:4])
 
 
