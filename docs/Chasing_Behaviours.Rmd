@@ -1004,9 +1004,83 @@ for(i in 1:length(durCats) - 1){
 plot(boutDur$predDur~boutDur$avgChasing)
 ```
 
+These plots do not look ideal, but part of this might be the fact that I'm grouping/comparing by categories of the predictor variables, which appear to have no effect on the response variable. So let's just compare overall means:
+
+```{r sem}
+sem<-function(x) { return(sd(x)/sqrt(length(x)))}
+```
+
+```{r meanComps}
+meanTab<-data.frame(
+  Data=c("Actual observations",
+         "Predicteds across group size",
+         "Predicteds across log bout duration"),
+  Mean=c(mean(chase_end_data$Chasing_end_numeric),
+         mean(grpEndMod_predict$PredictedProbability),
+         mean(durEndMod_predict$PredictedProbability)),
+  SEM=c(sem(chase_end_data$Chasing_end_numeric),
+         sem(grpEndMod_predict$PredictedProbability),
+         sem(durEndMod_predict$PredictedProbability))
+         
+)
+
+kable(meanTab,"latex",booktab=TRUE, caption="The means of the actual observations and the predicted probabilities for various group sizes and durations.")
+```
+
+This suggests that the predicted values are probably in the correct range. 
+
+**Random effects come from a normal distribution**
+
+```{r randomeffectsEnd, fig.cap="Distribution of random effects from the chasing model."}
+rands<-ranef(EndMod)
+
+hist(c(rands$Trial[,1],rands$Time_of_Day[,1]), main="",xlab="Random effects")
+```
+
+This is not amazingly normal, but I think it's good enough, given that we have so few random effects estimates. 
+
+**linearity of continuous predictor variables and logit of the outcome**
+
+To evaluate this assumption, we need the predicted probabilities and the two continuous variables, group size and the log of bout duration.
+
+```{r endmodProbs, fig.width=7, fig.cap="The predictor variables as a function of the logit-gransformed predicted probabilities from the chasing model."}
+probabilities <- predict(EndMod, type="response")
+pred_classes<-ifelse(probabilities > 0.5, "yes", "no")
+
+predictors<-c("logDuration","Group_size","Time_of_Day","Trial")
+
+mydata<-cbind(chase_end_data[,predictors], 
+              loglog=clogloglink(probabilities))
+
+par(mfrow=c(1,2))
+plot(mydata$logDuration~mydata$loglog)
+plot(mydata$Group_size~mydata$loglog)
 
 
-***These two combined suggest that perhaps this model is not fitting well and/or we are not meeting its assumptions***
+```
+
+These look ok to me -- roughly linear.
+
+**the variances of data (transformed by the link function) are homogeneous across categories**
+
+This is similar -- we plot the predicted values across each of the categories and ensure similar variances.
+
+```{r variancePlotsEnd, fig.width=7, fig.cap="Distributions of the logit-transformed predicted probabilities across the categorical random effects, plotted to inspect variances."}
+par(mfrow=c(1,2))
+boxplot(mydata$loglog~mydata$Trial)
+boxplot(mydata$loglog~mydata$Time_of_Day)
+```
+
+These also look ok. 
+
+**No major outliers are present**
+
+We can look at the distribution of residuals and see that they are reasonably normal (Fig. \@ref(fig:histResid)) -- on top of that, it is not highly skewed, with no obvious outliers. So I think we're probably good to proceed with interpreting this analysis!
+
+```{r histResidEnd, fig.cap="Distribution of residuals from the chasing model."}
+hist(resid(EndMod), main="",xlab="Residuals")
+```
+
 
 \pagebreak
 
