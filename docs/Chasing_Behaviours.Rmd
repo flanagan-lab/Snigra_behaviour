@@ -1086,9 +1086,9 @@ hist(resid(EndMod), main="",xlab="Residuals")
 
 ### Chasing Plots (final)
 
-```{r plotChasing, fig.height=7, fig.width=7, fig.cap="The probability of chasing occurring as a result of group size and duration. The bottom row plots the probability of a bout ending in chasing (given that it contained some chasing behaviour in the first place)."}
-par(mfrow=c(2,2))
-# group size
+```{r plotChasing, fig.height=5, fig.width=7, fig.cap="The probability of chasing occurring as a result of group size and duration. The bottom row plots the probability of a bout ending in chasing (given that it contained some chasing behaviour in the first place)."}
+par(mfrow=c(1,2), mar=c(4,4,2.5,1))
+# group size,
 plot(jitter(bout_data$Chasing_numeric, 0.25)~bout_data$Group_size,
        pch=trial_pch[bout_data$Trial],
      col=alpha(time_cols[bout_data$Time_of_Day],0.5),
@@ -1108,9 +1108,9 @@ lines(grpChaseMod_predict$Variable,
       grpChaseMod_predict$PredictedProbability, lwd = 2)
 
 # duration
-plot(jitter(bout_data$Chasing_numeric)~bout_data$logDuration,
+plot(jitter(bout_data$Chasing_numeric, 0.25)~bout_data$logDuration,
      xlab="log(Courtship bout duration (s))",
-     ylab="Chasing present",
+     ylab="",
      yaxt='n',
      bty='l',
      pch=19,
@@ -1129,53 +1129,26 @@ lines(durChaseMod_predict$Variable,
       durChaseMod_predict$PredictedProbability, lwd = 2)
 
 # add the points
-points(jitter(bout_data$Chasing_numeric, 0.5)~bout_data$logDuration,
+points(jitter(bout_data$Chasing_numeric, 0.25)~bout_data$logDuration,
        pch=trial_pch[bout_data$Trial],
      col=alpha(time_cols[bout_data$Time_of_Day],0.5),
      cex=1.5)
 
 
-# bout ended with chasing
-plot(jitter(chase_end_data$Chasing_end_numeric,0.25)~chase_end_data$Group_size,
-     xlab="Group size",
-     ylab="Bout ended with Chasing",
-     yaxt='n',
-     bty='l',
-     #type='n',
-     pch=trial_pch[chase_end_data$Trial],
-     col=alpha(time_cols[chase_end_data$Time_of_Day],0.5),
-     cex=1.5)
-axis(2,at=c(0,1),labels=c("No","Yes"),las=1)
 
+# add a legend to the top
+par(fig=c(0, 1, 0, 1), oma=c(0, 0, 0, 0),
+              mar=c(0, 0, 0, 0), new=TRUE)
 
-# add the predicted probabilities
-polygon(c(rev(grpEndMod_predict$Variable),grpEndMod_predict$Variable), 
-        c(rev(grpEndMod_predict$Lower),grpEndMod_predict$Upper),
-     col = alpha("grey90",0.5), border = NA)
+plot(0, 0, type='n', bty='n', xaxt='n', yaxt='n')
+legend("top",
+       c(levels(bout_data$Trial),
+         levels(bout_data$Time_of_Day)),
+       pch=c(trial_pch, 19,19),
+       col=c(rep("black",10),time_cols),
+       bty='n',
+       ncol=6)
 
-lines(grpEndMod_predict$Variable, 
-      grpEndMod_predict$PredictedProbability, lwd = 2)
-
-
-
-# bout ended with chasing
-plot(jitter(chase_end_data$Chasing_end_numeric,0.25)~chase_end_data$logDuration,
-     xlab="log(Courtship bout duration (s))",
-     ylab="Bout ended with Chasing",
-     yaxt='n',
-     bty='l',
-     pch=trial_pch[chase_end_data$Trial],
-     col=alpha(time_cols[chase_end_data$Time_of_Day],0.75),
-     cex=1.5)
-axis(2,at=c(0,1),labels=c("No","Yes"),las=1)
-
-# add the predicted probabilities
-polygon(c(rev(durEndMod_predict$Variable),durEndMod_predict$Variable), 
-        c(rev(durEndMod_predict$Lower),durEndMod_predict$Upper),
-     col = alpha("grey90",0.5), border = NA)
-
-lines(durEndMod_predict$Variable, 
-      durEndMod_predict$PredictedProbability, lwd = 2)
 
 
 ```
