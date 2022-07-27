@@ -1,0 +1,60 @@
+# Tests looking at initiation and where the ornament was used more in courtship or competition 
+
+
+#Which sex initiates more? -----------------------------------------------
+
+chunk<-final_data[c("behavior", "subject", "courtship_events", "modifier_2", "Duration", "time_in_video")]
+chunk1<-filter(chunk, behavior == "Wiggle") # only looking at active courtship behaviour
+chunk2<-filter(chunk, behavior == "Pose")
+chunk3<-rbind(chunk1, chunk2)  
+chunk4<- chunk3[order(chunk3$courtship_events),]
+chunk5<- chunk4[!(chunk4$subject=="Female" & chunk4$modifier_2  =="Female"),] # remove female-female interactions
+chunk6<- chunk5[!(chunk5$subject=="Second female" & chunk5$modifier_2  =="Female"),] # remove female-female interactions
+library(dplyr)
+chunk7<-chunk6[!duplicated(chunk6$courtship_events), ] #remove all other active courtship except the first active behaviour
+chunk7$Initiated <- as.numeric(chunk7$subject == "Female") 
+Initiated <- table(chunk7$Initiated) # 0=Male, 1=Female 
+
+# two-sided proportion test
+res<-prop.test(304, 389, p = NULL, alternative = "two.sided",
+               correct = TRUE)
+# males greater that females
+res <- prop.test(x =106, n = 136, p = 0.5, correct = FALSE,
+                 alternative = "greater")
+
+# Graph 
+barplot(Initiated, main="Sex initiating courtship",
+        xlab="Sex", ylab="Number of courtship events", names.arg=c("Male", "Female"), col=c("black","white"))
+
+# Is ornament used more in courtship or competition -----------------------
+
+Comp<- chunk4[!(chunk4$subject=="Male"),]
+# Number of female displays towards either males or females and those displays spilt into type of display
+a <-sum(Comp$behavior == "Wiggle" & Comp$modifier_2 == "Male") 
+b <-sum(Comp$behavior == "Wiggle" & Comp$modifier_2 == "Female")
+c <-sum(Comp$behavior == "Pose" & Comp$modifier_2 == "Male")
+d <-sum(Comp$behavior == "Pose" & Comp$modifier_2 == "Female")
+total <- sum(c(a,b,c,d))
+Comp <- matrix(c((a/total),(b/total),(c/total),(d/total)),ncol=2,byrow=TRUE)
+colnames(Comp)<-c("Male", "Female")
+rownames(Comp)<- c("Wiggle", "Pose")
+Comp <- as.table(Comp*100)
+
+# Graph
+barplot(Comp,
+        ylab = "% of female displays",
+        ylim =c(0,100),
+        col = yarrr::transparent(c("black","white"), trans.val = .3),
+        legend=rownames(Comp))
+
+# Proportion test: do females display (both wiggles and poses) significantly more towards males or females
+  # Display towards females = 80 (b+d)
+  # Displays towards males = 1429 (a+c)
+  # Total number of female displays = 1509
+
+# Is there a difference between female displays towards female and males
+res<-prop.test(1429, 1509, p = NULL, alternative = "two.sided",
+               correct = TRUE)
+# Is there there a greater proportion of female displays towards males
+res1 <- prop.test(x =1429, n = 1509, p = 0.5, correct = FALSE,
+                  alternative = "greater")
