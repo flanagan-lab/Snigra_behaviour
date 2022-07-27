@@ -833,6 +833,8 @@ durChaseMod_predict_noOut<-predicted_probs(ChaseMod_noOut, tmpdat, "logDuration"
 
 ```
 
+We can also check the assumptions by plotting the fitted lines on top of each other -- they should be basically the same. 
+
 ```{r}
 par(mfrow=c(1,2))
 # group size
