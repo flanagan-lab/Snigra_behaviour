@@ -29,6 +29,7 @@ library(scales)
 library(tidyverse)
 require(lme4)
 library(knitr)
+library(VGAM)
 ```
 
 ```{r}
@@ -914,7 +915,7 @@ chase_end_data<-bout_data[which(bout_data$Chasing_numeric==1),]
 
 ```{r EndMod}
 EndMod<- glmer(Chasing_end_numeric~Group_size*logDuration+(1|Time_of_Day) +(1|Trial),
-               family="binomial",
+               family=binomial("cloglog"),
                data=chase_end_data)
 EndModSum<-summary(EndMod)
 EndModAnova<-anova(EndMod)
