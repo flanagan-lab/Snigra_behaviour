@@ -498,6 +498,9 @@ and missing from chasing"),
        bty='n',
        ncol=1)
 ```
+```{r}
+write.csv(behav_data, "combined_behavioural_data.csv", row.names = FALSE)
+```
 
 
 
