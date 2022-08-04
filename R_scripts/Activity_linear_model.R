@@ -87,23 +87,6 @@ single_chisq <- chisq.test(single_dis, p = c(1/2, 1/2))
  
  
 
-# Creating a dataframe that contains both non reciprocated AND reciprocated courtship --------
- # as well and adding 0 proportion for sex that did not display 
- 
- # Getting extra information from the original dataframe
- extra <- active[1:6]
- #Merging with dataframe containing non-reciprocated courtship
-Zero <- merge(zero, extra, by="bout_number")
-
-# Selecting all info from active minus duration
-info <- active[c(1:8,10)]
-# Combining with zero data
-Zero1 <- rbind(Zero, info)
-head(Zero1)
-#Putting the courtship bouts in order
-Zero2 <- Zero1[order(Zero1$bout_number),]
-zero <-Zero2[!duplicated(Zero2),]
-
 # Graphing the data -------------------------------------------------------
 
 
