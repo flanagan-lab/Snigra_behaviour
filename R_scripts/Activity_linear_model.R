@@ -25,8 +25,8 @@ test$behavior <- ifelse(test$subject == "Female" & test$behavior=="Wiggle", "dis
 dat <-test
 
 #Get the sum of each active behaviour for each sex in each courtship event
-active <- aggregate(Duration ~  courtship_events + behavior+subject, data=dat, sum)
-active <- active[order(active$courtship_events),]
+active <- aggregate(Duration ~  bout_number + behavior+subject, data=dat, sum)
+active <- active[order(active$bout_number),]
 
 #Collect extra info from original dataframe that I want to add
 extra <- Test_final[c(9:14)]
@@ -42,7 +42,10 @@ active <- active %>% mutate (Proportion = Duration/total_time_of_courtship)
 
 # Creating dataframe where only BOTH sexes display in one courtship bout --------
 
-check <- table(active$courtship_events,active$subject)
+
+# Identifying which courtship events only had one sex display so no reciprocal courtship 
+check <- table(active$bout_number,active$subject)
+# Removing the courtship bouts where only one sex displays to find out which courtship bouts have both sexes displaying
  check1 <- check[apply(check, 1, function(row) all(row !=0 )), ]
 
 check2 <- as.data.frame(check1)
@@ -51,23 +54,22 @@ library(dbplyr)
 keep <- check2$Var1
  keep <-keep[!duplicated(keep)]
  keep <- as.data.frame(keep)
- colnames(keep) <- "courtship_events"
+ colnames(keep) <- "bout_number"
  
- active$courtship_events <-as.factor(active$courtship_events)
+ active$bout_number <-as.factor(active$bout_number)
 
- Act_dat <- merge(keep, active, by="courtship_events")
- Act_dat <- Act_dat[order(Act_dat$courtship_events),]
- 
- bouts <-unique(Act_dat$courtship_events)
- counts<- Act_dat[!duplicated(Act_dat$courtship_events), ]
- count <-filter(counts, Day_filmed == "7" )
- sum(count$total_time_of_courtship)
- count(count$courtship_events)
+ # Merging the dataframe with courtship bouts that I want to keep with the dataframe that has all the information
+ Act_dat <- merge(keep, active, by="bout_number")
+
+### Act_dat is the dataframe used to analyse activity for reciprocal courtship
+ Act_dat <- Act_dat[order(Act_dat$bout_number),]
  
  
  ### Adding zeros for singles
  
- check <- table(active$courtship_events,active$subject)
+  ### Adding zeros for singles
+ check <- table(active$bout_number,active$subject)
+ # Finding courtship bouts where only one sex displays
  zero <- as.data.frame(check)
  zero <- zero %>% filter(Freq==0)
  
@@ -75,7 +77,7 @@ keep <- check2$Var1
  
  
  #when female = 0 only male displayed for that courtship event and visa versa 
- colnames(zero) <- c("courtship_events", "subject", "Proportion")
+ colnames(zero) <- c("bout_number", "subject", "Proportion")
  zero$behavior <- ifelse(zero$subject == "Female", "diplay",
                          ifelse(zero$subject == "Male", "Wiggle",
                                 NA))
@@ -93,13 +95,21 @@ Female_only <- zero_dis[c(zero_dis$subject == "Female_only"),]
  
  extra <- active[1:6]
  
-Zero <- merge(zero, extra, by="courtship_events")
+ # Getting extra information from the original dataframe
+ extra <- active[1:6]
+ #Merging with dataframe containing non-reciprocated courtship
+Zero <- merge(zero, extra, by="bout_number")
 
 info <- active[c(1:8,10)]
- 
-Zero1 <- rbind(Zero, info) 
-Zero <- Zero1[order(Zero1$courtship_events),]
- zero <-Zero[!duplicated(Zero),]
+# Combining with zero data
+Zero1 <- rbind(Zero, info)
+head(Zero1)
+#Putting the courtship bouts in order
+Zero2 <- Zero1[order(Zero1$bout_number),]
+zero <-Zero2[!duplicated(Zero2),]
+
+# Graphing the data -------------------------------------------------------
+
 
  
  # Graphing
@@ -149,7 +159,7 @@ library(lme4)
 library("lmerTest")
 # linear model with out zero data
 Act_dat$Log_prop <- log(Act_dat$Proportion)
-model1 <-lmer(Log_prop~ subject + Time_of_Day + Day_filmed + (1|Trial/courtship_events), 
+model1 <-lmer(Log_prop~ subject + Time_of_Day + Day_filmed + (1|Trial/bout_number), 
               data=Act_dat)
 summary(model1)
 anova(model1)
@@ -167,7 +177,7 @@ confint(model1)
 
 # linear model with zero data
 zero$Log_prop <- log(zero$Proportion)
-model2 <-lmer(Proportion ~ subject + Time_of_Day + Day_filmed + (1|Trial/courtship_events), data=zero)
+model2 <-lmer(Proportion ~ subject + Time_of_Day + Day_filmed + (1|Trial/bout_number), data=zero)
 summary(model2)
 anova(model2)
 #normally distributed errors check
@@ -179,33 +189,33 @@ active$resd <-summary(model1)$residuals
 
 model1 <-lm(Log_prop ~ subject + Time_of_Day + Day_filmed, data=Act_dat)
 E <- rstandard (model1)
-boxplot(E ~ courtship_events, data=Act_dat, axes =FALSE,
+boxplot(E ~ bout_number, data=Act_dat, axes =FALSE,
         ylim=c(-2,2))
 abline(0,0);axis(2)
 
 
 # checking significance
-model0 <-lmer(Log_prop ~ 1 + (1|Trial)+(1|courtship_events), data=active)
+model0 <-lmer(Log_prop ~ 1 + (1|Trial)+(1|bout_number), data=active)
 
-model1 <-lmer(Log_prop ~ subject + Time_of_Day + Day_filmed + (1|Trial)+(1|courtship_events), data=active)
+model1 <-lmer(Log_prop ~ subject + Time_of_Day + Day_filmed + (1|Trial)+(1|bout_number), data=active)
 summary(model1)
 anova(model1)
 
 
-model2 <-lmer(Log_prop ~ Time_of_Day + Day_filmed + (1|Trial)+(1|courtship_events), data=active)
+model2 <-lmer(Log_prop ~ Time_of_Day + Day_filmed + (1|Trial)+(1|bout_number), data=active)
 
-model3 <-lmer(Log_prop ~ subject + Day_filmed + (1|Trial)+(1|courtship_events), data=active)
+model3 <-lmer(Log_prop ~ subject + Day_filmed + (1|Trial)+(1|bout_number), data=active)
 
-model4 <-lmer(Log_prop ~ subject + Time_of_Day  + (1|Trial)+(1|courtship_events), data=active)
+model4 <-lmer(Log_prop ~ subject + Time_of_Day  + (1|Trial)+(1|bout_number), data=active)
 summary(model4)
 
-model5 <-lmer(Log_prop ~ subject + (1|Trial)+(1|courtship_events), data=active)
+model5 <-lmer(Log_prop ~ subject + (1|Trial)+(1|bout_number), data=active)
 
 
-model6 <-lmer(Log_prop ~ Time_of_Day + (1|Trial)+(1|courtship_events), data=active)
+model6 <-lmer(Log_prop ~ Time_of_Day + (1|Trial)+(1|bout_number), data=active)
 
 
-model7 <-lmer(Log_prop ~ Day_filmed + (1|Trial)+(1|courtship_events), data=active)
+model7 <-lmer(Log_prop ~ Day_filmed + (1|Trial)+(1|bout_number), data=active)
 anova(model0, model6)
 
 Activity <- AIC(model0, model1, model2, model3, model4, model5, model6, model7)
@@ -220,7 +230,7 @@ colnames(Activity) <- c("Model", "df", "AIC")
 Activity <- Activity[,c(3,1,2)]
 
 
-model5 <-lmer(Log_prop ~ subject + Time_of_Day + (1|Trial)+(1|courtship_events), data=active)
+model5 <-lmer(Log_prop ~ subject + Time_of_Day + (1|Trial)+(1|bout_number), data=active)
 summary(model5)
 anova(model5)
 

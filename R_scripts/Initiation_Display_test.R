@@ -3,15 +3,14 @@
 
 #Which sex initiates more? -----------------------------------------------
 
-chunk<-final_data[c("behavior", "subject", "courtship_events", "modifier_2", "Duration", "time_in_video")]
+chunk<-final_data[c("behavior", "subject", "bout_number", "modifier_2", "Duration", "time_in_video")]
 chunk1<-filter(chunk, behavior == "Wiggle") # only looking at active courtship behaviour
 chunk2<-filter(chunk, behavior == "Pose")
-chunk3<-rbind(chunk1, chunk2)  
-chunk4<- chunk3[order(chunk3$courtship_events),]
+chunk3<-rbind(chunk1, chunk2)  # combine poses and wiggles 
+chunk4<- chunk3[order(chunk3$bout_number),] # sort by bout
 chunk5<- chunk4[!(chunk4$subject=="Female" & chunk4$modifier_2  =="Female"),] # remove female-female interactions
 chunk6<- chunk5[!(chunk5$subject=="Second female" & chunk5$modifier_2  =="Female"),] # remove female-female interactions
-library(dplyr)
-chunk7<-chunk6[!duplicated(chunk6$courtship_events), ] #remove all other active courtship except the first active behaviour
+chunk7<-chunk6[!duplicated(chunk6$bout_number), ] #remove all other active courtship except the first active behaviour
 chunk7$Initiated <- as.numeric(chunk7$subject == "Female") 
 Initiated <- table(chunk7$Initiated) # 0=Male, 1=Female 
 
