@@ -99,34 +99,33 @@ data_summary <- function(x) {
   return(c(y=m,ymin=ymin,ymax=ymax))
 }
 
-library(ggplot2)
 col1 <- c("#d73027",  "#fc8d59", "#fee090", "#99d594",
          "#e0f3f8", "#91bfdb", "#4575b4")
 col2 <- c("#fc8d59","#91bfdb")
 col3 <- c("#d73027","#91bfdb")
 
 # Reciprocated courtship 
-ggplot(Act_dat, aes(x=Time_of_Day, y=Proportion, color=subject, shape=subject)) +
+ggplot(active_both, aes(x=Time_of_Day, y=Proportion, color=subject, shape=subject)) +
    theme(panel.background = element_blank())+
   geom_jitter(position=position_dodge(0.8))+ stat_summary(fun.data=data_summary, color="black",
                                                           position=position_dodge(0.8))
 
 
 
-ggplot(Act_dat, aes(x=Time_of_Day, y=Proportion, color=Time_of_Day)) + ggtitle("Without zeros")+
+ggplot(active_both, aes(x=Time_of_Day, y=Proportion, color=Time_of_Day)) + ggtitle("Without zeros")+
   theme(panel.background = element_blank(), )+
   geom_jitter(position=position_jitter(0.2))+
   stat_summary(fun.data=data_summary, color="black", position=position_dodge(0.8))
   
 
-p <-ggplot(Act_dat, aes(x=Time_of_Day, y=Proportion, color=Time_of_Day)) +
+p <-ggplot(active_both, aes(x=Time_of_Day, y=Proportion, color=Time_of_Day)) +
   theme(panel.background = element_blank(),legend.title=element_blank(), legend.key = element_rect(fill ="White"),
         axis.title=element_text(size=14))+
   scale_color_manual(values=col2)+
    geom_point(aes(shape = subject),position=position_jitter(0.2), alpha = 0.7)+
   stat_summary(fun.data=data_summary, color="black", position=position_dodge(0.8), size=0.7)
 
-p <- ggplot(Act_dat, aes(x=subject, y=Proportion, color=subject)) +
+p <- ggplot(active_both, aes(x=subject, y=Proportion, color=subject)) +
   theme(panel.background = element_blank(),legend.position="none",
         axis.title=element_text(size=14))+
   scale_color_manual(values=col3)+
@@ -145,9 +144,9 @@ p+guides(color = FALSE)+labs(x = "Sex", y ="Proportion ")
 library(lme4)
 library("lmerTest")
 # linear model using ONLY reciprocated courtship
-Act_dat$Log_prop <- log(Act_dat$Proportion)
+active_both$Log_prop <- log(active_both$Proportion)
 model1 <-lmer(Log_prop~ subject + Time_of_Day + Day_filmed + (1|Trial/bout_number), 
-              data=Act_dat)
+              data=active_both)
 summary(model1)
 anova(model1)
 
@@ -174,9 +173,9 @@ plot(model2, select=c(1))
 
 active$resd <-summary(model1)$residuals
 
-model1 <-lm(Log_prop ~ subject + Time_of_Day + Day_filmed, data=Act_dat)
+model1 <-lm(Log_prop ~ subject + Time_of_Day + Day_filmed, data=active_both)
 E <- rstandard (model1)
-boxplot(E ~ bout_number, data=Act_dat, axes =FALSE,
+boxplot(E ~ bout_number, data=active_both, axes =FALSE,
         ylim=c(-2,2))
 abline(0,0);axis(2)
 
