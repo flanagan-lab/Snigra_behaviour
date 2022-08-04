@@ -28,8 +28,8 @@ barplot(Initiated, main="Sex initiating courtship",
 
 # Is ornament used more in courtship or competition -----------------------
 
-Comp<- chunk4[!(chunk4$subject=="Male"),]
-# Number of female displays towards either males or females and those displays spilt into type of display
+Comp<- chunk4[!(chunk4$subject=="Male"),] # active behavs from females
+# Number of female displays towards either males or females and those displays split into type of display
 a <-sum(Comp$behavior == "Wiggle" & Comp$modifier_2 == "Male") 
 b <-sum(Comp$behavior == "Wiggle" & Comp$modifier_2 == "Female")
 c <-sum(Comp$behavior == "Pose" & Comp$modifier_2 == "Male")
