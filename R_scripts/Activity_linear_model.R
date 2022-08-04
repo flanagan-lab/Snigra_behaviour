@@ -12,10 +12,6 @@ Test_final2 <- Test_final1[!(Test_final1$subject=="Second female" & Test_final1$
 # Selection only wiggle and pose behaviours 
 dat <- Test_final2[(Test_final2$behavior == "Wiggle" | Test_final2$behavior == "Pose"),]
 
-
-
-
-
 #Changing second female into Female (only care about female vs male)
 dat$subject <- ifelse(dat$subject == "Second female", "Female",
                       dat$subject)
