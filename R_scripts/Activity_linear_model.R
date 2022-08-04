@@ -63,6 +63,7 @@ check <- table(active$bout_number,active$subject)
 # Removing the courtship bouts where only one sex displays to find out which courtship bouts have both sexes displaying
  check1 <- check[apply(check, 1, function(row) all(row !=0 )), ]
 
+ # Making a data frame so that I can select the column with the courtship bouts I want to keep for me to use later to merge with the original dataset
 check2 <- as.data.frame(check1)
 
 library(dbplyr)
@@ -80,7 +81,9 @@ keep <- check2$Var1
  Act_dat <- Act_dat[order(Act_dat$bout_number),]
  
  
- ### Adding zeros for singles
+
+# Creating data set that includes courtship bouts where only one sex displays --------
+
  
   ### Adding zeros for singles
  check <- table(active$bout_number,active$subject)
@@ -99,22 +102,33 @@ keep <- check2$Var1
  
  ### Analysing single sex courtship
  zero_dis <- zero
+ # Make it easier to follow along by adding Male_only and Female_only 
+  # zero_dis allows me to look at whether males or female were more likely to display with out getting a response 
  zero_dis$subject <- ifelse(zero_dis$subject == "Female", "Male_only",
                             ifelse(zero_dis$subject == "Male", "Female_only",
                                    NA))
-Female_only <- zero_dis[c(zero_dis$subject == "Female_only"),]
+#Calculating how many female only display bout there were
+ Female_only <- zero_dis[c(zero_dis$subject == "Female_only"),]
  
- single_dis <- c(50, 56)
+#Total diaplays = 137
+# Female only = 69
+# Male only = 68
+ 
+# Calculating whether females or males were more likely to display without response 
+ single_dis <- c(69, 68)
  res <- chisq.test(single_dis, p = c(1/2, 1/2))
  
  
- extra <- active[1:6]
+
+# Creating a dataframe that contains both non reciprocated AND reciprocated courtship --------
+ # as well and adding 0 proportion for sex that did not display 
  
  # Getting extra information from the original dataframe
  extra <- active[1:6]
  #Merging with dataframe containing non-reciprocated courtship
 Zero <- merge(zero, extra, by="bout_number")
 
+# Selecting all info from active minus duration
 info <- active[c(1:8,10)]
 # Combining with zero data
 Zero1 <- rbind(Zero, info)
@@ -127,7 +141,7 @@ zero <-Zero2[!duplicated(Zero2),]
 
 
  
- # Graphing
+ # Finding the mean and selecting colours
 data_summary <- function(x) {
   m <- mean(x)
   ymin <- m-sd(x)
@@ -140,6 +154,8 @@ col1 <- c("#d73027",  "#fc8d59", "#fee090", "#99d594",
          "#e0f3f8", "#91bfdb", "#4575b4")
 col2 <- c("#fc8d59","#91bfdb")
 col3 <- c("#d73027","#91bfdb")
+
+# Reciprocated courtship 
 ggplot(Act_dat, aes(x=Time_of_Day, y=Proportion, color=subject, shape=subject)) +
    theme(panel.background = element_blank())+
   geom_jitter(position=position_dodge(0.8))+ stat_summary(fun.data=data_summary, color="black",
@@ -170,9 +186,15 @@ p <- ggplot(Act_dat, aes(x=subject, y=Proportion, color=subject)) +
 
 p+guides(color = FALSE)+labs(x = "Sex", y ="Proportion ")
 
+
+
+
+# Creating a linear model to look at active behaviour ---------------------
+
+
 library(lme4)
 library("lmerTest")
-# linear model with out zero data
+# linear model using ONLY reciprocated courtship
 Act_dat$Log_prop <- log(Act_dat$Proportion)
 model1 <-lmer(Log_prop~ subject + Time_of_Day + Day_filmed + (1|Trial/bout_number), 
               data=Act_dat)
@@ -190,7 +212,7 @@ confint(model1)
 
 
 
-# linear model with zero data
+# linear model with ALL data and including zero proportions
 zero$Log_prop <- log(zero$Proportion)
 model2 <-lmer(Proportion ~ subject + Time_of_Day + Day_filmed + (1|Trial/bout_number), data=zero)
 summary(model2)
