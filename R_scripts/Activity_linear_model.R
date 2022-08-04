@@ -1,5 +1,9 @@
 library(dplyr)
 library(tidyr)
+
+# read in the data
+final_data<-read.csv("processed_data/courtship_data.csv")
+
 # Creating a data frame with proportions ----------------------------------
 
 # create test_final using code in Graphs mesocosm --on onedrive 
