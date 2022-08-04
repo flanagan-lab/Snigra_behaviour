@@ -70,32 +70,14 @@ active_both <- as.data.frame(active_long[active_long$bout_number %in% reciprocal
 
 # Creating data set that includes courtship bouts where only one sex displays --------
 
- 
-  ### Adding zeros for singles
- check <- table(active$bout_number,active$subject)
- # Finding courtship bouts where only one sex displays
- zero <- as.data.frame(check)
- zero <- zero %>% filter(Freq==0)
- 
+# subset active_long to only include bouts that were NOT reciprocal
+active_single <- as.data.frame(active_long[!(active_long$bout_number %in% reciprocal_bouts),])
+# remove the zero observations
+active_single <- active_single[active_single$proportion > 0, ]
+  
+# summarize the reciprocal from males vs females
+single_dis <- table(active_single$Sex)
 
- 
- 
- #when female = 0 only male displayed for that courtship event and visa versa 
- colnames(zero) <- c("bout_number", "subject", "Proportion")
- zero$behavior <- ifelse(zero$subject == "Female", "diplay",
-                         ifelse(zero$subject == "Male", "Wiggle",
-                                NA))
- 
- ### Analysing single sex courtship
- zero_dis <- zero
- # Make it easier to follow along by adding Male_only and Female_only 
-  # zero_dis allows me to look at whether males or female were more likely to display with out getting a response 
- zero_dis$subject <- ifelse(zero_dis$subject == "Female", "Male_only",
-                            ifelse(zero_dis$subject == "Male", "Female_only",
-                                   NA))
-#Calculating how many female only display bout there were
- Female_only <- zero_dis[c(zero_dis$subject == "Female_only"),]
- 
 #Total diaplays = 137
 # Female only = 69
 # Male only = 68
