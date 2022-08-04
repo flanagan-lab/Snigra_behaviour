@@ -39,7 +39,9 @@ active <- distinct(active1)
 #Calculate proportion 
 active <- active %>% mutate (Proportion = Duration/total_time_of_courtship)
 
-# Removing single pringles (when one one sex displays with no response from the other sex)
+
+# Creating dataframe where only BOTH sexes display in one courtship bout --------
+
 check <- table(active$courtship_events,active$subject)
  check1 <- check[apply(check, 1, function(row) all(row !=0 )), ]
 
