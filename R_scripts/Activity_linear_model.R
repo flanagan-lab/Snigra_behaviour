@@ -169,7 +169,7 @@ ggplot(Act_dat, aes(x=Time_of_Day, y=Proportion, color=Time_of_Day)) + ggtitle("
   stat_summary(fun.data=data_summary, color="black", position=position_dodge(0.8))
   
 
-p <-ggplot(Act_dat, aes(x=Da, y=Proportion, color=Time_of_Day)) +
+p <-ggplot(Act_dat, aes(x=Time_of_Day, y=Proportion, color=Time_of_Day)) +
   theme(panel.background = element_blank(),legend.title=element_blank(), legend.key = element_rect(fill ="White"),
         axis.title=element_text(size=14))+
   scale_color_manual(values=col2)+
