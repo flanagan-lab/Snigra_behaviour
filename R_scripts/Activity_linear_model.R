@@ -83,8 +83,7 @@ single_dis <- table(active_single$Sex)
 # Male only = 68
  
 # Calculating whether females or males were more likely to display without response 
- single_dis <- c(69, 68)
- res <- chisq.test(single_dis, p = c(1/2, 1/2))
+single_chisq <- chisq.test(single_dis, p = c(1/2, 1/2))
  
  
 
