@@ -1,5 +1,6 @@
 # Tests looking at initiation and where the ornament was used more in courtship or competition 
-
+library(dplyr)
+final_data <- read.csv("processed_data/courtship_data.csv")
 
 #Which sex initiates more? -----------------------------------------------
 
