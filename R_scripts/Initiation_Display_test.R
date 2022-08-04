@@ -54,8 +54,8 @@ barplot(Comp,
 
 ## Really should only do one of these
 # Is there a difference between female displays towards female and males
-res<-prop.test(1429, 1509, p = NULL, alternative = "two.sided",
+res<-prop.test(x=a+c, n=total, p = NULL, alternative = "two.sided",
                correct = TRUE)
 # Is there there a greater proportion of female displays towards males
-res1 <- prop.test(x =1429, n = 1509, p = 0.5, correct = FALSE,
+res1 <- prop.test(x =a+c, n = total, p = 0.5, correct = FALSE,
                   alternative = "greater")
