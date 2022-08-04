@@ -174,7 +174,7 @@ plot(model2, select=c(1))
 
 active$resd <-summary(model1)$residuals
 
-model1 <-lm(Log_prop ~ subject + Time_of_Day + Day_filmed, data=active_both)
+model1 <-lm(Log_prop ~ subject + Time_of_Day + Day_filmed, data=active_long)
 E <- rstandard (model1)
 boxplot(E ~ bout_number, data=active_both, axes =FALSE,
         ylim=c(-2,2))
@@ -182,7 +182,7 @@ abline(0,0);axis(2)
 
 
 # checking significance
-model0 <-lmer(Log_prop ~ 1 + (1|Trial)+(1|bout_number), data=active)
+model0 <-lmer(Log_prop ~ 1 + (1|Trial)+(1|bout_number), data=active_long)
 
 model1 <-lmer(Log_prop ~ subject + Time_of_Day + Day_filmed + (1|Trial)+(1|bout_number), data=active)
 summary(model1)
@@ -217,7 +217,7 @@ colnames(Activity) <- c("Model", "df", "AIC")
 Activity <- Activity[,c(3,1,2)]
 
 
-model5 <-lmer(Log_prop ~ subject + Time_of_Day + (1|Trial)+(1|bout_number), data=active)
+model5 <-lmer(Log_prop ~ subject + Time_of_Day + (1|Trial)+(1|bout_number), data=active_long)
 summary(model5)
 anova(model5)
 
