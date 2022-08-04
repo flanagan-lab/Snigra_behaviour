@@ -40,11 +40,11 @@ active <- active[,colnames(active)!= "behavior"]
 # Reformat dataframe --------------------------------------------------------------
 # the goal is to have one row for male courtship and one per female per bout, including zeros
 
-# first, convert to wide format
+# first, convert to wide format, which splits out male/female into columns per bout
 active_wide <- pivot_wider(names_from=subject, values_from = Duration, data=active)
 # turn NAs into zeroes
 active_wide[is.na(active_wide)]<-0
-# now reshape to long format, with zeroes included
+# now reshape to long format, with zeroes included, so there is a column called 'sex'
 active_long <- pivot_longer(data=active_wide, 
                             cols=c(Female, Male), 
                             names_to="Sex", 
