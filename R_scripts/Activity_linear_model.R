@@ -162,8 +162,8 @@ confint(model1)
 
 
 # linear model with ALL data and including zero proportions
-zero$Log_prop <- log(zero$Proportion)
-model2 <-lmer(Proportion ~ subject + Time_of_Day + Day_filmed + (1|Trial/bout_number), data=zero)
+active_long$Log_prop <- log(active_long$proportion)
+model2 <-lmer(proportion ~ subject + Time_of_Day + Day_filmed + (1|Trial/bout_number), data=active_long)
 summary(model2)
 anova(model2)
 #normally distributed errors check
