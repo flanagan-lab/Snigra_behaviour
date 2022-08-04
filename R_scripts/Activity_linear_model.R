@@ -90,11 +90,9 @@ single_chisq <- chisq.test(single_dis, p = c(1/2, 1/2))
  
  
 
-# Graphing the data -------------------------------------------------------
+# Graphing the data (Fleur) -------------------------------------------------------
 
-
- 
- # Finding the mean and selecting colours
+# Finding the mean and selecting colours
 data_summary <- function(x) {
   m <- mean(x)
   ymin <- m-sd(x)
