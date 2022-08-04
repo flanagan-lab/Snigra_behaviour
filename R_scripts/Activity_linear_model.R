@@ -137,6 +137,8 @@ p <- ggplot(active_both, aes(x=Sex, y=proportion, color=Sex)) +
 p+guides(color = FALSE)+labs(x = "Sex", y ="Proportion ")
 
 
+# Graphing the data (Sarah) -------------------------------------------------------
+
 
 
 # Creating a linear model to look at active behaviour ---------------------
