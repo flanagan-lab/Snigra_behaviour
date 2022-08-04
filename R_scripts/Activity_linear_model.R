@@ -34,8 +34,25 @@ active1 <- merge(Test_final1[,9:14], active,  by="bout_number")
 #Remove double ups
 active <- distinct(active1)
 
+# remove the behavior column because it is not needed (all behaviors are 'active courtship')
+active <- active[,colnames(active)!= "behavior"]
+
+# Reformat dataframe --------------------------------------------------------------
+# the goal is to have one row for male courtship and one per female per bout, including zeros
+
+# first, convert to wide format
+active_wide <- pivot_wider(names_from=subject, values_from = Duration, data=active)
+# turn NAs into zeroes
+active_wide[is.na(active_wide)]<-0
+# now reshape to long format, with zeroes included
+active_long <- pivot_longer(data=active_wide, 
+                            cols=c(Female, Male), 
+                            names_to="Sex", 
+                            values_to="behavior_duration")
+
+
 #Calculate proportion 
-active <- active %>% mutate (Proportion = Duration/total_time_of_courtship)
+active_long$proportion <- active_long$behavior_duration/active_long$total_time_of_courtship
 
 
 # Creating dataframe where only BOTH sexes display in one courtship bout --------
