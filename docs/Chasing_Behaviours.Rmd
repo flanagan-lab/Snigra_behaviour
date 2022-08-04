@@ -250,6 +250,9 @@ court_data$Day_filmed <- ifelse( court_data$Trial == "Trial 10" & court_data$Dat
 
   
 ```
+```{r saveCourtData}
+write.csv(court_data,"processed_data/courtship_data.csv", row.names=FALSE)
+```
 
 
 
@@ -502,7 +505,7 @@ and missing from chasing"),
        ncol=1)
 ```
 ```{r}
-write.csv(behav_data, "combined_behavioural_data.csv", row.names = FALSE)
+write.csv(behav_data, "processed_data/combined_behavioural_data.csv", row.names = FALSE)
 ```
 
 
