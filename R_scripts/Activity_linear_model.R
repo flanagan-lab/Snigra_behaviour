@@ -1,5 +1,8 @@
 library(dplyr)
 library(tidyr)
+library(lme4)
+library("lmerTest")
+library(emmeans)
 
 # read in the data
 final_data<-read.csv("processed_data/courtship_data.csv")
@@ -141,8 +144,6 @@ p+guides(color = FALSE)+labs(x = "Sex", y ="Proportion ")
 # Creating a linear model to look at active behaviour ---------------------
 
 
-library(lme4)
-library("lmerTest")
 # linear model using ONLY reciprocated courtship
 active_both$Log_prop <- log(active_both$Proportion)
 model1 <-lmer(Log_prop~ subject + Time_of_Day + Day_filmed + (1|Trial/bout_number), 
@@ -153,7 +154,7 @@ anova(model1)
 qqnorm(resid(model1))
 qqline(resid(model1))
 
-library(emmeans)
+
 emmeans(model1, list(pairwise ~ Time_of_Day), adjust = "tukey")
 
 confint(model1)
