@@ -52,6 +52,7 @@ barplot(Comp,
   # Displays towards males = 1429 (a+c)
   # Total number of female displays = 1509
 
+## Really should only do one of these
 # Is there a difference between female displays towards female and males
 res<-prop.test(1429, 1509, p = NULL, alternative = "two.sided",
                correct = TRUE)
