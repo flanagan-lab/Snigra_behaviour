@@ -145,8 +145,8 @@ p+guides(color = FALSE)+labs(x = "Sex", y ="Proportion ")
 
 
 # linear model using ONLY reciprocated courtship
-active_both$Log_prop <- log(active_both$Proportion)
-model1 <-lmer(Log_prop~ subject + Time_of_Day + Day_filmed + (1|Trial/bout_number), 
+active_both$Log_prop <- log(active_both$proportion)
+model1 <-lmer(Log_prop~ Sex + Time_of_Day + Day_filmed + (1|Trial/bout_number), 
               data=active_both)
 summary(model1)
 anova(model1)
@@ -163,8 +163,8 @@ confint(model1)
 
 
 # linear model with ALL data and including zero proportions
-active_long$Log_prop <- log(active_long$proportion)
-model2 <-lmer(proportion ~ subject + Time_of_Day + Day_filmed + (1|Trial/bout_number), data=active_long)
+active_long$Log_prop <- log(active_long$proportion+0.01)
+model2 <-lmer(proportion ~ Sex + Time_of_Day + Day_filmed + (1|Trial/bout_number), data=active_long) #isSingular
 summary(model2)
 anova(model2)
 #normally distributed errors check
@@ -174,9 +174,9 @@ plot(model2, select=c(1))
 
 active$resd <-summary(model1)$residuals
 
-model1 <-lm(Log_prop ~ subject + Time_of_Day + Day_filmed, data=active_long)
-E <- rstandard (model1)
-boxplot(E ~ bout_number, data=active_both, axes =FALSE,
+model3 <-lm(Log_prop ~ Sex + Time_of_Day + Day_filmed, data=active_long)
+E <- rstandard (model3)
+boxplot(E ~ bout_number, data=active_long, axes =FALSE,
         ylim=c(-2,2))
 abline(0,0);axis(2)
 
@@ -184,40 +184,40 @@ abline(0,0);axis(2)
 # checking significance
 model0 <-lmer(Log_prop ~ 1 + (1|Trial)+(1|bout_number), data=active_long)
 
-model1 <-lmer(Log_prop ~ subject + Time_of_Day + Day_filmed + (1|Trial)+(1|bout_number), data=active)
+model1 <-lmer(Log_prop ~ Sex + Time_of_Day + Day_filmed + (1|Trial)+(1|bout_number), data=active_long)
 summary(model1)
 anova(model1)
 
 
-model2 <-lmer(Log_prop ~ Time_of_Day + Day_filmed + (1|Trial)+(1|bout_number), data=active)
+model2 <-lmer(Log_prop ~ Time_of_Day + Day_filmed + (1|Trial)+(1|bout_number), data=active_long)
 
-model3 <-lmer(Log_prop ~ subject + Day_filmed + (1|Trial)+(1|bout_number), data=active)
+model3 <-lmer(Log_prop ~ subject + Day_filmed + (1|Trial)+(1|bout_number), data=active_long)
 
-model4 <-lmer(Log_prop ~ subject + Time_of_Day  + (1|Trial)+(1|bout_number), data=active)
+model4 <-lmer(Log_prop ~ subject + Time_of_Day  + (1|Trial)+(1|bout_number), data=active_long)
 summary(model4)
 
-model5 <-lmer(Log_prop ~ subject + (1|Trial)+(1|bout_number), data=active)
+model5 <-lmer(Log_prop ~ subject + (1|Trial)+(1|bout_number), data=active_long)
 
 
-model6 <-lmer(Log_prop ~ Time_of_Day + (1|Trial)+(1|bout_number), data=active)
+model6 <-lmer(Log_prop ~ Time_of_Day + (1|Trial)+(1|bout_number), data=active_long)
 
 
-model7 <-lmer(Log_prop ~ Day_filmed + (1|Trial)+(1|bout_number), data=active)
+model7 <-lmer(Log_prop ~ Day_filmed + (1|Trial)+(1|bout_number), data=active_long)
 anova(model0, model6)
 
 Activity <- AIC(model0, model1, model2, model3, model4, model5, model6, model7)
 
 
-Activity$Model <- c("Interecpt", "subject + Time_of_Day + Day_filmed" ,
-                    "Time_of_Day + Day_filmed", "subject + Day_filmed ",
-                    "subject + Time_of_Day", "subject ", "Time_of_Day",
+Activity$Model <- c("Interecpt", "Sex + Time_of_Day + Day_filmed" ,
+                    "Time_of_Day + Day_filmed", "Sex + Day_filmed ",
+                    "Sex + Time_of_Day", "Sex", "Time_of_Day",
                     "Day_filmed")
 colnames(Activity) <- c("Model", "df", "AIC")
 
 Activity <- Activity[,c(3,1,2)]
 
 
-model5 <-lmer(Log_prop ~ subject + Time_of_Day + (1|Trial)+(1|bout_number), data=active_long)
+model5 <-lmer(Log_prop ~ Sex + Time_of_Day + (1|Trial)+(1|bout_number), data=active_long)
 summary(model5)
 anova(model5)
 
