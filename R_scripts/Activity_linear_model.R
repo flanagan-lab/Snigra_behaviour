@@ -108,31 +108,31 @@ col2 <- c("#fc8d59","#91bfdb")
 col3 <- c("#d73027","#91bfdb")
 
 # Reciprocated courtship 
-ggplot(active_both, aes(x=Time_of_Day, y=Proportion, color=subject, shape=subject)) +
+ggplot(active_both, aes(x=Time_of_Day, y=proportion, color=Sex, shape=Sex)) +
    theme(panel.background = element_blank())+
   geom_jitter(position=position_dodge(0.8))+ stat_summary(fun.data=data_summary, color="black",
                                                           position=position_dodge(0.8))
 
 
 
-ggplot(active_both, aes(x=Time_of_Day, y=Proportion, color=Time_of_Day)) + ggtitle("Without zeros")+
+ggplot(active_both, aes(x=Time_of_Day, y=proportion, color=Time_of_Day)) + ggtitle("Without zeros")+
   theme(panel.background = element_blank(), )+
   geom_jitter(position=position_jitter(0.2))+
   stat_summary(fun.data=data_summary, color="black", position=position_dodge(0.8))
   
 
-p <-ggplot(active_both, aes(x=Time_of_Day, y=Proportion, color=Time_of_Day)) +
+p <-ggplot(active_both, aes(x=Time_of_Day, y=proportion, color=Time_of_Day)) +
   theme(panel.background = element_blank(),legend.title=element_blank(), legend.key = element_rect(fill ="White"),
         axis.title=element_text(size=14))+
   scale_color_manual(values=col2)+
-   geom_point(aes(shape = subject),position=position_jitter(0.2), alpha = 0.7)+
+   geom_point(aes(shape = Sex),position=position_jitter(0.2), alpha = 0.7)+
   stat_summary(fun.data=data_summary, color="black", position=position_dodge(0.8), size=0.7)
 
-p <- ggplot(active_both, aes(x=subject, y=Proportion, color=subject)) +
+p <- ggplot(active_both, aes(x=Sex, y=proportion, color=Sex)) +
   theme(panel.background = element_blank(),legend.position="none",
         axis.title=element_text(size=14))+
   scale_color_manual(values=col3)+
-  geom_point(aes(shape = subject),position=position_jitter(0.2), alpha = 0.4)+
+  geom_point(aes(shape = Sex),position=position_jitter(0.2), alpha = 0.4)+
   stat_summary(fun.data=data_summary, color="black", position=position_dodge(0.8), size=0.7)
 
 
