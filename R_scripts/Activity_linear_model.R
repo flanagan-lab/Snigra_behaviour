@@ -28,10 +28,8 @@ dat <-test
 active <- aggregate(Duration ~  bout_number + behavior+subject, data=dat, sum)
 active <- active[order(active$bout_number),]
 
-#Collect extra info from original dataframe that I want to add
-extra <- Test_final[c(9:14)]
-#merge the two dataframes together
-active1 <- merge(extra, active,  by="courtship_events")
+#Merge info from original dataframe to the activity data
+active1 <- merge(Test_final1[,9:14], active,  by="bout_number")
 
 #Remove double ups
 active <- distinct(active1)
