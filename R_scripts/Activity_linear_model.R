@@ -57,30 +57,16 @@ active_long$proportion <- active_long$behavior_duration/active_long$total_time_o
 
 # Creating dataframe where only BOTH sexes display in one courtship bout --------
 
+reciprocal_bouts <- by(active_long, active_long$bout_number, function(dat){
+  # if there is a zero proportion, the bout is NOT reciprocal (return FALSE)
+  if(TRUE %in% (dat$proportion == 0)) return(FALSE) 
+  else return(TRUE) # if there are no zeros, then it IS reciprocal, return TRUE
+})
+# get the bout numbers where this is true (as numbers)
+reciprocal_bouts <- as.numeric(names(reciprocal_bouts[reciprocal_bouts==TRUE]))
 
-# Identifying which courtship events only had one sex display so no reciprocal courtship 
-check <- table(active$bout_number,active$subject)
-# Removing the courtship bouts where only one sex displays to find out which courtship bouts have both sexes displaying
- check1 <- check[apply(check, 1, function(row) all(row !=0 )), ]
-
- # Making a data frame so that I can select the column with the courtship bouts I want to keep for me to use later to merge with the original dataset
-check2 <- as.data.frame(check1)
-
-library(dbplyr)
-keep <- check2$Var1
- keep <-keep[!duplicated(keep)]
- keep <- as.data.frame(keep)
- colnames(keep) <- "bout_number"
- 
- active$bout_number <-as.factor(active$bout_number)
-
- # Merging the dataframe with courtship bouts that I want to keep with the dataframe that has all the information
- Act_dat <- merge(keep, active, by="bout_number")
-
-### Act_dat is the dataframe used to analyse activity for reciprocal courtship
- Act_dat <- Act_dat[order(Act_dat$bout_number),]
- 
- 
+# subset to only keep the reciprocal bouts (this is equivalent to Act_dat in previous version)
+active_both <- as.data.frame(active_long[active_long$bout_number %in% reciprocal_bouts,])
 
 # Creating data set that includes courtship bouts where only one sex displays --------
 
