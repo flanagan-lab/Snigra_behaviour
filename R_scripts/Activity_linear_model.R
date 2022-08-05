@@ -199,6 +199,12 @@ hist(log(active_long$proportion+0.01))
 
 # Creating a linear model to look at active behaviour ---------------------
 
+# Ok so we have possibly normal data if we log-transform but with a fair number of zeros
+# things to consider
+## # should we use binomial or other glmer that's better with proportions?
+## # should we ditch day_filmed?
+## # biologically, do we care about the proportion spent for those bouts without both sexes?
+##### # I think we might not care about the ones without reciprocation, when it comes to proportions.
 
 # linear model using ONLY reciprocated courtship
 active_both$Log_prop <- log(active_both$proportion)
