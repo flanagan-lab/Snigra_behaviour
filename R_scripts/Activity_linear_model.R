@@ -207,7 +207,7 @@ hist(log(active_long$proportion+0.01))
 ##### # I think we might not care about the ones without reciprocation, when it comes to proportions.
 
 # linear model using ONLY reciprocated courtship
-active_both$Log_prop <- log(active_both$proportion)
+active_both$Log_prop <- log(active_both$proportion+0.01)
 model1 <-lmer(Log_prop~ Sex + Time_of_Day + Day_filmed + (1|Trial/bout_number), 
               data=active_both)
 summary(model1)
