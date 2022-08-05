@@ -139,7 +139,60 @@ p+guides(color = FALSE)+labs(x = "Sex", y ="Proportion ")
 
 # Graphing the data (Sarah) -------------------------------------------------------
 
+sexcols<-c(female='#af8dc3',male='#7fbf7b')
+nbouts<-length(unique(active_long$bout_number))
+time_cols<-c(AM="#7fc97f",Noon="#beaed4")
+# differences between the sexes
+boxplot(active_long$proportion ~ active_long$Sex,
+        xlab="Sex",
+        ylab="Proportion of bout spent courting",
+        col=NA, border=NA,
+        ylim=c(0,1))
+points(x=jitter(rep(1,nbouts)),
+       y=active_long$proportion[active_long$Sex=="Female"],
+       col=scales::alpha(sexcols["female"],0.5)
+)
+points(x=jitter(rep(2,nbouts)),
+       y=active_long$proportion[active_long$Sex=="Male"],
+       col=scales::alpha(sexcols["male"],0.5)
+)
+boxplot(active_long$proportion ~ active_long$Sex,
+        xlab="Sex",
+        ylab="Proportion of bout spent courting",
+        col=scales::alpha("white",0.25),
+        border=c(sexcols),
+        lwd=2,
+        add=TRUE)
+points(x=c(1,2),
+       y=c(mean(active_long$proportion[active_long$Sex=="Female"]),
+           mean(active_long$proportion[active_long$Sex=="Male"])),
+       col=sexcols,
+       pch=23,
+       cex=3.5
+       )
 
+
+# proportion as a function of time of day
+boxplot(active_long$proportion ~ active_long$Time_of_Day,
+        xlab="Time of Day",
+        ylab="Proportion of bout spent courting",
+        col=scales::alpha("white",0.25),
+        border=c(time_cols),
+        lwd=2)
+
+# proportion as a function of day filmed
+boxplot(active_long$proportion ~ active_long$Day_filmed,
+        xlab="Day filmed",
+        ylab="Proportion of bout spent courting",
+        col=scales::alpha("white",0.25),
+        lwd=2)
+
+# proportion as a function of trial
+boxplot(active_long$proportion ~ active_long$Trial,
+        xlab="Trial",
+        ylab="Proportion of bout spent courting",
+        col=scales::alpha("white",0.25),
+        lwd=2)
 
 # Creating a linear model to look at active behaviour ---------------------
 
