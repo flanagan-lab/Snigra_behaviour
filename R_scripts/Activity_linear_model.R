@@ -194,6 +194,9 @@ boxplot(active_long$proportion ~ active_long$Trial,
         col=scales::alpha("white",0.25),
         lwd=2)
 
+hist(active_long$proportion)
+hist(log(active_long$proportion+0.01)) 
+
 # Creating a linear model to look at active behaviour ---------------------
 
 
