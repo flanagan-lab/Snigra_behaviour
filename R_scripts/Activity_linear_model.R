@@ -202,6 +202,7 @@ hist(log(active_long$proportion+0.01))
 # Ok so we have possibly normal data if we log-transform but with a fair number of zeros
 # things to consider
 ## # should we use binomial or other glmer that's better with proportions?
+## # male and female proportions aren't exactly independent within a bout, there is possibly a better/different way to set this up.
 ## # should we ditch day_filmed?
 ## # biologically, do we care about the proportion spent for those bouts without both sexes?
 ##### # I think we might not care about the ones without reciprocation, when it comes to proportions.
