@@ -211,34 +211,39 @@ hist(log(active_both$proportion+0.01))
 # 2. those data are normally distributed when log-transformed, so we can use lmer (but check assumptions)
 # 3. should we ditch day_filmed, since it doesn't have good coverage across other levels?
 
-active$resd <-summary(model1)$residuals
 
-model3 <-lm(Log_prop ~ Sex + Time_of_Day + Day_filmed, data=active_long)
-E <- rstandard (model3)
-boxplot(E ~ bout_number, data=active_long, axes =FALSE,
-        ylim=c(-2,2))
-abline(0,0);axis(2)
+# linear model using ONLY reciprocated courtship
 
 
-# checking significance
-model0 <-lmer(Log_prop ~ 1 + (1|Trial)+(1|bout_number), data=active_long)
 
-model1 <-lmer(Log_prop ~ Sex + Time_of_Day + Day_filmed + (1|Trial)+(1|bout_number), data=active_long)
-summary(model1)
-anova(model1)
+# model selection
+## intercept only
+model0a <-lm(Log_prop ~ 1, data=active_both)
+model0b <-lmer(Log_prop ~ 1 + (1|Trial/bout_number), data=active_both)
+
+## single variables
+model1 <-lmer(Log_prop ~ Sex + (1|Trial/bout_number), data=active_both)
+model2 <-lmer(Log_prop ~ Time_of_Day + (1|Trial/bout_number), data=active_both)
+model3 <-lmer(Log_prop ~ Day_filmed + (1|Trial/bout_number), data=active_both)
+
+## two variables
+model4 <-lmer(Log_prop ~ Time_of_Day + Day_filmed + (1|Trial/bout_number), data=active_both)
+model5 <-lmer(Log_prop ~ Sex + Day_filmed + (1|Trial/bout_number), data=active_both)
+model6 <-lmer(Log_prop ~ Sex + Time_of_Day  + (1|Trial/bout_number), data=active_both)
+
+## full model
+model7 <-lmer(Log_prop ~ Sex + Time_of_Day + Day_filmed + (1|Trial/bout_number), data=active_both)
+
+ActivityAIC <- AIC(model0a,model0b, model1, model2, model3, model4, model5, model6, model7)
 
 
-model2 <-lmer(Log_prop ~ Time_of_Day + Day_filmed + (1|Trial)+(1|bout_number), data=active_long)
+ActivityAIC$Model <- c("Interecpt LM", "Intercept with random effects", "Sex + Time_of_Day + Day_filmed" ,
+                    "Time_of_Day + Day_filmed", "Sex + Day_filmed ",
+                    "Sex + Time_of_Day", "Sex", "Time_of_Day",
+                    "Day_filmed")
+ActivityAIC <- ActivityAIC[order(ActivityAIC$AIC),c(3,1,2)]
 
-model3 <-lmer(Log_prop ~ subject + Day_filmed + (1|Trial)+(1|bout_number), data=active_long)
-
-model4 <-lmer(Log_prop ~ subject + Time_of_Day  + (1|Trial)+(1|bout_number), data=active_long)
-summary(model4)
-
-model5 <-lmer(Log_prop ~ subject + (1|Trial)+(1|bout_number), data=active_long)
-
-
-model6 <-lmer(Log_prop ~ Time_of_Day + (1|Trial)+(1|bout_number), data=active_long)
+ActivityAIC
 
 
 model7 <-lmer(Log_prop ~ Day_filmed + (1|Trial)+(1|bout_number), data=active_long)
