@@ -247,24 +247,17 @@ ActivityAIC <- ActivityAIC[order(ActivityAIC$AIC),c(3,1,2)]
 
 ActivityAIC
 
+# use intercept w/ random effects (model0b) 
+## Random effects intercept
+summary(model0b)
+anova(model0b)
+confint(model0b)
 
-model7 <-lmer(Log_prop ~ Day_filmed + (1|Trial)+(1|bout_number), data=active_long)
-anova(model0, model6)
+# check some assumptions
+par(mfrow=c(1,2))
+hist(summary(model0b)$residuals)
 
-Activity <- AIC(model0, model1, model2, model3, model4, model5, model6, model7)
+qqnorm(resid(model0b))
+qqline(resid(model0b))
 
-
-Activity$Model <- c("Interecpt", "Sex + Time_of_Day + Day_filmed" ,
-                    "Time_of_Day + Day_filmed", "Sex + Day_filmed ",
-                    "Sex + Time_of_Day", "Sex", "Time_of_Day",
-                    "Day_filmed")
-colnames(Activity) <- c("Model", "df", "AIC")
-
-Activity <- Activity[,c(3,1,2)]
-
-
-model5 <-lmer(Log_prop ~ Sex + Time_of_Day + (1|Trial)+(1|bout_number), data=active_long)
-summary(model5)
-anova(model5)
-
-anova
+plot(model0b, select=c(1))
