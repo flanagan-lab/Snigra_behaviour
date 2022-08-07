@@ -11,7 +11,7 @@ final_data<-read.csv("processed_data/courtship_data.csv")
 # Subsetting data to only include male wiggles ------------------------------------------------------------
 
 ### subsetting data to only include wanted information ###
-group<-final_data[c("behavior", "subject", "courtship_events", "modifier_2", "modifier_3", "Duration", "time_in_video", "Trial")]
+group<-final_data[c("behavior", "subject", "bout_number", "modifier_2", "modifier_3", "Duration", "time_in_video", "Trial")]
 group1<-filter(group, behavior == "Wiggle")
 group2<- group1[!(group1$subject=="Female"),]
 group<- group2[!(group2$subject=="Second female"),]
@@ -34,7 +34,7 @@ vioplot(group$Duration[group$modifier_3 == "2"], group$Duration[group$modifier_3
 ggplot(data  = group,
        aes(x = modifier_3,
            y = Duration,
-           #col = courtship_events 
+           #col = bout_number 
              ))+
   geom_point(size = 1.2,
              alpha = .8,
@@ -53,7 +53,7 @@ ggplot(data  = group,
 
 # Linear Model - all groups separate, and extreme values included, removed random effect ------------------------------------------------------------
 
-group$courtship_events<- as.numeric(group$courtship_events)
+group$bout_number<- as.numeric(group$bout_number)
 
 groupsize <-lm(Duration ~ modifier_3, data=group)
   summary(groupsize)
@@ -73,7 +73,7 @@ qqline(group$Durationlog, col = "steelblue", lwd = 2)
 
 
 # Just males lm -----------------------------------------------------------
-group1 <-lmer(Duration ~ modifier_3 + (1|courtship_events), data=group)
+group1 <-lmer(Duration ~ modifier_3 + (1|bout_number), data=group)
 summary(group1)
 plot(group1, which=1)
 plot(group1, which=2)
@@ -86,7 +86,7 @@ qqline(group$Duration, col = "steelblue", lwd = 2)
 # Log Duration ------------------------------------------------------------
 
 group$Durationlog <- log(group$Duration)
-Malegroup <-lmer(Durationlog ~ modifier_3 + (1|courtship_events), data=group)
+Malegroup <-lmer(Durationlog ~ modifier_3 + (1|bout_number), data=group)
 summary(Malegroup)
 # fixed effect parameter estimates (coefficients)
 coef(summary(Malegroup))
@@ -119,7 +119,7 @@ str(group_dat)
 ggplot(data  = group_dat,
        aes(x = groupsize,
            y = Durationlog,
-           col = courtship_events))+
+           col = bout_number))+
   geom_point(size = 1.2,
              alpha = .8,
              position = "jitter")+
@@ -135,7 +135,7 @@ ggplot(data  = group_dat,
 # linear model
 
 group_dat$Durationlog <- log(group_dat$Duration)
-group2 <-lmer(Durationlog ~ groupsize + (1|courtship_events), data=group_dat)
+group2 <-lmer(Durationlog ~ groupsize + (1|bout_number), data=group_dat)
 summary(group2)
 anova(group2)
 plot(group2, which=1)
@@ -161,7 +161,7 @@ report(group2)
 ## not sure about this graph ####
 
 group2_augmented <- augment(group2)
-ggplot(fortify(group2_augmented), aes(groupsize, Durationlog, color=courtship_events)) +
+ggplot(fortify(group2_augmented), aes(groupsize, Durationlog, color=bout_number)) +
   stat_summary(fun.data=mean_se, geom="pointrange") +
   stat_summary(aes(y=.fitted), fun=mean, geom="line")
 
@@ -171,7 +171,7 @@ ggplot(fortify(group2_augmented), aes(groupsize, Durationlog, color=courtship_ev
 group$Durationlog <- log(group$Duration)
 
 # Create null model
-lmm.null <- lmer(Durationlog ~ 1 + (1|courtship_events), data = group) 
+lmm.null <- lmer(Durationlog ~ 1 + (1|bout_number), data = group) 
 summary(lmm.null)
 # 0.02115 +  0.31841 =  0.33956
 # 0.02115/ 0.33956 = 0.06228649 == ICC1 indicates that 6.2% of the variance in 
@@ -179,7 +179,7 @@ summary(lmm.null)
 anova(lmm.null)
 # Full model  
 
-Malegroup <-lmer(Durationlog ~ modifier_3 + (1|courtship_events), data=group)
+Malegroup <-lmer(Durationlog ~ modifier_3 + (1|bout_number), data=group)
 summary(Malegroup)
 anova(Malegroup)
 coef(Malegroup)
