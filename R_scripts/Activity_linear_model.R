@@ -237,10 +237,12 @@ model7 <-lmer(Log_prop ~ Sex + Time_of_Day + Day_filmed + (1|Trial/bout_number),
 ActivityAIC <- AIC(model0a,model0b, model1, model2, model3, model4, model5, model6, model7)
 
 
-ActivityAIC$Model <- c("Interecpt LM", "Intercept with random effects", "Sex + Time_of_Day + Day_filmed" ,
+ActivityAIC$Model <- c("Interecpt LM", "Intercept with random effects", 
+                       "Sex", "Time_of_Day",
+                       "Day_filmed",
                     "Time_of_Day + Day_filmed", "Sex + Day_filmed ",
-                    "Sex + Time_of_Day", "Sex", "Time_of_Day",
-                    "Day_filmed")
+                    "Sex + Time_of_Day", 
+                    "Sex + Time_of_Day + Day_filmed" )
 ActivityAIC <- ActivityAIC[order(ActivityAIC$AIC),c(3,1,2)]
 
 ActivityAIC
