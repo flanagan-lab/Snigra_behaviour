@@ -195,35 +195,12 @@ boxplot(active_long$proportion ~ active_long$Trial,
         col=scales::alpha("white",0.25),
         lwd=2)
 
+par(mfrow=c(2,2))
 hist(active_long$proportion)
 hist(log(active_long$proportion+0.01)) 
 
-# Creating a linear model to look at active behaviour ---------------------
-
-# Ok so we have possibly normal data if we log-transform but with a fair number of zeros
-# things to consider
-## # should we use binomial or other glmer that's better with proportions?
-## # male and female proportions aren't exactly independent within a bout, there is possibly a better/different way to set this up.
-## # should we ditch day_filmed?
-## # biologically, do we care about the proportion spent for those bouts without both sexes?
-##### # I think we might not care about the ones without reciprocation, when it comes to proportions.
-
-# linear model using ONLY reciprocated courtship
-active_both$Log_prop <- log(active_both$proportion+0.01)
-model1 <-lmer(Log_prop~ Sex + Time_of_Day + Day_filmed + (1|Trial/bout_number), 
-              data=active_both)
-summary(model1)
-anova(model1)
-
-qqnorm(resid(model1))
-qqline(resid(model1))
-
-
-emmeans(model1, list(pairwise ~ Time_of_Day), adjust = "tukey")
-
-confint(model1)
-
-
+hist(active_both$proportion)
+hist(log(active_both$proportion+0.01)) 
 
 
 # linear model with ALL data and including zero proportions
