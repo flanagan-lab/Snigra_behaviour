@@ -56,7 +56,7 @@ active_long <- pivot_longer(data=active_wide,
 
 #Calculate proportion 
 active_long$proportion <- active_long$behavior_duration/active_long$total_time_of_courtship
-
+active_long$Log_prop <- log(active_long$proportion+0.01)
 
 # Creating dataframe where only BOTH sexes display in one courtship bout --------
 
@@ -70,7 +70,8 @@ reciprocal_bouts <- as.numeric(names(reciprocal_bouts[reciprocal_bouts==TRUE]))
 
 # subset to only keep the reciprocal bouts (this is equivalent to Act_dat in previous version)
 active_both <- as.data.frame(active_long[active_long$bout_number %in% reciprocal_bouts,])
-
+active_both$Log_prop <- log(active_both$proportion+0.01)
+active_both$Day_filmed <- factor(active_both$Day_filmed)  # convert it to a factor?
 # Creating data set that includes courtship bouts where only one sex displays --------
 
 # subset active_long to only include bouts that were NOT reciprocal
