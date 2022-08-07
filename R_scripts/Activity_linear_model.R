@@ -202,16 +202,14 @@ hist(log(active_long$proportion+0.01))
 hist(active_both$proportion)
 hist(log(active_both$proportion+0.01)) 
 
+# Creating a linear model to look at active behaviour ---------------------
 
-# linear model with ALL data and including zero proportions
-active_long$Log_prop <- log(active_long$proportion+0.01)
-model2 <-lmer(proportion ~ Sex + Time_of_Day + Day_filmed + (1|Trial/bout_number), data=active_long) #isSingular
-summary(model2)
-anova(model2)
-#normally distributed errors check
-hist(summary(model2)$residuals)
-qqnorm(summary(model2)$residuals)
-plot(model2, select=c(1))
+# What is our question?
+### Do males and females spend similar amounts of time courting within a bout? ###
+# So: 
+# 1. we only want to use the reciprocated courtship bouts
+# 2. those data are normally distributed when log-transformed, so we can use lmer (but check assumptions)
+# 3. should we ditch day_filmed, since it doesn't have good coverage across other levels?
 
 active$resd <-summary(model1)$residuals
 
