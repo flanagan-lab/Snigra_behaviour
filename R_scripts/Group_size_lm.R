@@ -1,3 +1,12 @@
+library(report)
+library(lme4)
+library("lmerTest")
+library(emmeans)
+library("ggplot2")  
+library(broom.mixed)
+
+# read in the data
+final_data<-read.csv("processed_data/courtship_data.csv")
 
 # Subsetting data to only include male wiggles ------------------------------------------------------------
 
@@ -94,7 +103,6 @@ qqnorm(group$Durationlog, pch = 1, frame = FALSE)
 qqline(group$Durationlog, col = "steelblue", lwd = 2)
 
 # Getting results
-library(report)
 report(Malegroup)
 
 
@@ -124,9 +132,8 @@ ggplot(data  = group_dat,
   theme(legend.position = "none")+
   labs(title = "Group size and male wiggle duration")
 
-# linear model 
-library(lme4)
-library("lmerTest")
+# linear model
+
 group_dat$Durationlog <- log(group_dat$Duration)
 group2 <-lmer(Durationlog ~ groupsize + (1|courtship_events), data=group_dat)
 summary(group2)
@@ -134,7 +141,6 @@ anova(group2)
 plot(group2, which=1)
 plot(group2, which=2)
 
-library(emmeans)
 e <-emmeans(group2, list(pairwise ~ groupsize), adjust = "tukey")
 
 write.csv(e, "C:\\Users\\Owner\\OneDrive - University of Canterbury\\Pipefish\\Pipefish_data\\Groupsize_posthoc.csv", row.names = FALSE)
@@ -146,7 +152,6 @@ qqline(group_dat$Durationlog, col = "steelblue", lwd = 2)
 
 
 # Getting results
-library(report)
 report(group2)
 
 0.02191 + 0.31921
@@ -154,8 +159,7 @@ report(group2)
 0.31921/0.34112
 
 ## not sure about this graph ####
-library("ggplot2")  
-library(broom.mixed)
+
 group2_augmented <- augment(group2)
 ggplot(fortify(group2_augmented), aes(groupsize, Durationlog, color=courtship_events)) +
   stat_summary(fun.data=mean_se, geom="pointrange") +
@@ -174,8 +178,7 @@ summary(lmm.null)
   #'Duration' can be "explained" by courtship events
 anova(lmm.null)
 # Full model  
-library(lme4)
-library(lmerTest)
+
 Malegroup <-lmer(Durationlog ~ modifier_3 + (1|courtship_events), data=group)
 summary(Malegroup)
 anova(Malegroup)
@@ -189,7 +192,7 @@ anova(lmm.null, Malegroup)
 anova(Malegroup)
 
 # Histogram of residuals 
-library(ggplot2)
+
 ggplot(data = group, aes(x = Malegroup$residuals)) +
   geom_histogram(fill = 'steelblue', color = 'black') +
   labs(title = 'Histogram of Residuals', x = 'Residuals', y = 'Frequency')
