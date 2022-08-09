@@ -110,15 +110,15 @@ summary(origModel) # no, it still matters...
 
 # Grouping >5 fish together in one group and removing extreme values --------
 
-group_dat <- group
-group_dat<- group_dat[order(group_dat$modifier_3),]
-group_dat$groupsize <- group_dat$modifier_3
-group_dat$groupsize <- as.numeric(as.character(group_dat$groupsize))
-group_dat$groupsize[group_dat$groupsize>4] <- 5
-group_dat$groupsize <- as.factor(group_dat$groupsize)
-str(group_dat)
+group_merged <- group
+group_merged<- group_merged[order(group_merged$modifier_3),]
+group_merged$groupsize <- group_merged$modifier_3
+group_merged$groupsize <- as.numeric(as.character(group_merged$groupsize))
+group_merged$groupsize[group_merged$groupsize>4] <- 5
+group_merged$groupsize <- as.factor(group_merged$groupsize)
+str(group_merged)
 # plotting the data 
-ggplot(data  = group_dat,
+ggplot(data  = group_merged,
        aes(x = groupsize,
            y = logDuration,
            col = bout_number))+
