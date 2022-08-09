@@ -41,6 +41,7 @@ group$modifier_3[group$modifier_3=="None" & group$time_in_video==641.583]<-4
 # changing things to factor or numeric
 group$modifier_3 <- as.factor(group$modifier_3)
 group$Duration <- as.numeric(group$Duration)
+group$bout_number <- as.factor(group$bout_number)
 
 # Creating a violin plot to look at distribution of data
 vioplot(group$Duration[group$modifier_3 == "2"], group$Duration[group$modifier_3 == "3"], group$Duration[group$modifier_3 == "4"],
