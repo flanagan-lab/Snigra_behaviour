@@ -152,8 +152,6 @@ write.csv(e, "C:\\Users\\Owner\\OneDrive - University of Canterbury\\Pipefish\\P
 qqnorm(group_merged$logDuration, pch = 1, frame = FALSE)
 qqline(group_merged$logDuration, col = "steelblue", lwd = 2)
 
-# Getting results
-report(group2)
 
 0.02191 + 0.31921
 0.02191/0.34112
