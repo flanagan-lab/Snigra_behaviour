@@ -33,6 +33,11 @@ group<- group_model[!(group_model$subject=="Second female"),]
 # Removing any leading or trailing spaces in dataframe
 group<-data.frame(lapply(group,trimws))
 
+# Fix some typos in modifier_3:
+group$modifier_3[group$modifier_3==33]<-3
+group$modifier_3[group$modifier_3=="None" & group$time_in_video==442.104]<-3
+group$modifier_3[group$modifier_3=="None" & group$time_in_video==641.583]<-4
+
 # changing things to factor or numeric
 group$modifier_3 <- as.factor(group$modifier_3)
 group$Duration <- as.numeric(group$Duration)
