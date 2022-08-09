@@ -148,7 +148,6 @@ write.csv(e, "C:\\Users\\Owner\\OneDrive - University of Canterbury\\Pipefish\\P
 
 
 # Q-Q plot
-
 qqnorm(group_merged$logDuration, pch = 1, frame = FALSE)
 qqline(group_merged$logDuration, col = "steelblue", lwd = 2)
 
