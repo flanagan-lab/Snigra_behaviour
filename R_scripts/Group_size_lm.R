@@ -153,6 +153,7 @@ qqnorm(group_merged$logDuration, pch = 1, frame = FALSE)
 qqline(group_merged$logDuration, col = "steelblue", lwd = 2)
 
 
+# Not sure what these numbers are (report() didn't work for me)
 0.02191 + 0.31921
 0.02191/0.34112
 0.31921/0.34112
