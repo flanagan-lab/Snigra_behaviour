@@ -136,16 +136,20 @@ ggplot(data  = group_merged,
 
 # linear model
 
-summary(group2)
-anova(group2)
-plot(group2, which=1)
-plot(group2, which=2)
 group_model <-lmer(logDuration ~ groupsize + (1|Trial/bout_number), data=group_merged)
+summary(group_model)
+# get some estimates
+anova(group_model)
+coef(group_model)
+e <-emmeans(group_model, list(pairwise ~ groupsize), adjust = "tukey")
 
-e <-emmeans(group2, list(pairwise ~ groupsize), adjust = "tukey")
 write.csv(e, "Groupsize_posthoc.csv", row.names = FALSE)
 
+# check some assumptions
+plot(group_model, which=1)
 
+plot(ranef(group_model))
+plot(group_model)
 
 # Q-Q plot
 qqnorm(group_merged$logDuration, pch = 1, frame = FALSE)
