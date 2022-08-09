@@ -167,8 +167,6 @@ ggplot(fortify(group_model_augmented), aes(groupsize, logDuration, color=bout_nu
 
 # Determining whether random effects is making a difference on the --------
 
-group$Durationlog <- log(group$Duration)
-
 # Create null model
 group_null <- lmer(logDuration ~ 1 + (1|Trial/bout_number), data = group_merged) 
 summary(group_null)
