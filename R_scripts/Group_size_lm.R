@@ -157,14 +157,6 @@ qqline(group_merged$logDuration, col = "steelblue", lwd = 2)
 
 
 
-## not sure about this graph ####
-# Me either -- it doesn't actually create a useful plot... what is it meant to be doing??
-group_model_augmented <- augment(group_model)
-ggplot(fortify(group_model_augmented), aes(groupsize, logDuration, color=bout_number)) +
-  stat_summary(fun.data=mean_se, geom="pointrange") +
-  stat_summary(aes(y=.fitted), fun=mean, geom="line")
-
-
 # Determining whether random effects is making a difference on the --------
 
 # Create null model
