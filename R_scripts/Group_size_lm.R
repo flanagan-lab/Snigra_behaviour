@@ -101,8 +101,9 @@ plot(Malegroup, which=1)
 qqnorm(group$logDuration, pch = 1, frame = FALSE)
 qqline(group$logDuration, col = "steelblue", lwd = 2) #these look pretty nice
 
-# Getting results
-report(Malegroup)
+# Fleur reported in her thesis that group size didn't matter...
+# let's check that my results are not deviated substantially due to change in random effects
+
 
 
 # Grouping >5 fish together in one group and removing extreme values --------
