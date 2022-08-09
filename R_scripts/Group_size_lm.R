@@ -86,8 +86,8 @@ ggplot(data  = group,
 
 # Log Duration ------------------------------------------------------------
 
-Malegroup <-lmer(Durationlog ~ modifier_3 + (1|bout_number), data=group)
 
+Malegroup <-lmer(logDuration ~ modifier_3 + (1|Trial/bout_number), data=group)
 summary(Malegroup)
 # fixed effect parameter estimates (coefficients)
 coef(summary(Malegroup))
