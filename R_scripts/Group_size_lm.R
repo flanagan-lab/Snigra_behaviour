@@ -156,10 +156,6 @@ qqnorm(group_merged$logDuration, pch = 1, frame = FALSE)
 qqline(group_merged$logDuration, col = "steelblue", lwd = 2)
 
 
-# Not sure what these numbers are (report() didn't work for me)
-0.02191 + 0.31921
-0.02191/0.34112
-0.31921/0.34112
 
 ## not sure about this graph ####
 # Me either -- it doesn't actually create a useful plot... what is it meant to be doing??
@@ -174,8 +170,6 @@ ggplot(fortify(group_model_augmented), aes(groupsize, logDuration, color=bout_nu
 # Create null model
 group_null <- lmer(logDuration ~ 1 + (1|Trial/bout_number), data = group_merged) 
 summary(group_null)
-# 0.02115 +  0.31841 =  0.33956
-# 0.02115/ 0.33956 = 0.06228649 == ICC1 indicates that 6.2% of the variance in 
   #'Duration' can be "explained" by courtship events
 anova(group_null)
 
