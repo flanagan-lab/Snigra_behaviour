@@ -1,3 +1,15 @@
+# The goal of this script -----------------------------------------------------
+
+# This script is analysing whether group size impacted male wiggle duration.
+
+# Log duration was the response variable, 
+# group size was a fixed effect and courtship event was a random effect
+
+# SPF: I am going to adjust this so it is consistent with the activity model
+# and have bout nested within trial
+
+# Setup -----------------------------------------------------------------------
+
 library(report)
 library(lme4)
 library("lmerTest")
