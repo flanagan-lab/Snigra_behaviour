@@ -160,9 +160,9 @@ report(group2)
 0.31921/0.34112
 
 ## not sure about this graph ####
-
-group2_augmented <- augment(group2)
-ggplot(fortify(group2_augmented), aes(groupsize, Durationlog, color=bout_number)) +
+# Me either -- it doesn't actually create a useful plot... what is it meant to be doing??
+group_model_augmented <- augment(group_model)
+ggplot(fortify(group_model_augmented), aes(groupsize, logDuration, color=bout_number)) +
   stat_summary(fun.data=mean_se, geom="pointrange") +
   stat_summary(aes(y=.fitted), fun=mean, geom="line")
 
