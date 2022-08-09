@@ -43,6 +43,9 @@ group$modifier_3 <- as.factor(group$modifier_3)
 group$Duration <- as.numeric(group$Duration)
 group$bout_number <- as.factor(group$bout_number)
 
+# log transform duration
+group$logDuration <- log(group$Duration)
+
 # Creating a violin plot to look at distribution of data
 vioplot(group$Duration[group$modifier_3 == "2"], group$Duration[group$modifier_3 == "3"], group$Duration[group$modifier_3 == "4"],
         group$Duration[group$modifier_3 == "5"], group$Duration[group$modifier_3 == "6"], names=c("2", "3", "4", "5", "6"))
