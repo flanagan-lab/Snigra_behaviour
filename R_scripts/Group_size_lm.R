@@ -96,8 +96,6 @@ coef(summary(Malegroup))
 plot(resid(Malegroup), pch = 16, col = "red")
 
 plot(Malegroup, which=1)
-plot(Malegroup, which=2)
-plot(Malegroup, pch = 16, col = "blue")
 
 # Q-Q plot
 qqnorm(group$logDuration, pch = 1, frame = FALSE)
