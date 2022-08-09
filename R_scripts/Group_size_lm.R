@@ -54,7 +54,15 @@ vioplot(group$Duration[group$modifier_3 == "2"], group$Duration[group$modifier_3
 ##vioplot(group$Duration ~ group$modifier_3,
         #xlab = "Group size", ylab = "Duration of wiggle", main="Duration distribution")
 
-# Creating a scatterplot with all data points, colours for different court events 
+# Checking duration and log duration
+par(mfrow=c(1,2))
+hist(group$Duration)
+hist(group$logDuration)
+
+
+
+
+# Creating a scatterplot with all data points
 ggplot(data  = group,
        aes(x = modifier_3,
            y = Duration,
