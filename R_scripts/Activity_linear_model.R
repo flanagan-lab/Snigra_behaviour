@@ -267,3 +267,6 @@ qqnorm(resid(model0b))
 qqline(resid(model0b))
 
 plot(model0b, select=c(1))
+
+
+emmeans(model7, list(pairwise ~ Day_filmed), adjust = "tukey")
