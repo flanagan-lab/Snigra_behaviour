@@ -72,6 +72,12 @@ reciprocal_bouts <- as.numeric(names(reciprocal_bouts[reciprocal_bouts==TRUE]))
 active_both <- as.data.frame(active_long[active_long$bout_number %in% reciprocal_bouts,])
 active_both$Log_prop <- log(active_both$proportion+0.01)
 active_both$Day_filmed <- factor(active_both$Day_filmed)  # convert it to a factor?
+
+# ensure trial and bout_number are factors
+active_both$Trial <- factor(active_both$Trial)
+active_both$bout_number <- factor(active_both$bout_number)
+
+
 # Creating data set that includes courtship bouts where only one sex displays --------
 
 # subset active_long to only include bouts that were NOT reciprocal
