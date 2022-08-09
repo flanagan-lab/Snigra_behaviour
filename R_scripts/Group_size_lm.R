@@ -27,11 +27,6 @@ final_data<-read.csv("processed_data/courtship_data.csv")
 ### subsetting data to only include wanted information ###
 group<-final_data[c("behavior", "subject", "bout_number", "modifier_2", "modifier_3", "Duration", "time_in_video", "Trial")]
 group1<-filter(group, behavior == "Wiggle")
-group2<- group1[!(group1$subject=="Female"),]
-group<- group2[!(group2$subject=="Second female"),]
-# Removing extreme values
-group<- group[!(group$Duration=="66.938" | group$Duration=="56.491"),] # removing 2 extreme duration values 
-# Removing any spaces in dataframe
 group<-data.frame(lapply(group,trimws))
 
 # changing things to factor or numeric
