@@ -177,15 +177,9 @@ summary(group_null)
 # 0.02115 +  0.31841 =  0.33956
 # 0.02115/ 0.33956 = 0.06228649 == ICC1 indicates that 6.2% of the variance in 
   #'Duration' can be "explained" by courtship events
-# Full model  
 anova(group_null)
 
-Malegroup <-lmer(Durationlog ~ modifier_3 + (1|bout_number), data=group)
-summary(Malegroup)
-anova(Malegroup)
-coef(Malegroup)
-plot(ranef(Malegroup))
-plot(Malegroup)
+
 # Comparing the models 
 anova(group_null, group_model)
 
