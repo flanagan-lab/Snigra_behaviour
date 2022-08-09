@@ -65,21 +65,19 @@ hist(group$logDuration)
 # Creating a scatterplot with all data points
 ggplot(data  = group,
        aes(x = modifier_3,
-           y = Duration,
-           #col = bout_number 
-             ))+
+           y = Duration
+       ))+
   geom_point(size = 1.2,
              alpha = .8,
              position = "jitter")+
-  geom_line(data = fortify(groupsize), aes(x = modifier_3, y = .fitted))+
+  geom_line(data = fortify(lm(Duration ~ modifier_3, data=group)), aes(x = modifier_3, y = .fitted))+
   #geom_smooth(method = lm,
-            #se     = FALSE, 
-            #col    = "black",
-            ##size   = .5, 
-            #alpha  = .8)+ # to add regression line# to add some random noise for plotting purposes
+  #se     = FALSE, 
+  #col    = "black",
+  ##size   = .5, 
+  #alpha  = .8)+ # to add regression line# to add some random noise for plotting purposes
   theme_minimal()+
   theme(legend.position = "none")+
-    labs(title = "Group size and male wiggle duration")
 
 
 
@@ -102,6 +100,7 @@ plot(groupsize, which=2)
 # Q-Q plots 
 qqnorm(group$Durationlog, pch = 1, frame = FALSE)
 qqline(group$Durationlog, col = "steelblue", lwd = 2)
+  labs(title = "Group size and male wiggle duration")
 
 
 # Just males lm -----------------------------------------------------------
