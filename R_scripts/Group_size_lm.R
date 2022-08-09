@@ -93,7 +93,7 @@ summary(Malegroup)
 coef(summary(Malegroup))
 
 
-plot(Malegroup$residuals, pch = 16, col = "red")
+plot(resid(Malegroup), pch = 16, col = "red")
 
 plot(Malegroup, which=1)
 plot(Malegroup, which=2)
