@@ -46,7 +46,9 @@ group$bout_number <- as.factor(group$bout_number)
 # log transform duration
 group$logDuration <- log(group$Duration)
 
+# Exploratory plots ------------------------------------------------------------
 # Creating a violin plot to look at distribution of data
+# modifier_3 contains the group number
 vioplot(group$Duration[group$modifier_3 == "2"], group$Duration[group$modifier_3 == "3"], group$Duration[group$modifier_3 == "4"],
         group$Duration[group$modifier_3 == "5"], group$Duration[group$modifier_3 == "6"], names=c("2", "3", "4", "5", "6"))
 ##vioplot(group$Duration ~ group$modifier_3,
