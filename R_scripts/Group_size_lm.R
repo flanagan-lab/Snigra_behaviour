@@ -16,6 +16,8 @@ library("lmerTest")
 library(emmeans)
 library("ggplot2")  
 library(broom.mixed)
+library(vioplot)
+
 
 # read in the data
 final_data<-read.csv("processed_data/courtship_data.csv")
