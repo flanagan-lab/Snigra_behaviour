@@ -78,41 +78,11 @@ ggplot(data  = group,
   #alpha  = .8)+ # to add regression line# to add some random noise for plotting purposes
   theme_minimal()+
   theme(legend.position = "none")+
-
-
-
-# Linear Model - all groups separate, and extreme values included, removed random effect ------------------------------------------------------------
-
-group$bout_number<- as.numeric(group$bout_number)
-
-groupsize <-lm(Duration ~ modifier_3, data=group)
-  summary(groupsize)
-
-plot(groupsize, pch = 16, col = "blue") #Plot the results
-
-
-plot(Malegroup$residuals, pch = 16, col = "red")
-
-# second plot doesn't work? 
-plot(groupsize, which=1)
-plot(groupsize, which=2)
-
-# Q-Q plots 
-qqnorm(group$Durationlog, pch = 1, frame = FALSE)
-qqline(group$Durationlog, col = "steelblue", lwd = 2)
   labs(title = "Group size and male wiggle duration")
 
 
-# Just males lm -----------------------------------------------------------
-group1 <-lmer(Duration ~ modifier_3 + (1|bout_number), data=group)
-summary(group1)
-plot(group1, which=1)
-plot(group1, which=2)
 
 
-# Q-Q plots 
-qqnorm(group$Duration, pch = 1, frame = FALSE)
-qqline(group$Duration, col = "steelblue", lwd = 2)
 
 # Log Duration ------------------------------------------------------------
 
