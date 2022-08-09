@@ -86,8 +86,8 @@ ggplot(data  = group,
 
 # Log Duration ------------------------------------------------------------
 
-group$Durationlog <- log(group$Duration)
 Malegroup <-lmer(Durationlog ~ modifier_3 + (1|bout_number), data=group)
+
 summary(Malegroup)
 # fixed effect parameter estimates (coefficients)
 coef(summary(Malegroup))
@@ -135,7 +135,6 @@ ggplot(data  = group_dat,
 
 # linear model
 
-group_dat$Durationlog <- log(group_dat$Duration)
 group2 <-lmer(Durationlog ~ groupsize + (1|bout_number), data=group_dat)
 summary(group2)
 anova(group2)
