@@ -143,8 +143,8 @@ plot(group2, which=2)
 group_model <-lmer(logDuration ~ groupsize + (1|Trial/bout_number), data=group_merged)
 
 e <-emmeans(group2, list(pairwise ~ groupsize), adjust = "tukey")
+write.csv(e, "Groupsize_posthoc.csv", row.names = FALSE)
 
-write.csv(e, "C:\\Users\\Owner\\OneDrive - University of Canterbury\\Pipefish\\Pipefish_data\\Groupsize_posthoc.csv", row.names = FALSE)
 
 
 # Q-Q plot
