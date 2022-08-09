@@ -100,8 +100,8 @@ plot(Malegroup, which=2)
 plot(Malegroup, pch = 16, col = "blue")
 
 # Q-Q plot
-qqnorm(group$Durationlog, pch = 1, frame = FALSE)
-qqline(group$Durationlog, col = "steelblue", lwd = 2)
+qqnorm(group$logDuration, pch = 1, frame = FALSE)
+qqline(group$logDuration, col = "steelblue", lwd = 2) #these look pretty nice
 
 # Getting results
 report(Malegroup)
@@ -119,7 +119,7 @@ str(group_dat)
 # plotting the data 
 ggplot(data  = group_dat,
        aes(x = groupsize,
-           y = Durationlog,
+           y = logDuration,
            col = bout_number))+
   geom_point(size = 1.2,
              alpha = .8,
@@ -135,11 +135,11 @@ ggplot(data  = group_dat,
 
 # linear model
 
-group2 <-lmer(Durationlog ~ groupsize + (1|bout_number), data=group_dat)
 summary(group2)
 anova(group2)
 plot(group2, which=1)
 plot(group2, which=2)
+group_model <-lmer(logDuration ~ groupsize + (1|Trial/bout_number), data=group_merged)
 
 e <-emmeans(group2, list(pairwise ~ groupsize), adjust = "tukey")
 
@@ -147,9 +147,9 @@ write.csv(e, "C:\\Users\\Owner\\OneDrive - University of Canterbury\\Pipefish\\P
 
 
 # Q-Q plot
-qqnorm(group_dat$Durationlog, pch = 1, frame = FALSE)
-qqline(group_dat$Durationlog, col = "steelblue", lwd = 2)
 
+qqnorm(group_merged$logDuration, pch = 1, frame = FALSE)
+qqline(group_merged$logDuration, col = "steelblue", lwd = 2)
 
 # Getting results
 report(group2)
