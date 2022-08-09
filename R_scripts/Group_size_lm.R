@@ -172,13 +172,13 @@ ggplot(fortify(group2_augmented), aes(groupsize, Durationlog, color=bout_number)
 group$Durationlog <- log(group$Duration)
 
 # Create null model
-summary(lmm.null)
 group_null <- lmer(logDuration ~ 1 + (1|Trial/bout_number), data = group_merged) 
+summary(group_null)
 # 0.02115 +  0.31841 =  0.33956
 # 0.02115/ 0.33956 = 0.06228649 == ICC1 indicates that 6.2% of the variance in 
   #'Duration' can be "explained" by courtship events
-anova(lmm.null)
 # Full model  
+anova(group_null)
 
 Malegroup <-lmer(Durationlog ~ modifier_3 + (1|bout_number), data=group)
 summary(Malegroup)
@@ -187,17 +187,17 @@ coef(Malegroup)
 plot(ranef(Malegroup))
 plot(Malegroup)
 # Comparing the models 
-anova(lmm.null, Malegroup)
+anova(group_null, group_model)
 
 # Get p-values 
-anova(Malegroup)
+anova(group_model)
 
 # Histogram of residuals 
 
-ggplot(data = group, aes(x = Malegroup$residuals)) +
+ggplot(data = group_merged, aes(x = resid(group_model))) +
   geom_histogram(fill = 'steelblue', color = 'black') +
   labs(title = 'Histogram of Residuals', x = 'Residuals', y = 'Frequency')
 
 # AIC values 
-AIC(lmm.null, Malegroup)
+AIC(group_null, group_model)
 
