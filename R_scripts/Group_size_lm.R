@@ -104,6 +104,8 @@ qqline(group$logDuration, col = "steelblue", lwd = 2) #these look pretty nice
 # Fleur reported in her thesis that group size didn't matter...
 # let's check that my results are not deviated substantially due to change in random effects
 
+origModel<-lmer(logDuration ~ modifier_3 + (1|bout_number), data=group)
+summary(origModel) # no, it still matters...
 
 
 # Grouping >5 fish together in one group and removing extreme values --------
