@@ -391,6 +391,14 @@ chase_data$Difference<- (chase_data$Max_length - chase_data$Min_length)
 chase_data$Chasing_numeric<-ifelse(chase_data$Chasing_present=="Yes",1, 0)
 chase_data$Chasing_end_numeric<-ifelse(chase_data$Chasing_end=="Yes",1, 0)
 ```
+```{r saveChaseData}
+write.csv(chase_data, "processed_data/chase_data.csv", row.names = FALSE)
+```
+```{r}
+chase_data<-read.csv("processed_data/chase_data.csv")
+```
+
+
 
 ### Combining courtship and chasing data
 
