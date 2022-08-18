@@ -1,0 +1,258 @@
+---
+title: "Active courtship analysis"
+output: 
+  bookdown::pdf_document2:
+    fig_caption: yes
+    number_sections: no
+    toc: no
+editor_options: 
+  chunk_output_type: console
+header-includes: |
+  \usepackage{lipsum} \usepackage{float} \floatplacement{figure}{H}
+---
+
+```{r knitsetup, include=FALSE}
+knitr::opts_knit$set(root.dir='../',fig_path="./figs/")
+```
+
+
+```{r chunksetup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,out.extra='',fig.pos="H",
+                      fig.path = "./figs/",
+                      dpi = 300,fig.keep='last',dev='png')
+```
+
+```{r loadLibs, message=FALSE}
+library(stringr)
+library(dplyr)
+library(scales)
+library(tidyverse)
+require(lme4)
+library(knitr)
+library(emmeans)
+library(MuMIn)
+```
+
+```{r}
+sex_cols<-c(Female="#7fc97f",Male="#beaed4")
+trial_pch<-c(0:7,9:10)
+```
+
+```{r}
+behav_data<-read.csv("processed_data/combined_behavioural_data.csv")
+```
+```{r}
+active_data <- behav_data[behav_data$behavior %in% c("Pose","Wiggle"),]
+active_data$logDuration <- log(active_data$Duration)
+active_data$logTotalCourtship <- log(active_data$total_time_of_courtship)
+```
+
+We don't care about Second female vs female so we should re-code those...
+
+```{r}
+active_data$subject[active_data$subject == "Second female"] <- "Female"
+```
+
+One question is whether we want to restrict the analysis to behaviours that are intersexual rather than any female-female interactions.... I think we probably do, so let's remove those observations.
+
+```{r}
+active_data <- active_data[which(active_data$subject != active_data$modifier_2),]
+active_data <- active_data[which(active_data$modifier_2 != "None"),]
+```
+
+
+And we need to ensure that the factors are factors
+
+```{r}
+active_data$subject<- factor(active_data$subject, levels=c("Female","Male"))
+active_data$Trial <- factor(active_data$Trial, levels=c(
+  "Trial 1",
+  "Trial 2",
+  "Trial 3",
+  "Trial 4",
+  "Trial 5",
+  "Trial 6",
+  "Trial 7",
+  "Trial 8",
+  "Trial 9",
+  "Trial 10"
+))
+
+active_data$Time_of_Day <- factor(active_data$Time_of_Day, levels=c(
+  "AM","Noon"
+))
+```
+
+
+
+## Exploratory analysis
+
+```{r}
+table(active_data$behavior, active_data$subject)
+```
+
+
+
+
+```{r}
+par(mfrow=c(2,2))
+hist(active_data$Duration)
+hist(active_data$logDuration)
+hist(active_data$total_time_of_courtship)
+hist(active_data$logTotalCourtship)
+```
+
+
+
+
+What are the things that we want to investigate? 
+
+- sex (aka 'subject')
+- total time of courtship
+- time of day
+- day filmed
+- group size
+- Trial/bout_number (random effect)
+
+```{r}
+summary(active_data[,c("logDuration","subject","Time_of_Day","Day_filmed","total_time_of_courtship","Group_size","Trial","bout_number")])
+```
+
+
+are any of these highly correlated?
+
+
+```{r}
+par(mfrow=c(1,5))
+plot(as.factor(active_data$Trial), as.factor(active_data$subject))
+plot(as.factor(active_data$Trial), active_data$Group_size)
+plot(as.factor(active_data$Trial), active_data$Day_filmed)
+plot(as.factor(active_data$Trial), active_data$total_time_of_courtship)
+plot(as.factor(active_data$Trial), as.factor(active_data$Time_of_Day))
+```
+
+```{r}
+par(mfrow=c(1,5))
+plot(active_data$bout_number, as.factor(active_data$subject))
+plot(active_data$bout_number, active_data$Group_size)
+plot(active_data$bout_number, active_data$Day_filmed)
+plot(active_data$bout_number, active_data$total_time_of_courtship)
+plot(active_data$bout_number, as.factor(active_data$Time_of_Day))
+```
+
+```{r}
+par(mfrow=c(1,4))
+plot(active_data$Group_size, as.factor(active_data$subject))
+plot(active_data$Group_size, active_data$Day_filmed)
+plot(active_data$Group_size, active_data$total_time_of_courtship)
+plot(active_data$Group_size, as.factor(active_data$Time_of_Day))
+```
+
+```{r}
+par(mfrow=c(1,3))
+plot(active_data$Day_filmed, as.factor(active_data$subject))
+plot(active_data$Day_filmed, active_data$total_time_of_courtship)
+plot(active_data$Day_filmed, as.factor(active_data$Time_of_Day))
+```
+
+```{r}
+par(mfrow=c(1,2))
+plot(active_data$total_time_of_courtship, as.factor(active_data$subject))
+plot(active_data$total_time_of_courtship, as.factor(active_data$Time_of_Day))
+```
+
+
+```{r}
+par(mfrow=c(1,1))
+plot(as.factor(active_data$subject), as.factor(active_data$Time_of_Day))
+```
+
+Amazingly there don't seem to be any major relationships between these predictors. 
+
+
+## Model selection
+
+- sex (aka 'subject')
+- total time of courtship
+- time of day
+- day filmed
+- group size
+- Trial/bout_number (random effect)
+
+```{r modelSelection}
+options(na.action = "na.fail")
+
+## full model
+model <-lmer(logDuration ~ subject*Group_size + Time_of_Day * Day_filmed + logTotalCourtship + (1|Trial/bout_number), data=active_data)
+
+
+
+z <- dredge(model, rank = "AICc")
+
+kable(z, "latex",booktab=TRUE,caption="Model selection table")
+```
+
+The top 3 models have very similar AICc scores, and these have subject (1st), subject + group_size (2nd), subject * group_size (3rd). 
+
+```{r BestModel}
+model1 <- lmer(logDuration ~ subject + (1|Trial/bout_number), data=active_data)
+
+summary(model1)
+anova(model1)
+
+plot(model1)
+
+emmeans(model1, list("subject"), pbkrtest.limit=3558)
+```
+
+
+```{r}
+model2 <- lmer(logDuration ~ subject + Group_size +  (1|Trial/bout_number), data=active_data)
+
+summary(model2)
+
+
+
+```
+
+
+```{r}
+model3 <- lmer(logDuration ~ subject* Group_size + (1|Trial/bout_number), data=active_data)
+
+
+```
+
+
+```{r}
+layout(matrix(c(1,2), 1, 2, byrow = TRUE),
+   widths=c(2,3))
+par(mar=c(4,4,2,1))
+# just males and females
+vioplot(active_data$logDuration~active_data$subject,
+        yaxt='n',
+        xlab="",
+        ylab="Display duration (s)",
+        col=sex_cols)
+axis(1,at=c(1,2),labels=c("Female","Male"))
+
+axis(2, at=seq(-6,4,2),
+     labels=round(exp(seq(-6,4,2)),3))
+
+
+# group size
+par(mar=c(4,2,2,2))
+plot(active_data$logDuration~active_data$Group_size,
+     col=sex_cols[active_data$subject],
+     cex=1.5,
+     xlab="Mean group size",
+     ylab="",
+     yaxt='n')
+
+axis(2, at=seq(-6,4,2),
+     labels=round(exp(seq(-6,4,2)),3))
+```
+
+
+
+
+
