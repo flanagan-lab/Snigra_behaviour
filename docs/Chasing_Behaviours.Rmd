@@ -33,7 +33,7 @@ library(VGAM)
 ```
 
 ```{r}
-time_cols<-c(AM="#7fc97f",Noon="#beaed4")
+time_cols<-c(AM="#fc8d62",Noon="#e78ac3")
 trial_pch<-c(0:7,9:10)
 ```
 ```{r}
