@@ -18,9 +18,7 @@ Initiated <- table(chunk7$Initiated) # 0=Male, 1=Female
 # two-sided proportion test
 res<-prop.test(x=Initiated[1], n=sum(Initiated), p = NULL, alternative = "two.sided",
                correct = TRUE)
-# males greater that females -- I'm not sure what this one is meant to be doing, as the numbers don't add up
-res <- prop.test(x =106, n = 136, p = 0.5, correct = FALSE,
-                 alternative = "greater")
+
 
 # Graph 
 barplot(Initiated, main="Sex initiating courtship",
