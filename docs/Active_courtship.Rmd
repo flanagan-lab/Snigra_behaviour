@@ -214,7 +214,7 @@ anova(model1)
 
 plot(model1)
 
-emmeans(model1, list("subject"), pbkrtest.limit=3558)
+emmeans(model1, list("subject"), pbkrtest.limit=3558, type='response')
 ```
 
 
@@ -223,7 +223,7 @@ model2 <- lmer(logDuration ~ subject + Group_size +  (1|Trial/bout_number), data
 
 summary(model2)
 
-
+emmeans(model2, list("subject"), pbkrtest.limit=3558, type='response')
 
 ```
 
