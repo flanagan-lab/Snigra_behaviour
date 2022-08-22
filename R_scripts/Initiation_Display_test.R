@@ -89,5 +89,8 @@ barplot(Comp,
         ylim =c(0,100),
         density=c(0,10,0,10),
         legend=rownames(Comp),
+        args.legend=list(
+          x="right"
+        ),
         col=sex_cols["Female"])
 legend("topright","d)",cex=2,font=2)
