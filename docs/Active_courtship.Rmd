@@ -267,6 +267,19 @@ predicted_probs<-function(mod, tmpdat,column, jvalues){
 ```
 
 ```{r}
+maldat <- active_data[active_data$subject=="Male",c("subject","Group_size","logDuration", "Trial","bout_number")]
+femdat <- active_data[active_data$subject=="Female",c("subject","Group_size","logDuration", "Trial","bout_number")]
+
+jvalues<- seq(from=min(active_data$Group_size), to=max(active_data$Group_size), length.out=100)
+femGrpPredict<- predicted_probs(model3, femdat,"logDuration", jvalues)
+
+malGrpPredict<- predicted_probs(model3, maldat,"logDuration", jvalues)
+
+```
+
+
+
+```{r activityPlots,fig.keep='last', fig.height=4}
 layout(matrix(c(1,2), 1, 2, byrow = TRUE),
    widths=c(2,3))
 par(mar=c(4,4,2,1))
