@@ -74,6 +74,8 @@ layout(matrix(c(1,1,2,3), byrow=TRUE, nrow=2))
 par(mar=c(0,0,0,0))
 plot(im, axes=FALSE)
 
+# initiation
+par(mar=c(4,4,2,1))
 barplot(Initiated, 
         xlab="Sex initiating courtship",
         ylab="Number of courtship events", 
