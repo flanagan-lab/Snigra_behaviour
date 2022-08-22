@@ -93,4 +93,5 @@ barplot(Comp,
           x="right"
         ),
         col=sex_cols["Female"])
-legend("topright","d)",cex=2,font=2)
+legend(y=112,x=1.45,as.expression(bquote(bold("d)"))),cex=2,bty='n',xpd=TRUE)
+dev.off()
