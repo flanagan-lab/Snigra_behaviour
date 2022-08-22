@@ -81,7 +81,7 @@ barplot(Initiated,
         ylab="Number of courtship events", 
         names.arg=c("Male", "Female"), 
         col=sex_cols[c("Male", "Female")])
-legend("topright","c)",cex=2,font=2)
+legend(y=345,x=1.7,as.expression(bquote(bold("c)"))),cex=2,bty='n',xpd=TRUE)
 
 barplot(Comp,
         ylab = "% of female displays",
