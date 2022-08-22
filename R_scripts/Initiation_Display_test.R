@@ -61,8 +61,14 @@ res1 <- prop.test(x =a+c, n = total, p = 0.5, correct = FALSE,
 
 
 # Making a figure for the publication -----------------------
-layout(matrix(c(1,1,2,3), byrow=TRUE, nrow=2))
+
+# some setup -- colors and images
 sex_cols<-c(Female="#7fc97f",Male="#beaed4")
+im<-imager::load.image("./figs/pipefish_photos.png")
+
+## making the plot (looks better if res=1200 but then it's too big for the google doc)
+png("./figs/Fig1_displays.png",height = 7,width=5.75,units = "in", res=500)
+layout(matrix(c(1,1,2,3), byrow=TRUE, nrow=2))
 
 # load the pipefish picture
 imager::load.image("../figs/pipefish_photos.png")
