@@ -1103,7 +1103,7 @@ hist(resid(EndMod), main="",xlab="Residuals")
 
 ### Chasing Plots (final)
 
-```{r plotChasing, fig.height=4.5, fig.width=7, fig.cap="The probability of chasing occurring as a result of group size and duration. The bottom row plots the probability of a bout ending in chasing (given that it contained some chasing behaviour in the first place)."}
+```{r plotChasing, fig.height=4, fig.width=7, fig.cap="The probability of chasing occurring as a result of group size and duration. The bottom row plots the probability of a bout ending in chasing (given that it contained some chasing behaviour in the first place).", fig.keep='last'}
 par(mfrow=c(1,2), mar=c(4,4,2.5,1))
 # group size,
 plot(jitter(bout_data$Chasing_numeric, 0.25)~bout_data$Group_size,
@@ -1213,7 +1213,7 @@ prop_cor<-cor.test(prop_chase$Prop_Yes, prop_chase$Difference,method = "spearman
 ```
 
 
-```{r plotPropChasingBodySize, fig.height=5, fig.width=5, fig.cap="The proportion of time spent chasing in a trial given the maximum difference in female lengths. The points are scaled by the number of bouts in that trial. While a positive trend is apparent from the plot, the correlation is not significant for this sample size of 10 trials."}
+```{r plotPropChasingBodySize, fig.height=5, fig.width=5, fig.cap="The proportion of time spent chasing in a trial given the maximum difference in female lengths. The points are scaled by the number of bouts in that trial. While a positive trend is apparent from the plot, the correlation is not significant for this sample size of 10 trials.", fig.keep='last'}
 plot(prop_chase$Prop_Yes~prop_chase$Difference,
      cex=log(prop_chase$sum)/2,
      pch=19,
