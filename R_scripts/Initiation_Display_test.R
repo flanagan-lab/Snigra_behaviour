@@ -70,8 +70,9 @@ im<-imager::load.image("./figs/pipefish_photos.png")
 png("./figs/Fig1_displays.png",height = 7,width=5.75,units = "in", res=500)
 layout(matrix(c(1,1,2,3), byrow=TRUE, nrow=2))
 
-# load the pipefish picture
-imager::load.image("../figs/pipefish_photos.png")
+#  pipefish pictures
+par(mar=c(0,0,0,0))
+plot(im, axes=FALSE)
 
 barplot(Initiated, 
         xlab="Sex initiating courtship",
