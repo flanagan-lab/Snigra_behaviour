@@ -57,3 +57,26 @@ res<-prop.test(x=a+c, n=total, p = NULL, alternative = "two.sided",
 # Is there there a greater proportion of female displays towards males
 res1 <- prop.test(x =a+c, n = total, p = 0.5, correct = FALSE,
                   alternative = "greater")
+
+
+# Making a figure for the publication -----------------------
+layout(matrix(c(1,1,2,3), byrow=TRUE, nrow=2))
+sex_cols<-c(Female="#7fc97f",Male="#beaed4")
+
+# load the pipefish picture
+imager::load.image("../figs/pipefish_photos.png")
+
+barplot(Initiated, 
+        xlab="Sex initiating courtship",
+        ylab="Number of courtship events", 
+        names.arg=c("Male", "Female"), 
+        col=sex_cols[c("Male", "Female")])
+legend("topright","c)",cex=2,font=2)
+
+barplot(Comp,
+        ylab = "% of female displays",
+        ylim =c(0,100),
+        density=c(0,10,0,10),
+        legend=rownames(Comp),
+        col=sex_cols["Female"])
+legend("topright","d)",cex=2,font=2)
