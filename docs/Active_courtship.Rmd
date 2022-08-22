@@ -200,7 +200,8 @@ model <-lmer(logDuration ~ subject*Group_size + Time_of_Day * Day_filmed + logTo
 
 z <- dredge(model, rank = "AICc")
 
-kable(z, "latex",booktab=TRUE,caption="Model selection table")
+kable(z, "latex",booktab=TRUE,caption="Model selection table") %>% 
+  kable_styling(latex_options=c("HOLD_position", "scale_down")) 
 ```
 
 The top 3 models have very similar AICc scores, and these have subject (1st), subject + group_size (2nd), subject * group_size (3rd). 
