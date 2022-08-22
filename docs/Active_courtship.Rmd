@@ -31,6 +31,8 @@ require(lme4)
 library(knitr)
 library(emmeans)
 library(MuMIn)
+library(vioplot)
+library(kableExtra)
 ```
 
 ```{r}
