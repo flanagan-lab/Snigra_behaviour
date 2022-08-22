@@ -43,6 +43,15 @@ trial_pch<-c(0:7,9:10)
 ```{r}
 behav_data<-read.csv("processed_data/combined_behavioural_data.csv")
 ```
+
+We can summarize the overall behaviours and work out some summary statistics:
+
+```{r}
+behav_tab<-table(behav_data$behavior)
+```
+
+Of the `r nrow(behav_data)` observed behaviours, `r sum(behav_tab[c("Inactive", "Out of sight")])` are either "Inactive" or "Out of sight". Disregarding those, and our 'active' courtship behaviours make up `r sum(behav_tab[c("Pose", "Wiggle")])/(nrow(behav_data) - sum(behav_tab[c("Inactive", "Out of sight")]))*100`. Chasing and surrounding make up the next largest chunk of behaviours, taking `r sum(behav_tab[c("Chasing", "Surrounding")])/(nrow(behav_data) - sum(behav_tab[c("Inactive", "Out of sight")]))*100`.
+
 ```{r}
 active_data <- behav_data[behav_data$behavior %in% c("Pose","Wiggle"),]
 active_data$logDuration <- log(active_data$Duration)
