@@ -85,6 +85,7 @@ legend(y=345,x=1.7,as.expression(bquote(bold("c)"))),cex=2,bty='n',xpd=TRUE)
 
 barplot(Comp,
         ylab = "% of female displays",
+        xlab = "Sex receiving female displays",
         ylim =c(0,100),
         density=c(0,10,0,10),
         legend=rownames(Comp),
