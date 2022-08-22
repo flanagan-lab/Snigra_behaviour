@@ -298,14 +298,52 @@ axis(2, at=seq(-6,4,2),
 # group size
 par(mar=c(4,2,2,2))
 plot(active_data$logDuration~active_data$Group_size,
-     col=sex_cols[active_data$subject],
+     col=scales::alpha(sex_cols[active_data$subject],0.3),
      cex=1.5,
      xlab="Mean group size",
      ylab="",
-     yaxt='n')
+     yaxt='n',
+     pch=c(1,6)[active_data$subject])
 
 axis(2, at=seq(-6,4,2),
      labels=round(exp(seq(-6,4,2)),3))
+
+# add lines
+polygon(c(rev(femGrpPredict$Variable),femGrpPredict$Variable), 
+        c(rev(femGrpPredict$Lower),femGrpPredict$Upper),
+     col = alpha("grey",0.5), border = NA)
+
+
+lines(femGrpPredict$Variable, 
+      femGrpPredict$PredictedProbability, lwd = 2,col=sex_cols["Female"])
+lines(femGrpPredict$Variable, 
+      femGrpPredict$Lower, lwd = 1,col=sex_cols["Female"])
+lines(femGrpPredict$Variable, 
+      femGrpPredict$Upper, lwd = 1,col=sex_cols["Female"])
+
+# add lines
+polygon(c(rev(malGrpPredict$Variable),malGrpPredict$Variable), 
+        c(rev(malGrpPredict$Lower),malGrpPredict$Upper),
+     col = alpha("grey",0.75), border = NA)
+
+
+lines(malGrpPredict$Variable, 
+      malGrpPredict$PredictedProbability, lwd = 2,col=sex_cols["Male"],lty=2)
+lines(malGrpPredict$Variable, 
+      malGrpPredict$Lower, lwd = 1,col=sex_cols["Male"],lty=2)
+lines(malGrpPredict$Variable, 
+      malGrpPredict$Upper, lwd = 1,col=sex_cols["Male"],lty=2)
+
+# add the legend
+
+legend("bottomright",
+       c("Female","Male"),
+       pch=c(1,6),
+       col=sex_cols,
+       lty=c(1,2),
+       lwd=2,
+       cex=1.5,
+       bty='n')
 ```
 
 
