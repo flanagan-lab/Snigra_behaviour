@@ -1,4 +1,5 @@
 # Tests looking at initiation and where the ornament was used more in courtship or competition 
+# run from the top of the project dir (Snigra_behaviour_paper/)
 library(dplyr)
 final_data <- read.csv("processed_data/courtship_data.csv")
 
