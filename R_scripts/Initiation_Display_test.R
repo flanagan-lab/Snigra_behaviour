@@ -73,9 +73,9 @@ par(mfrow=c(1,2),mar=c(4,4,2,1))
 barplot(rev(Initiated), 
         xlab="Sex initiating courtship",
         ylab="Number of courtship events", 
-legend(y=340,x=1.6,as.expression(bquote(bold("A"))),cex=2,bty='n',xpd=TRUE)
         names.arg=c("Female", "Male"), 
         col=sex_cols[c("Female", "Male")])
+legend(y=340,x=-0.4,as.expression(bquote(bold("A"))),cex=2,bty='n',xpd=TRUE)
 
 barplot(Comp[,c(2,1)],
         ylab = "% of female displays",
@@ -86,5 +86,5 @@ barplot(Comp[,c(2,1)],
           x="right"
         ),
         col=sex_cols["Female"])
-legend(y=112,x=1.45,as.expression(bquote(bold("B"))),cex=2,bty='n',xpd=TRUE)
+legend(y=112,x=-0.4,as.expression(bquote(bold("B"))),cex=2,bty='n',xpd=TRUE)
 dev.off()
