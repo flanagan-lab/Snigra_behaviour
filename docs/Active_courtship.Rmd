@@ -288,8 +288,9 @@ vioplot(active_data$logDuration~active_data$subject,
         yaxt='n',
         xlab="",
         ylab="Display duration (s)",
-        col=sex_cols)
-axis(1,at=c(1,2),labels=c("Female","Male"))
+        col=sex_cols,
+        axes=FALSE)
+axis(1,at=c(1,2),labels=c("Female","Male"),lty=0)
 
 axis(2, at=seq(-6,4,2),
      labels=round(exp(seq(-6,4,2)),3))
@@ -306,7 +307,8 @@ plot(active_data$logDuration~active_data$Group_size,
      xlab="Mean group size",
      ylab="",
      yaxt='n',
-     pch=c(1,6)[active_data$subject])
+     pch=c(1,6)[active_data$subject],
+     bty='l')
 
 axis(2, at=seq(-6,4,2),
      labels=round(exp(seq(-6,4,2)),3))
