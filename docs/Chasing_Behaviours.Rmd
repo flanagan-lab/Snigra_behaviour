@@ -1124,6 +1124,10 @@ polygon(c(rev(grpChaseMod_predict$Variable),grpChaseMod_predict$Variable),
 lines(grpChaseMod_predict$Variable, 
       grpChaseMod_predict$PredictedProbability, lwd = 2)
 
+legend("topright",
+       as.expression(bquote(bold("A"))),
+       cex=2,bty='n',xpd=TRUE)
+
 # duration
 plot(jitter(bout_data$Chasing_numeric, 0.25)~bout_data$logDuration,
      xlab="log(Courtship bout duration (s))",
@@ -1151,7 +1155,9 @@ points(jitter(bout_data$Chasing_numeric, 0.25)~bout_data$logDuration,
      col=alpha(time_cols[bout_data$Time_of_Day],0.5),
      cex=1.5)
 
-
+legend("topright",
+       as.expression(bquote(bold("B"))),
+       cex=2,bty='n',xpd=TRUE)
 
 # add a legend to the top
 par(fig=c(0, 1, 0, 1), oma=c(0, 0, 0, 0),
