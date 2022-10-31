@@ -81,10 +81,13 @@ barplot(Comp[,c(2,1)],
         ylab = "% of female displays",
         xlab = "Sex receiving female displays",
         ylim =c(0,100),
+        density=c(0,15,0,15),
         legend=rownames(Comp),
         args.legend=list(
-          x="right"
+          x="left",
+          bty='n'
         ),
-        col=sex_cols["Female"])
+        col=sex_cols["Female"]
+)
 legend(y=112,x=-0.4,as.expression(bquote(bold("B"))),cex=2,bty='n',xpd=TRUE)
 dev.off()
