@@ -66,7 +66,7 @@ res1 <- prop.test(x =a+c, n = total, p = 0.5, correct = FALSE,
 sex_cols<-c(Female="#7fc97f",Male="#beaed4")
 
 ## making the plot (looks better if res=1200 but then it's too big for the google doc)
-png("./figs/Fig1_displays.png",height = 4,width=5.75,units = "in", res=500)
+png("./figs/Fig1_displays.png",height = 3.5,width=5.75,units = "in", res=1000)
 
 # initiation
 par(mfrow=c(1,2),mar=c(4,4,2,1))
