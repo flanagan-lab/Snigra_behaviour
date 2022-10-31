@@ -293,6 +293,9 @@ axis(1,at=c(1,2),labels=c("Female","Male"))
 
 axis(2, at=seq(-6,4,2),
      labels=round(exp(seq(-6,4,2)),3))
+legend("topright",
+       as.expression(bquote(bold("A"))),
+       cex=2,bty='n',xpd=TRUE)
 
 
 # group size
@@ -344,6 +347,10 @@ legend("bottomright",
        lwd=2,
        cex=1.5,
        bty='n')
+
+legend("topright",
+       as.expression(bquote(bold("B"))),
+       cex=2,bty='n',xpd=TRUE)
 ```
 
 
