@@ -64,24 +64,18 @@ res1 <- prop.test(x =a+c, n = total, p = 0.5, correct = FALSE,
 
 # some setup -- colors and images
 sex_cols<-c(Female="#7fc97f",Male="#beaed4")
-im<-imager::load.image("./figs/pipefish_photos.png")
 
 ## making the plot (looks better if res=1200 but then it's too big for the google doc)
-png("./figs/Fig1_displays.png",height = 7,width=5.75,units = "in", res=500)
-layout(matrix(c(1,1,2,3), byrow=TRUE, nrow=2))
-
-#  pipefish pictures
-par(mar=c(0,0,0,0))
-plot(im, axes=FALSE)
+png("./figs/Fig1_displays.png",height = 4,width=5.75,units = "in", res=500)
 
 # initiation
-par(mar=c(4,4,2,1))
+par(mfrow=c(1,2),mar=c(4,4,2,1))
 barplot(Initiated, 
         xlab="Sex initiating courtship",
         ylab="Number of courtship events", 
         names.arg=c("Male", "Female"), 
         col=sex_cols[c("Male", "Female")])
-legend(y=345,x=1.7,as.expression(bquote(bold("c)"))),cex=2,bty='n',xpd=TRUE)
+legend(y=340,x=1.6,as.expression(bquote(bold("A"))),cex=2,bty='n',xpd=TRUE)
 
 barplot(Comp,
         ylab = "% of female displays",
@@ -93,5 +87,5 @@ barplot(Comp,
           x="right"
         ),
         col=sex_cols["Female"])
-legend(y=112,x=1.45,as.expression(bquote(bold("d)"))),cex=2,bty='n',xpd=TRUE)
+legend(y=112,x=1.45,as.expression(bquote(bold("B"))),cex=2,bty='n',xpd=TRUE)
 dev.off()
