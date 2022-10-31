@@ -70,18 +70,17 @@ png("./figs/Fig1_displays.png",height = 4,width=5.75,units = "in", res=500)
 
 # initiation
 par(mfrow=c(1,2),mar=c(4,4,2,1))
-barplot(Initiated, 
+barplot(rev(Initiated), 
         xlab="Sex initiating courtship",
         ylab="Number of courtship events", 
-        names.arg=c("Male", "Female"), 
-        col=sex_cols[c("Male", "Female")])
 legend(y=340,x=1.6,as.expression(bquote(bold("A"))),cex=2,bty='n',xpd=TRUE)
+        names.arg=c("Female", "Male"), 
+        col=sex_cols[c("Female", "Male")])
 
-barplot(Comp,
+barplot(Comp[,c(2,1)],
         ylab = "% of female displays",
         xlab = "Sex receiving female displays",
         ylim =c(0,100),
-        density=c(0,10,0,10),
         legend=rownames(Comp),
         args.legend=list(
           x="right"
