@@ -12,6 +12,12 @@ The code refers to data that is found in two directories in the top of the repo:
 
 The chase behaviour data is in Chase_datasheets/. The files in Chase_datasheets/ can be read in and used for chasing behaviour analysis using code in the R script named `Chasing_data.R`. Note that 3 courtship bouts were deleted from the chase data (but not the courtship data) because there was no active behaviour just chasing and surrounding (bouts 14, 16 and 18).
 
+The files that process data save it to a folder called processed_data/.
+
+### Data availability
+
+Raw video footage is available upon request. The BORIS output files are archived for review purposes on zenodo: https://doi.org/10.5281/zenodo.7471179.
+
 ## Analysis
 
 The analysis is documented in a combination of Rmarkdown documents and R scripts. 
