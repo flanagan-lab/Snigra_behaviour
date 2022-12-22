@@ -1,6 +1,10 @@
 # *Stigmatopora nigra* courtship behaviour analysis
 
-This directory contains the behavioural data from mesocosms containing *S. nigra* males and females (which were run in 2020-2021). It also contains the scripts and Rmd documents used for the analysis of the data.
+This repository documents the analysis of behavioural data collected from video recordings of 10 mesocosms containing *S. nigra* males and females (which were run in 2020-2021). The goals of the study are to:
+
+1. Describe the courtship behaviours of these sexually dimorphic fish
+2. Establish whether one sex is more active in courtship than the other
+3. Determine factors the influence sex-specific behaviours
 
 ## Data
 
