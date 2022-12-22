@@ -63,3 +63,6 @@ The rmarkdown documents are in the folder called docs/. They do the following th
 * `Active_courtship.Rmd`: Processes some data, performs some exploratory plotting, and performs model selection on the variables that predict the duration of courtship behaviours. It also includes the code to create Fig. 2 in the manuscript.
 * `Chasing_Behaviours.Rmd`: Processes some data, performs some exploratory plotting, and performs the generalised linear regression to analyse the probability that chasing will occur. It also includes the code to create Fig. 3 in the manuscript. 
 
+## Author information
+
+Much of this code was written by Fleur van Eyndhoven as part of her MSc thesis at the University of Canterbury. Sarah Flanagan also contributed code and created the final plots for the manuscript.
