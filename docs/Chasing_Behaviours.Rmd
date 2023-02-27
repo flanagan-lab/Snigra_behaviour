@@ -4,7 +4,7 @@ output:
   bookdown::pdf_document2:
     fig_caption: yes
     number_sections: no
-    toc: no
+    toc: yes
 editor_options: 
   chunk_output_type: console
 header-includes: |
