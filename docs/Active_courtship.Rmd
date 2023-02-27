@@ -135,7 +135,7 @@ hist(active_data$logTotalCourtship)
 
 
 
-What are the things that we want to investigate? 
+What are the things that we want to investigate? We first need to check if any of these variables are highly correlated.
 
 - sex (aka 'subject')
 - total time of courtship
