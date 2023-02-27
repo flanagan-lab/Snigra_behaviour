@@ -48,6 +48,8 @@ We can summarize the overall behaviours and work out some summary statistics:
 
 ```{r}
 behav_tab<-table(behav_data$behavior)
+# recode "Second female" to just be "female"
+behav_data$subject[behav_data$subject == "Second female"] <- "Female"
 ```
 
 Of the `r nrow(behav_data)` observed behaviours, `r sum(behav_tab[c("Inactive", "Out of sight")])` are either "Inactive" or "Out of sight". Disregarding those, and our 'active' courtship behaviours make up `r sum(behav_tab[c("Pose", "Wiggle")])/(nrow(behav_data) - sum(behav_tab[c("Inactive", "Out of sight")]))*100`. Chasing and surrounding make up the next largest chunk of behaviours, taking `r sum(behav_tab[c("Chasing", "Surrounding")])/(nrow(behav_data) - sum(behav_tab[c("Inactive", "Out of sight")]))*100`.
@@ -58,11 +60,6 @@ active_data$logDuration <- log(active_data$Duration)
 active_data$logTotalCourtship <- log(active_data$total_time_of_courtship)
 ```
 
-We don't care about Second female vs female so we should re-code those...
-
-```{r}
-active_data$subject[active_data$subject == "Second female"] <- "Female"
-```
 
 One question is whether we want to restrict the analysis to behaviours that are intersexual rather than any female-female interactions.... I think we probably do, so let's remove those observations.
 
