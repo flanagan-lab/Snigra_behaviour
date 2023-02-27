@@ -149,9 +149,6 @@ summary(active_data[,c("logDuration","subject","Time_of_Day","Day_filmed","total
 ```
 
 
-are any of these highly correlated?
-
-
 ```{r}
 par(mfrow=c(1,5))
 plot(as.factor(active_data$Trial), as.factor(active_data$subject))
