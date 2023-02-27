@@ -60,8 +60,7 @@ active_data$logDuration <- log(active_data$Duration)
 active_data$logTotalCourtship <- log(active_data$total_time_of_courtship)
 ```
 
-
-One question is whether we want to restrict the analysis to behaviours that are intersexual rather than any female-female interactions.... I think we probably do, so let's remove those observations.
+Before moving forward with the analysis, we want to restrict the analysis to behaviours that are intersexual rather than any female-female interactions.
 
 ```{r}
 active_data <- active_data[which(active_data$subject != active_data$modifier_2),]
