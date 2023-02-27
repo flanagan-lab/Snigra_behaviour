@@ -240,6 +240,7 @@ emmeans(model1, list("subject"), pbkrtest.limit=3558, type='response')
 model2 <- lmer(logDuration ~ subject + Group_size +  (1|Trial/bout_number), data=active_data)
 
 summary(model2)
+anova(model2)
 
 emmeans(model2, list("subject"), pbkrtest.limit=3558, type='response')
 
@@ -250,8 +251,10 @@ emmeans(model2, list("subject"), pbkrtest.limit=3558, type='response')
 model3 <- lmer(logDuration ~ subject* Group_size + (1|Trial/bout_number), data=active_data)
 
 summary(model3)
+anova(model3)
 
-emm <- emmeans(model3, spec= c('subject','Group_size'), level= 0.95,pbkrtest.limit=3558)
+ emmeans(model3, spec= c('subject','Group_size'), level= 0.95,pbkrtest.limit=3558)
+```
 ```
 
 For plotting, I'll visualize the durations from females and from males, but also the breakdown across group size. I'll then plot the lines and CIs for males and females across group size, if I can figure out how to get those. I'll use the same approach as I did for the Chasing_Behaviours.Rmd.
