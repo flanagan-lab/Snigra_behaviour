@@ -94,10 +94,33 @@ active_data$Time_of_Day <- factor(active_data$Time_of_Day, levels=c(
 
 ## Exploratory analysis
 
+
+How many hours of courtship were recorded? We'll consider the total duration of each courtship bout.
+
+```{r}
+all_courtship_durs<-tapply(behav_data$total_time_of_courtship,
+                           behav_data$bout_number,
+                           max)
+sum(all_courtship_durs)/60/60 #convert to hrs
+summary(all_courtship_durs/60) #in mins
+```
+
+
+What was the total time of active courtship behaviours?
+
+```{r}
+behav_times<-tapply(behav_data$Duration,
+                    behav_data$behavior,
+                    sum)
+court_behavs<-c("Pose","Wiggle","Chasing","Surrounding")
+sum(behav_times[court_behavs])/60/60
+```
+
+
+
 ```{r}
 table(active_data$behavior, active_data$subject)
 ```
-
 
 
 
