@@ -202,6 +202,8 @@ Amazingly there don't seem to be any major relationships between these predictor
 
 ## Model selection
 
+For this analysis we will only consider bouts of courtship that were reciprocated (i.e., both males and females displayed). We will consider the following effects:
+
 - sex (aka 'subject')
 - total time of courtship
 - time of day
