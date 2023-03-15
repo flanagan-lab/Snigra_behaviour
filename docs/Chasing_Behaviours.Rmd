@@ -80,6 +80,8 @@ bout_data<-do.call(rbind,as.list(by(
   INDICES=behav_data$bout_number,
   function(dat){
     bout_dat<- dat[,c("bout_number","Trial", "Time_of_Day","Group_size", "total_time_of_courtship","Chasing_present","Chasing_numeric","Chasing_end","Chasing_end_numeric")]
+    bout_dat<-unique(bout_dat)
+    bout_dat$Group_size<-mean(bout_dat$Group_size)
     return(unique(bout_dat))
   }
   
@@ -136,6 +138,16 @@ plot(table(chase_data$Chasing_present, chase_data$Chasing_end),
 mtext("The bout ended in chasing",2)
 mtext("The bout contained chasing",3)
 ```
+```{r}
+kable(table(bout_data$Chasing_present)/nrow(bout_data)*100,"latex",booktab=TRUE)
+```
+
+Of the bouts with chasing, how many had chasing as the final behaviour?
+
+```{r}
+table(bout_data$Chasing_end[bout_data$Chasing_present=="Yes"])/sum(table(bout_data$Chasing_end[bout_data$Chasing_present=="Yes"]))*100
+```
+
 
 Before fitting models, we also want to check if:
 - the variances of data (transformed by the link function) are homogeneous across categories
@@ -220,6 +232,11 @@ ChaseMod<- glmer(Chasing_numeric~Group_size*logDuration+ (1|Time_of_Day) +(1|Tri
 ChaseModSum<-summary(ChaseMod)
 ChaseModANOVA<-anova(ChaseMod)
 
+ChaseModSum
+```
+
+
+```{r ChasingModEst}
 # get standard errors
 ChaseMod_SE <- sqrt(diag(vcov(ChaseMod)))
 
@@ -365,7 +382,10 @@ ChaseMod_noOut<- glmer(Chasing_numeric~Group_size*logDuration+ (1|Time_of_Day) +
                     data=bout_data_noOut)
 ChaseMod_noOutSum<-summary(ChaseMod_noOut)
 ChaseMod_noOutANOVA<-anova(ChaseMod_noOut)
+```
 
+
+```{r chaseModNoOutEst}
 # get standard errors
 ChaseMod_noOut_SE <- sqrt(diag(vcov(ChaseMod_noOut)))
 
@@ -480,7 +500,11 @@ EndMod<- glmer(Chasing_end_numeric~Group_size*logDuration+(1|Time_of_Day) +(1|Tr
                data=chase_end_data)
 EndModSum<-summary(EndMod)
 EndModAnova<-anova(EndMod)
+EndModSum
+```
 
+
+```{r EndModEst}
 # get standard errors
 EndMod_SE <- sqrt(diag(vcov(EndMod)))
 
@@ -759,6 +783,7 @@ The best approach to analysing proportion data is to use a beta regression or a 
 
 ```{r propCor, warning=FALSE}
 prop_cor<-cor.test(prop_chase$Prop_Yes, prop_chase$Difference,method = "spearman")
+prop_cor
 ```
 
 
