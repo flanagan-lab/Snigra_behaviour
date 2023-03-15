@@ -54,6 +54,158 @@ behav_data$subject[behav_data$subject == "Second female"] <- "Female"
 
 Of the `r nrow(behav_data)` observed behaviours, `r sum(behav_tab[c("Inactive", "Out of sight")])` are either "Inactive" or "Out of sight". Disregarding those, and our 'active' courtship behaviours make up `r sum(behav_tab[c("Pose", "Wiggle")])/(nrow(behav_data) - sum(behav_tab[c("Inactive", "Out of sight")]))*100`. Chasing and surrounding make up the next largest chunk of behaviours, taking `r sum(behav_tab[c("Chasing", "Surrounding")])/(nrow(behav_data) - sum(behav_tab[c("Inactive", "Out of sight")]))*100`.
 
+## Exploratory analysis
+
+
+How many hours of courtship were recorded? We'll consider the total duration of each courtship bout.
+
+```{r}
+all_courtship_durs<-tapply(behav_data$total_time_of_courtship,
+                           behav_data$bout_number,
+                           max)
+sum(all_courtship_durs)/60/60 #convert to hrs
+summary(all_courtship_durs/60) #in mins
+```
+
+```{r}
+hist(all_courtship_durs/60,
+     xlab="Courtship bout duration (min)",
+     ylab="Number of bouts",
+     main="")
+```
+
+```{r}
+long_bout<-behav_data[behav_data$bout_number==217,]
+```
+
+One thing to check is that we haven't accidentally grouped bouts by accidentally including extra long inactive behaviours. In many cases one individual will be inactive while others are active, so it's important to check the timepoints surrounding each of the longer inactive moments.
+
+```{r}
+long_inactives<-rownames(behav_data[behav_data$behavior=="Inactive" & behav_data$Duration > 60,])
+check_inactives<-unlist(lapply(long_inactives, function(x){
+  
+  this_bout<-behav_data[behav_data$bout_number==behav_data[x,"bout_number"],]
+  long_start<-behav_data[x,"time_in_video"]
+  long_end<-behav_data[x,"time_in_video"]+behav_data[x,"Duration"]
+  # other behavs can happen during this time by other inds
+  other_activ<-this_bout[this_bout$time_in_video > long_start & 
+                           round(this_bout$time_in_video,2) <= round(long_end,2),]
+  if(nrow(other_activ)==0){
+    # some of the long ones are the last obs and that's ok
+    if(rownames(this_bout)[nrow(this_bout)] != x){
+      browser()
+      return(this_bout[1,"bout_number"])
+    }
+    
+  }
+}))
+print(check_inactives[!is.null(check_inactives)])
+```
+
+Several got checked -- most are ones where behaviours resumed within 0.001 sec of the end of the inactive behaviour. It's possible some of those should be split into separate bouts. Others are ones where the time in the video is re-set, presumably because each video was split into multiple chunks by the camera. Those are harder for me to check. 
+
+What was the total time of active courtship behaviours?
+
+```{r}
+behav_times<-tapply(behav_data$Duration,
+                    behav_data$behavior,
+                    sum)
+court_behavs<-c("Pose","Wiggle","Chasing","Surrounding")
+sum(behav_times[court_behavs])/60/60
+```
+
+## Initiation
+
+Which sex initiated displays more frequently?
+
+```{r}
+initiation<-as.data.frame(do.call(rbind,by(behav_data,
+               behav_data$bout_number,
+               function(bout_dat){ 
+                 
+                 active<-bout_dat[bout_dat$behavior != "Inactive",]
+                 initiator<-active[1,"subject"]
+                 if(length(table(active$subject))>1){
+                   reciprocated<-TRUE
+                 } else{
+                   reciprocated<-FALSE
+                 }
+                 return(c(initiatior = initiator, reciprocated=reciprocated, bout=bout_dat$bout_number[1]))
+               }
+               )))
+reciprocated<-initiation[initiation$reciprocated==TRUE,]
+nrow(reciprocated)/nrow(initiation)
+```
+```{r}
+
+recipInit<-table(reciprocated$initiatior)
+
+recipInit/sum(recipInit)*100
+
+# two-sided proportion test
+res<-prop.test(x=recipInit[1], n=sum(recipInit), p = NULL, alternative = "two.sided",
+               correct = TRUE)
+
+```
+
+## Who do females display to?
+
+```{r}
+# active behavs from females
+Comp<- behav_data[!(behav_data$subject=="Male") & behav_data$behavior %in% c("Wiggle","Pose"),] 
+# Number of female displays towards either males or females and those displays split into type of display
+a <-sum(Comp$behavior == "Wiggle" & Comp$modifier_2 == "Male") 
+b <-sum(Comp$behavior == "Wiggle" & Comp$modifier_2 == "Female")
+c <-sum(Comp$behavior == "Pose" & Comp$modifier_2 == "Male")
+d <-sum(Comp$behavior == "Pose" & Comp$modifier_2 == "Female")
+total <- sum(c(a,b,c,d))
+Comp <- matrix(c((a/total),(b/total),(c/total),(d/total)),ncol=2,byrow=TRUE)
+colnames(Comp)<-c("Male", "Female")
+rownames(Comp)<- c("Wiggle", "Pose")
+Comp <- as.table(Comp*100)
+kable(Comp)
+```
+
+Is there a difference between female displays towards female and males?
+```{r}
+prop.test(x=a+c, n=total, p = NULL, alternative = "two.sided",
+               correct = TRUE)
+```
+
+```{r Fig1Displays, out.height='3.5in', out.width='5.75in', dpi=300, fig.keep='last'}
+#png("./figs/Fig1_displays.png",height = 3.5,width=5.75,units = "in", res=1000)
+
+# initiation
+par(mfrow=c(1,2),mar=c(4,4,2,1))
+barplot(recipInit, 
+        xlab="Sex initiating courtship",
+        ylab="Number of courtship events", 
+        names.arg=c("Female", "Male"), 
+        col=sex_cols[c("Female", "Male")],
+        ylim=c(0,200))
+legend(y=200,x=-0.4,as.expression(bquote(bold("A"))),cex=2,bty='n',xpd=TRUE)
+
+barplot(Comp[,c(2,1)],
+        ylab = "% of female displays",
+        xlab = "Sex receiving female displays",
+        ylim =c(0,100),
+        density=c(0,15,0,15),
+        legend=rownames(Comp),
+        args.legend=list(
+          x="left",
+          bty='n'
+        ),
+        col=sex_cols["Female"]
+)
+legend(y=100,x=-0.4,as.expression(bquote(bold("B"))),cex=2,bty='n',xpd=TRUE)
+#dev.off()
+
+```
+
+
+## Active behaviours
+
+
 ```{r}
 active_data <- behav_data[behav_data$behavior %in% c("Pose","Wiggle"),]
 active_data$logDuration <- log(active_data$Duration)
@@ -90,34 +242,6 @@ active_data$Time_of_Day <- factor(active_data$Time_of_Day, levels=c(
 ))
 ```
 
-
-
-## Exploratory analysis
-
-
-How many hours of courtship were recorded? We'll consider the total duration of each courtship bout.
-
-```{r}
-all_courtship_durs<-tapply(behav_data$total_time_of_courtship,
-                           behav_data$bout_number,
-                           max)
-sum(all_courtship_durs)/60/60 #convert to hrs
-summary(all_courtship_durs/60) #in mins
-```
-
-
-What was the total time of active courtship behaviours?
-
-```{r}
-behav_times<-tapply(behav_data$Duration,
-                    behav_data$behavior,
-                    sum)
-court_behavs<-c("Pose","Wiggle","Chasing","Surrounding")
-sum(behav_times[court_behavs])/60/60
-```
-
-
-
 ```{r}
 table(active_data$behavior, active_data$subject)
 ```
@@ -131,9 +255,6 @@ hist(active_data$logDuration)
 hist(active_data$total_time_of_courtship)
 hist(active_data$logTotalCourtship)
 ```
-
-
-
 
 What are the things that we want to investigate? We first need to check if any of these variables are highly correlated.
 
@@ -199,7 +320,14 @@ Amazingly there don't seem to be any major relationships between these predictor
 
 ## Model selection
 
-For this analysis we will only consider bouts of courtship that were reciprocated (i.e., both males and females displayed). We will consider the following effects:
+For this analysis we will only consider bouts of courtship that were reciprocated (i.e., both males and females displayed). 
+
+```{r}
+active_data<-active_data[active_data$bout_number %in% reciprocated$bout,]
+```
+
+
+We will consider the following effects:
 
 - sex (aka 'subject')
 - total time of courtship
