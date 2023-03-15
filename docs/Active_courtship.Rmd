@@ -54,6 +54,44 @@ behav_data$subject[behav_data$subject == "Second female"] <- "Female"
 
 Of the `r nrow(behav_data)` observed behaviours, `r sum(behav_tab[c("Inactive", "Out of sight")])` are either "Inactive" or "Out of sight". Disregarding those, and our 'active' courtship behaviours make up `r sum(behav_tab[c("Pose", "Wiggle")])/(nrow(behav_data) - sum(behav_tab[c("Inactive", "Out of sight")]))*100`. Chasing and surrounding make up the next largest chunk of behaviours, taking `r sum(behav_tab[c("Chasing", "Surrounding")])/(nrow(behav_data) - sum(behav_tab[c("Inactive", "Out of sight")]))*100`.
 
+```{r}
+active_data <- behav_data[behav_data$behavior %in% c("Pose","Wiggle"),]
+active_data$logDuration <- log(active_data$Duration)
+active_data$logTotalCourtship <- log(active_data$total_time_of_courtship)
+```
+
+Before moving forward with the analysis, we want to restrict the analysis to behaviours that are intersexual rather than any female-female interactions.
+
+```{r}
+active_data <- active_data[which(active_data$subject != active_data$modifier_2),]
+active_data <- active_data[which(active_data$modifier_2 != "None"),]
+```
+
+
+And we need to ensure that the factors are factors
+
+```{r}
+active_data$subject<- factor(active_data$subject, levels=c("Female","Male"))
+active_data$Trial <- factor(active_data$Trial, levels=c(
+  "Trial 1",
+  "Trial 2",
+  "Trial 3",
+  "Trial 4",
+  "Trial 5",
+  "Trial 6",
+  "Trial 7",
+  "Trial 8",
+  "Trial 9",
+  "Trial 10"
+))
+
+active_data$Time_of_Day <- factor(active_data$Time_of_Day, levels=c(
+  "AM","Noon"
+))
+```
+
+
+
 ## Exploratory analysis
 
 
@@ -93,7 +131,6 @@ check_inactives<-unlist(lapply(long_inactives, function(x){
   if(nrow(other_activ)==0){
     # some of the long ones are the last obs and that's ok
     if(rownames(this_bout)[nrow(this_bout)] != x){
-      browser()
       return(this_bout[1,"bout_number"])
     }
     
@@ -102,7 +139,7 @@ check_inactives<-unlist(lapply(long_inactives, function(x){
 print(check_inactives[!is.null(check_inactives)])
 ```
 
-Several got checked -- most are ones where behaviours resumed within 0.001 sec of the end of the inactive behaviour. It's possible some of those should be split into separate bouts. Others are ones where the time in the video is re-set, presumably because each video was split into multiple chunks by the camera. Those are harder for me to check. 
+Each of these were checked -- most are ones where behaviours resumed within 0.001 sec of the end of the inactive behaviour. It's possible some of those should be split into separate bouts. Others are ones where the time in the video is re-set, presumably because each video was split into multiple chunks by the camera. Those are harder for me to check. 
 
 What was the total time of active courtship behaviours?
 
