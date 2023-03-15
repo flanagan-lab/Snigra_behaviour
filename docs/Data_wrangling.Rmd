@@ -400,6 +400,11 @@ write.csv(chase_data, "processed_data/chase_data.csv", row.names = FALSE)
 
 ### Combining courtship and chasing data
 
+```{r}
+court_data<-read.csv("processed_data/courtship_data.csv")
+chase_data<-read.csv("processed_data/chase_data.csv")
+```
+
 ```{r createUniqueID}
 court_data$combo<-paste(gsub("\\s+","",court_data$media_file_path), 
                         court_data$time_in_video, 
@@ -430,6 +435,11 @@ by="combo")
 # remove any unnecessarily duplicated ones
 behav_data<-unique(behav_data)
 
+# re-order each bout based on time points
+behav_data<-do.call(rbind,by(behav_data,behav_data$bout_number,function(bout_dat){
+  sort_dat<-bout_dat[order(bout_dat$time_in_video),]
+  return(sort_dat)
+}))
 ```
 
 So, there are some interesting issues. There are fewer chasing observations than courtship observations, but this is expected -- chasing only occurred in intersexual contexts, and the courtship data contains some same-sex interactions. The courtship dataset also contains a few observations without active courtship from all participants, which were excluded from analyses.
