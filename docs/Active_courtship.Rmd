@@ -151,7 +151,9 @@ court_behavs<-c("Pose","Wiggle","Chasing","Surrounding")
 sum(behav_times[court_behavs])/60/60
 ```
 
+
 ## Initiation
+
 
 Which sex initiated displays more frequently?
 
@@ -174,15 +176,11 @@ reciprocated<-initiation[initiation$reciprocated==TRUE,]
 nrow(reciprocated)/nrow(initiation)
 ```
 ```{r}
-
 recipInit<-table(reciprocated$initiatior)
-
 recipInit/sum(recipInit)*100
-
 # two-sided proportion test
 res<-prop.test(x=recipInit[1], n=sum(recipInit), p = NULL, alternative = "two.sided",
                correct = TRUE)
-
 ```
 
 ## Who do females display to?
@@ -202,16 +200,13 @@ rownames(Comp)<- c("Wiggle", "Pose")
 Comp <- as.table(Comp*100)
 kable(Comp)
 ```
-
 Is there a difference between female displays towards female and males?
 ```{r}
 prop.test(x=a+c, n=total, p = NULL, alternative = "two.sided",
                correct = TRUE)
 ```
-
 ```{r Fig1Displays, out.height='3.5in', out.width='5.75in', dpi=300, fig.keep='last'}
 #png("./figs/Fig1_displays.png",height = 3.5,width=5.75,units = "in", res=1000)
-
 # initiation
 par(mfrow=c(1,2),mar=c(4,4,2,1))
 barplot(recipInit, 
@@ -221,7 +216,6 @@ barplot(recipInit,
         col=sex_cols[c("Female", "Male")],
         ylim=c(0,200))
 legend(y=200,x=-0.4,as.expression(bquote(bold("A"))),cex=2,bty='n',xpd=TRUE)
-
 barplot(Comp[,c(2,1)],
         ylab = "% of female displays",
         xlab = "Sex receiving female displays",
@@ -236,9 +230,7 @@ barplot(Comp[,c(2,1)],
 )
 legend(y=100,x=-0.4,as.expression(bquote(bold("B"))),cex=2,bty='n',xpd=TRUE)
 #dev.off()
-
 ```
-
 
 ## Active behaviours
 
@@ -255,10 +247,7 @@ Before moving forward with the analysis, we want to restrict the analysis to beh
 active_data <- active_data[which(active_data$subject != active_data$modifier_2),]
 active_data <- active_data[which(active_data$modifier_2 != "None"),]
 ```
-
-
 And we need to ensure that the factors are factors
-
 ```{r}
 active_data$subject<- factor(active_data$subject, levels=c("Female","Male"))
 active_data$Trial <- factor(active_data$Trial, levels=c(
@@ -273,7 +262,6 @@ active_data$Trial <- factor(active_data$Trial, levels=c(
   "Trial 9",
   "Trial 10"
 ))
-
 active_data$Time_of_Day <- factor(active_data$Time_of_Day, levels=c(
   "AM","Noon"
 ))
@@ -292,6 +280,9 @@ hist(active_data$logDuration)
 hist(active_data$total_time_of_courtship)
 hist(active_data$logTotalCourtship)
 ```
+
+
+
 
 What are the things that we want to investigate? We first need to check if any of these variables are highly correlated.
 
