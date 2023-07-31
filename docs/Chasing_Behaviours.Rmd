@@ -199,30 +199,7 @@ logit_back<-function(y) { return(exp(y)/(1+exp(y))) }
 
 ```
 ```{r}
-predicted_probs<-function(mod, tmpdat,column, jvalues){
-  # calculate predicted probabilities and store in a list
-  pp <- lapply(jvalues, function(j) {
-    
-      tmpdat[,column] <- j
-      p<-predict(mod, newdata = tmpdat, type = "response")
-      
-      return(p)
-  })
-  
-  # get the means with lower and upper quartiles
-  plotdat <- t(sapply(pp, function(x) {
-    
-      c(M = mean(x), quantile(x, c(0.2, 0.8)))
-  }))
-  
-  # add in LengthofStay values and convert to data frame
-  plotdat <- as.data.frame(cbind(plotdat, jvalues))
-  
-  # better names and show the first few rows
-  colnames(plotdat) <- c("PredictedProbability", "Lower", "Upper", "Variable")
-  
-  return(plotdat)
-}
+source("R_scripts/predicted_probs.R")
 ```
 
 ```{r ChasingMod}
