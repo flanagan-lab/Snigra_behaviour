@@ -318,7 +318,7 @@ par(mfrow=c(1,1))
 plot(as.factor(active_data$subject), as.factor(active_data$Time_of_Day))
 ```
 
-Amazingly there don't seem to be any major relationships between these predictors. 
+There don't seem to be any major relationships between these predictors. 
 
 
 ## Model selection
@@ -330,7 +330,7 @@ active_data<-active_data[active_data$bout_number %in% reciprocated$bout,]
 ```
 
 
-We will consider the following effects:
+We will consider the following effects and perform model selection:
 
 - sex (aka 'subject')
 - total time of courtship
