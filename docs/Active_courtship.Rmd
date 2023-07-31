@@ -173,7 +173,9 @@ rownames(Comp)<- c("Wiggle", "Pose")
 Comp <- as.table(Comp*100)
 kable(Comp)
 ```
+
 Is there a difference between female displays towards female and males?
+
 ```{r}
 prop.test(x=a+c, n=total, p = NULL, alternative = "two.sided",
                correct = TRUE)
