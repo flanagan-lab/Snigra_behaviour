@@ -153,6 +153,7 @@ recipInit/sum(recipInit)*100
 # two-sided proportion test
 res<-prop.test(x=recipInit[1], n=sum(recipInit), p = NULL, alternative = "two.sided",
                correct = TRUE)
+res
 ```
 
 ## To whom do females display?
