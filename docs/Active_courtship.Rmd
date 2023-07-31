@@ -351,6 +351,8 @@ z <- dredge(model, rank = "AICc")
 
 kable(z, "latex",booktab=TRUE,caption="Model selection table") %>% 
   kable_styling(latex_options=c("HOLD_position", "scale_down")) 
+
+write.csv(z,"docs/model_selection_behavior.csv")
 ```
 
 The top 3 models have very similar AICc scores, and these have subject (1st), subject + group_size (2nd), subject * group_size (3rd). 
