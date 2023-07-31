@@ -524,3 +524,43 @@ and missing from chasing"),
 write.csv(behav_data, "processed_data/combined_behavioural_data.csv", row.names = FALSE)
 ```
 
+## Checking data
+
+We will do a few checks of the data to ensure there are no discrepancies in coding bouts and behaviours.
+
+One thing to check is that we haven't accidentally grouped bouts by accidentally including extra long inactive behaviours. In many cases one individual will be inactive while others are active, so it's important to check the timepoints surrounding each of the longer inactive moments.
+
+```{r checkInactives}
+long_inactives<-rownames(behav_data[behav_data$behavior=="Inactive" & behav_data$Duration > 60,])
+check_inactives<-unlist(lapply(long_inactives, function(x){
+  
+  this_bout<-behav_data[behav_data$bout_number==behav_data[x,"bout_number"],]
+  long_start<-behav_data[x,"time_in_video"]
+  long_end<-behav_data[x,"time_in_video"]+behav_data[x,"Duration"]
+  # other behavs can happen during this time by other inds
+  other_activ<-this_bout[this_bout$time_in_video > long_start & 
+                           round(this_bout$time_in_video,2) <= round(long_end,2),]
+  if(nrow(other_activ)==0){
+    # some of the long ones are the last obs and that's ok
+    if(rownames(this_bout)[nrow(this_bout)] != x){
+      return(this_bout[1,"bout_number"])
+    }
+    
+  }
+}))
+print(check_inactives[!is.null(check_inactives)])
+
+
+```
+
+One time when a long inactive time is acceptable is at the very end of the bout, as the final behaviour for one of the individuals.
+
+```{r}
+check_bouts<-behav_data[long_inactives[check_inactives[!is.null(check_inactives)]],"bout_number"]
+
+for(i in 1:length(check_bouts)){
+  print(tail(behav_data[behav_data$bout_number==check_bouts[i],]))
+}
+```
+
+Each of these were checked -- most are ones where behaviours resumed within 0.001 sec of the end of the inactive behaviour. All of these long inactive times that are left over appear to occur as the last behaviour for one individual towards the end of the bout, so these are deemed ok. 
