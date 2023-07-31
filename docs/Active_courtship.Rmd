@@ -155,7 +155,7 @@ res<-prop.test(x=recipInit[1], n=sum(recipInit), p = NULL, alternative = "two.si
                correct = TRUE)
 ```
 
-## Who do females display to?
+## To whom do females display?
 
 ```{r}
 # active behavs from females
