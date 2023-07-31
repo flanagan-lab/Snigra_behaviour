@@ -365,7 +365,8 @@ anova(model1)
 
 plot(model1)
 
-emmeans(model1, list("subject"), pbkrtest.limit=3558, type='response')
+m1<-emmeans(model1, list("subject"), pbkrtest.limit=3558, type='response')
+m1
 ```
 
 
@@ -375,8 +376,8 @@ model2 <- lmer(logDuration ~ subject + Group_size +  (1|Trial/bout_number), data
 summary(model2)
 anova(model2)
 
-emmeans(model2, list("subject"), pbkrtest.limit=3558, type='response')
-
+m2<-emmeans(model2, list("subject"), pbkrtest.limit=3558, type='response')
+m2
 ```
 
 
@@ -386,7 +387,8 @@ model3 <- lmer(logDuration ~ subject* Group_size + (1|Trial/bout_number), data=a
 summary(model3)
 anova(model3)
 
- emmeans(model3, spec= c('subject','Group_size'), level= 0.95,pbkrtest.limit=3558)
+m3<-emmeans(model3, spec= c('subject','Group_size'), level= 0.95,pbkrtest.limit=3558)
+m3
 ```
 
 
@@ -396,7 +398,8 @@ model4 <- lmer(logDuration ~ subject + Group_size + Time_of_Day + (1|Trial/bout_
 summary(model4)
 anova(model4)
 
-emmeans(model4, spec= c('subject','Group_size', 'Time_of_Day'), level= 0.95,pbkrtest.limit=3558)
+m4<-emmeans(model4, spec= c('subject','Group_size', 'Time_of_Day'), level= 0.95,pbkrtest.limit=3558)
+m4
 ```
 
 
@@ -405,7 +408,31 @@ model5 <- lmer(logDuration ~ subject + Time_of_Day + (1|Trial/bout_number), data
 
 summary(model5)
 
-emmeans(model5, spec= c('subject','Time_of_Day'), level= 0.95,pbkrtest.limit=3558)
+m5<-emmeans(model5, spec= c('subject','Time_of_Day'), level= 0.95,pbkrtest.limit=3558)
+m5
+```
+
+```{r}
+top5<-bind_rows(
+  mod1=data.frame(m1)[1,],
+  mod1=data.frame(m1)[2,],
+  mod2=data.frame(m2)[1,],
+  mod2=data.frame(m2)[2,],
+  mod3=data.frame(m3)[1,],
+  mod3=data.frame(m3)[2,],
+  mod4=data.frame(m4)[1,],
+  mod4=data.frame(m4)[2,],
+  mod4=data.frame(m4)[3,],
+  mod4=data.frame(m4)[4,],
+  mod5=data.frame(m5)[1,],
+  mod5=data.frame(m5)[2,],
+  mod5=data.frame(m5)[3,],
+  mod5=data.frame(m5)[4,],
+  .id = "model"
+  
+  )
+
+write.csv(top5,"active_top5models.csv")
 ```
 
 For plotting, I'll visualize the durations from females and from males, but also the breakdown across group size. I'll then plot the lines and CIs for males and females across group size, if I can figure out how to get those. I'll use the same approach as I did for the Chasing_Behaviours.Rmd.
