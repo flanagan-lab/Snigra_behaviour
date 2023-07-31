@@ -435,7 +435,8 @@ top5<-bind_rows(
 write.csv(top5,"active_top5models.csv")
 ```
 
-For plotting, I'll visualize the durations from females and from males, but also the breakdown across group size. I'll then plot the lines and CIs for males and females across group size, if I can figure out how to get those. I'll use the same approach as I did for the Chasing_Behaviours.Rmd.
+
+For plotting, I'll visualize the durations from females and from males, but also the breakdown across group size. I'll also plot the lines and CIs for males and females across group size, using the function `predicted_probs()` in `predicted_probs.R` (also used in `Chasing_Behaviours.Rmd`).
 
 
 ```{r}
