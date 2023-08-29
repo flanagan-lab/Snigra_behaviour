@@ -586,12 +586,18 @@ pheno_data$Sex <- as.factor(pheno_data$Sex)
 
 ```{r sizePlots}
 par(mfrow=c(1,2))
-plot(pheno_data$TL..cm.~pheno_data$Trial_actual,
+plot(pheno_data$TL..cm.~as.numeric(pheno_data$Trial_actual),
      xlab="trial",
      ylab="total length (cm)",
-     pch=as.numeric(as.factor(pheno_data$Sex)))
+     pch=as.numeric(as.factor(pheno_data$Sex)),
+     ylim=c(70,140))
+legend("top",
+       c("Male","Female"),
+       pch=as.numeric(as.factor(c("Male","Female"))),
+       ncol=2,
+       bty='n')
 plot(pheno_data$TL..cm.~as.factor(pheno_data$Sex),
-     xlab="",
+     xlab="sex",
      ylab="total length (cm)")
 ```
 
