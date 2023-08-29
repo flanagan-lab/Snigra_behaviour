@@ -123,6 +123,16 @@ court_behavs<-c("Pose","Wiggle","Chasing","Surrounding")
 sum(behav_times[court_behavs])/60/60
 ```
 
+How about group sizes?
+
+```{r}
+group_sizes<-tapply(behav_data$Group_size,
+                    behav_data$bout_number,
+                    mean)
+hist(group_sizes)
+```
+
+The average group size was `r mean(group_sizes)`, with a minimum of `r min(group_sizes)` and a maximum of `r max(group_sizes)`.
 
 ## Initiation
 
