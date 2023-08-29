@@ -32,6 +32,12 @@ library(knitr)
 library(VGAM)
 library(fBasics)
 ```
+```{r spftools}
+if(length(system.file(package='spfTools'))<=1){
+  devtools::install_github("https://github.com/spflanagan/spfTools/")
+}
+library(spfTools)
+```
 
 ```{r}
 time_cols<-c(AM="#fc8d62",Noon="#e78ac3")
