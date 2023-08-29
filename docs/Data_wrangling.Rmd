@@ -30,6 +30,7 @@ library(tidyverse)
 require(lme4)
 library(knitr)
 library(VGAM)
+library(fBasics)
 ```
 
 ```{r}
@@ -564,3 +565,40 @@ for(i in 1:length(check_bouts)){
 ```
 
 Each of these were checked -- most are ones where behaviours resumed within 0.001 sec of the end of the inactive behaviour. All of these long inactive times that are left over appear to occur as the last behaviour for one individual towards the end of the bout, so these are deemed ok. 
+
+
+## Phenotype data
+
+I need to compare the phenotype data between trials for both sexes. I will focus on total length, despite it being imperfect, because some of the images were not high enough quality to test snout-vent length (SVL). 
+
+```{r readPheno}
+pheno_data<-read.csv("phenotype_data.csv")
+```
+
+```{r sizePlots}
+par(mfrow=c(1,2))
+plot(pheno_data$TL..cm.~pheno_data$Trial_actual,
+     xlab="trial",
+     ylab="total length (cm)")
+plot(pheno_data$TL..cm.~as.factor(pheno_data$Sex),
+     xlab="",
+     ylab="total length (cm)")
+```
+
+The data appear roughly normally distributed but I can test it:
+
+```{r normalTest}
+normalTest(pheno_data$TL..cm., method="da")
+```
+
+Overall it appears to be consistent with a normal distribution, though there might be some skewness.
+
+```{r anova}
+pheno_aov<-aov(pheno_data$TL..cm.~as.factor(pheno_data$Sex)*as.factor(pheno_data$Trial_actual))
+summary(pheno_aov)
+```
+
+
+Males and females have significantly different total lengths (unsurprisingly), but body size does not differ between trials and there is no interaction between sex and trial. 
+
+
