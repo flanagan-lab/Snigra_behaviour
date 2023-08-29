@@ -588,7 +588,8 @@ pheno_data$Sex <- as.factor(pheno_data$Sex)
 par(mfrow=c(1,2))
 plot(pheno_data$TL..cm.~pheno_data$Trial_actual,
      xlab="trial",
-     ylab="total length (cm)")
+     ylab="total length (cm)",
+     pch=as.numeric(as.factor(pheno_data$Sex)))
 plot(pheno_data$TL..cm.~as.factor(pheno_data$Sex),
      xlab="",
      ylab="total length (cm)")
