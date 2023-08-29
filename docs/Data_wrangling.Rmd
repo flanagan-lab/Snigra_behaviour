@@ -579,6 +579,9 @@ I need to compare the phenotype data between trials for both sexes. I will focus
 
 ```{r readPheno}
 pheno_data<-read.csv("phenotype_data.csv")
+pheno_data<-pheno_data[!is.na(pheno_data$Trial_actual),]
+pheno_data$Trial_actual<-as.factor(pheno_data$Trial_actual)
+pheno_data$Sex <- as.factor(pheno_data$Sex)
 ```
 
 ```{r sizePlots}
