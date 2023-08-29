@@ -359,10 +359,14 @@ model <-lmer(logDuration ~ subject*Group_size + Time_of_Day * Day_filmed + logTo
 
 z <- dredge(model, rank = "AICc")
 
+ztab<-as.data.frame(z)
+ztab$model<-gsub("^.*lmer\\(formula = (.*), data.*$","\\1",as.vector(attr(z,"model.calls")))
+
+
 kable(z, "latex",booktab=TRUE,caption="Model selection table") %>% 
   kable_styling(latex_options=c("HOLD_position", "scale_down")) 
 
-write.csv(z,"docs/model_selection_behavior.csv")
+write.csv(ztab,"docs/3_RoyalSocOpenSci/1_R1/Supp1_model_selection_behavior.csv")
 ```
 
 The top 3 models have very similar AICc scores, and these have subject (1st), subject + group_size (2nd), subject * group_size (3rd). 
