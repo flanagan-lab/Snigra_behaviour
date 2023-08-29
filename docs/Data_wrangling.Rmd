@@ -604,7 +604,7 @@ normalTest(pheno_data$TL..cm., method="da")
 Overall it appears to be consistent with a normal distribution, though there might be some skewness.
 
 ```{r anova}
-pheno_aov<-aov(pheno_data$TL..cm.~as.factor(pheno_data$Sex)*as.factor(pheno_data$Trial_actual))
+pheno_aov<-aov(pheno_data$TL..cm.~pheno_data$Sex*pheno_data$Trial_actual)
 summary(pheno_aov)
 ```
 
