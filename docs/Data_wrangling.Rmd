@@ -578,7 +578,7 @@ Each of these were checked -- most are ones where behaviours resumed within 0.00
 I need to compare the phenotype data between trials for both sexes. I will focus on total length, despite it being imperfect, because some of the images were not high enough quality to test snout-vent length (SVL). 
 
 ```{r readPheno}
-pheno_data<-read.csv("phenotype_data.csv")
+pheno_data<-read.csv("processed_data/phenotype_data.csv")
 pheno_data<-pheno_data[!is.na(pheno_data$Trial_actual),]
 pheno_data$Trial_actual<-as.factor(pheno_data$Trial_actual)
 pheno_data$Sex <- as.factor(pheno_data$Sex)
