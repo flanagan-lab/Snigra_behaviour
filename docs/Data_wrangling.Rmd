@@ -617,8 +617,16 @@ summary(pheno_aov)
 
 Males and females have significantly different total lengths (unsurprisingly), but body size does not differ between trials and there is no interaction between sex and trial. 
 
-```{r}
+```{r summarystatsLength}
 tapply(pheno_data$TL..cm., pheno_data$Sex, mean)
 tapply(pheno_data$TL..cm., pheno_data$Sex, sem)
 ```
+
+Do male and female pipefish have different variances in size?
+
+```{r vartest}
+var.test(pheno_data$TL..cm.[pheno_data$Sex=="Male"],pheno_data$TL..cm.[pheno_data$Sex=="Female"])
+```
+
+No, they do not. 
 
