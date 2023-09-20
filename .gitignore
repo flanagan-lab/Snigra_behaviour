@@ -46,8 +46,7 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-# csv files
-*csv
+
 
 *png
 *jpg
@@ -61,4 +60,9 @@ rsconnect/
 *docx
 *doc
 *zip
+*xlsx
 
+BORIS_data/*
+Chase_datasheets/*
+
+./*csv
