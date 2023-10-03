@@ -614,6 +614,7 @@ barplot(recipInit,
 legend(y=250,x=-0.4,as.expression(bquote(bold("A"))),cex=2,bty='n',xpd=TRUE)
 mtext("Sex initiating courtship", 1,line=2)
 mtext("Number of courtship events",2, line=2)
+text(x=1.25,y=200,"*",cex=2,xpd=TRUE)
 
 barplot(Comp[,c(2,1)],
         ylab = "",
@@ -630,7 +631,7 @@ barplot(Comp[,c(2,1)],
 legend(y=125,x=-0.4,as.expression(bquote(bold("B"))),cex=2,bty='n',xpd=TRUE)
 mtext("Sex receiving female displays", 1, line=2)
 mtext("% of female displays",2,line=2)
-
+text(x=1.25,y=100,"*",cex=2,xpd=TRUE)
 
 # just males and females
 vioplot(active_data$logDuration~active_data$subject,
@@ -648,7 +649,7 @@ mtext("Display duration (s)",2,line=2)
 legend(x=0, y=5,
        as.expression(bquote(bold("C"))),
        cex=2,bty='n',xpd=TRUE)
-
+text(x=1.5,y=log(55),"*",cex=2,xpd=TRUE)
 
 # group size
 plot(active_data$logDuration~active_data$Group_size,
