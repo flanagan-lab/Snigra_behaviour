@@ -599,7 +599,7 @@ legend("topright",
 ### Combine the two major figures
 
 
-```{r Fig1Combined, out.height='10in',out.width='6in', dpi=300, fig.keep='last'}
+```{r Fig1Combined, out.height='10in',out.width='6in', dpi=300, fig.keep='last', dev='pdf'}
 
 # initiation
 par(mar=c(4,4,2.5,2.5),

@@ -647,7 +647,7 @@ hist(resid(EndMod), main="",xlab="Residuals")
 
 ### Chasing Plots (final)
 
-```{r plotChasing, fig.height=4, fig.width=7.5, fig.cap="The probability of chasing occurring as a result of group size and duration. The bottom row plots the probability of a bout ending in chasing (given that it contained some chasing behaviour in the first place).", fig.keep='last'}
+```{r plotChasing, fig.height=4, fig.width=7.5, fig.cap="The probability of chasing occurring as a result of group size and duration. The bottom row plots the probability of a bout ending in chasing (given that it contained some chasing behaviour in the first place).", fig.keep='last', dev='pdf'}
 par(mfrow=c(1,2), mar=c(4,4,2.5,1))
 # group size,
 plot(jitter(bout_data$Chasing_numeric, 0.25)~bout_data$Group_size,
