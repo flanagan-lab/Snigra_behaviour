@@ -613,7 +613,7 @@ barplot(recipInit,
         ylim=c(0,200))
 legend(y=250,x=-0.4,as.expression(bquote(bold("A"))),cex=2,bty='n',xpd=TRUE)
 mtext("Sex initiating courtship", 1,line=2)
-mtext("Number of courtship events",2, line=2)
+mtext("# of courtship events",2, line=2)
 text(x=1.25,y=200,"*",cex=2,xpd=TRUE)
 
 barplot(Comp[,c(2,1)],
