@@ -596,7 +596,7 @@ legend("topright",
        cex=2,bty='n',xpd=TRUE)
 ```
 
-## Combine the two major figures
+### Combine the two major figures
 
 
 ```{r Fig1Combined, out.height='10in',out.width='6in', dpi=300, fig.keep='last'}
