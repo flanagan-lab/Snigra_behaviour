@@ -449,6 +449,56 @@ top5<-bind_rows(
 write.csv(top5,"active_top5models.csv")
 ```
 
+### Checking robustness to outliers
+
+The plots (below) look as though a few outliers with large group sizes could be affecting the results. We can look at the top three models without outliers and see if the same interpretations apply.
+
+```{r removeOutliers}
+active_data_no_out<-active_data[active_data$Group_size <= 5,]
+```
+
+**Model 1:**
+
+```{r BestModelNoOutliers}
+model1_no_out <- lmer(logDuration ~ subject + (1|Trial/bout_number), data=active_data_no_out)
+
+summary(model1_no_out)
+anova(model1_no_out)
+
+plot(model1_no_out)
+
+m1_no_out<-emmeans(model1_no_out, list("subject"), pbkrtest.limit=3558, type='response')
+m1_no_out
+```
+
+**Model 2**:
+
+```{r modelTwoNoOutliers}
+model2_no_out <- lmer(logDuration ~ subject + Group_size +  (1|Trial/bout_number), data=active_data_no_out)
+
+summary(model2_no_out)
+anova(model2_no_out)
+
+m2_no_out<-emmeans(model2_no_out, list("subject"), pbkrtest.limit=3558, type='response')
+m2_no_out
+```
+
+**Model 3:**
+
+```{r modelThreeNoOutliers}
+model3_no_out <- lmer(logDuration ~ subject* Group_size + (1|Trial/bout_number), data=active_data_no_out)
+
+summary(model3_no_out)
+anova(model3_no_out)
+
+m3_no_out<-emmeans(model3_no_out, spec= c('subject','Group_size'), level= 0.95,pbkrtest.limit=3558)
+m3_no_out
+```
+
+In all of these, male and female 95% confidence intervals remain non-overlapping in this model, so the models do not seem to be driven by the outliers. Therefore, the full model with all data points will be considered and plotted.
+
+## Plotting
+
 
 For plotting, I'll visualize the durations from females and from males, but also the breakdown across group size. I'll also plot the lines and CIs for males and females across group size, using the function `predicted_probs()` in `predicted_probs.R` (also used in `Chasing_Behaviours.Rmd`).
 
