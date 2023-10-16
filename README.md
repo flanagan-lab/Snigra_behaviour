@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/515324589.svg)](https://zenodo.org/doi/10.5281/zenodo.7735473)
+
 # *Stigmatopora nigra* courtship behaviour analysis
 
 This repository documents the analysis of behavioural data collected from video recordings of 10 mesocosms containing *S. nigra* males and females (which were run in 2020-2021). The goals of the study were to:
@@ -8,18 +10,15 @@ This repository documents the analysis of behavioural data collected from video 
 
 The paper summarising these analyses and the results is published in The Royal Society Open Science, [https://dx.doi.org/10.1098/rsos.231428](https://dx.doi.org/10.1098/rsos.231428)
 
-## Data
+## Data availability
 
-[![DOI](https://zenodo.org/badge/515324589.svg)](https://zenodo.org/doi/10.5281/zenodo.7735473)
-
-The raw data is archived on Zenodo (https://doi.org/10.5281/zenodo.8401296) and is organised in two directories, which are referenced in the script `docs/Data_wrangling.Rmd`: Chase_datasheets/ and BORIS_data/. Both contain data from analysis of videos in BORIS. The BORIS_data/ contains the majority of the courtship behaviours, but the videos were re-analysed to investigate chase behaviours after the courtship behaviours were scored. The chase behaviour data is in Chase_datasheets/.  Note that 3 courtship bouts were deleted from the chase data (but not the courtship data) because there was no active behaviour just chasing and surrounding (bouts 14, 16 and 18).
+Raw video footage is available upon request. The BORIS output files are archived for review purposes on zenodo: [https://doi.org/10.5281/zenodo.7471179](https://doi.org/10.5281/zenodo.7735430). These data are organised in two directories, which are referenced in the script `docs/Data_wrangling.Rmd`: Chase_datasheets/ and BORIS_data/. Both contain data from analysis of videos in BORIS. The BORIS_data/ contains the majority of the courtship behaviours, but the videos were re-analysed to investigate chase behaviours after the courtship behaviours were scored. The chase behaviour data is in Chase_datasheets/.  Note that 3 courtship bouts were deleted from the chase data (but not the courtship data) because there was no active behaviour just chasing and surrounding (bouts 14, 16 and 18).
 
 The raw data sheets are merged and tidied in the Rmarkdown file `docs/Data_wrangling.Rmd`. This doc creates three files, `processed_data/courtship_data.csv`, `processed_data/chase_data.csv`, and `processed_data/combined_behavioural_data.csv`. These files are used in the other documents and scripts to run the analyses and are included in the repository. Also in `processed_data/` is a file called `phenotype_data.csv`, which contains the body size measurements for all of the individuals in the experimental breeding populations. 
 
 
 ### Data availability
 
-Raw video footage is available upon request. The BORIS output files are archived for review purposes on zenodo: https://doi.org/10.5281/zenodo.7471179.
 
 ## Analysis
 
